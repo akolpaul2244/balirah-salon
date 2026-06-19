@@ -1,0 +1,18 @@
+{% extends "notifications/emails/_base_email.html" %}
+
+{% block email_content %}
+<h1 style="margin:0 0 16px;font-family:Georgia,serif;font-size:24px;color:#0A2540;">Verify Your Email</h1>
+<p style="margin:0 0 24px;font-size:15px;line-height:1.7;color:#555555;">
+Hi {{ user.first_name }}, thanks for creating an account with {{ salon_name }}. Please confirm your email address to activate your account.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><td align="center" style="padding:8px 0 24px;">
+<a href="{{ verify_url }}" style="display:inline-block;background-color:#D4AF37;color:#0A2540;font-weight:700;font-size:14px;padding:14px 40px;border-radius:24px;text-decoration:none;">Verify Email Address</a>
+</td></tr>
+</table>
+
+<p style="margin:0 0 16px;font-size:13px;line-height:1.7;color:#999999;">If the button above doesn't work, copy and paste this link into your browser:</p>
+<p style="margin:0 0 24px;font-size:13px;line-height:1.7;color:#0A2540;word-break:break-all;">{{ verify_url }}</p>
+<p style="margin:0;font-size:13px;line-height:1.7;color:#999999;">This link will expire in 24 hours. If you didn't create an account, you can safely ignore this email.</p>
+{% endblock %}

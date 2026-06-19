@@ -1,0 +1,9 @@
+{% if whatsapp_number %}
+<a href="https://wa.me/{{ whatsapp_number|cut:'+' }}?text=Hi%20Balirah%2C%20I%20would%20like%20to%20book%20an%20appointment."
+   class="whatsapp-btn"
+   target="_blank"
+   rel="noopener"
+   aria-label="Chat with us on WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+{% endif %}

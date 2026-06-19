@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About Us{% endblock %}
+{% block meta_description %}Learn the story behind Balirah Beauty Salon — our mission, values, and the passionate team serving Kampala.{% endblock %}
+
+{% block content %}
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__content">
+      <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'core:home' %}">Home</a>
+        <span class="page-hero__breadcrumb-sep">/</span>
+        <span>About Us</span>
+      </nav>
+      <h1 class="page-hero__title">Our Story</h1>
+      <p class="page-hero__subtitle">Built on craft, passion, and a relentless pursuit of the perfect finish.</p>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center">
+      <div data-aos="fade-right">
+        <span class="section-eyebrow">Who We Are</span>
+        <h2 class="section-title">More Than a Salon.</h2>
+        <div class="divider-line"></div>
+        <p style="color:var(--grey-600);line-height:1.9;margin-bottom:1.25rem">
+          {{ salon.about_full|default:"Balirah Beauty Salon was founded on a simple but powerful belief: every person deserves to feel their absolute best. What began as a single chair in Kampala has grown into the city's most trusted destination for precision barbering and luxury nail care." }}
+        </p>
+        <p style="color:var(--grey-600);line-height:1.9;margin-bottom:1.25rem">
+          We have spent years perfecting our craft, curating the finest products, and building a team of specialists who genuinely care about the people in their chairs. The result is a salon that feels less like a transaction and more like a homecoming.
+        </p>
+        <p style="color:var(--grey-600);line-height:1.9">
+          From the moment you walk through our doors to the moment you leave — sharper, fresher, and more confident — our entire focus is on you.
+        </p>
+      </div>
+
+      <div data-aos="fade-left">
+        <div class="about-image-pair">
+          <div class="img-tall" style="border-radius:var(--radius-lg);overflow:hidden;background:linear-gradient(135deg,var(--navy),var(--navy-light));min-height:500px;display:flex;align-items:center;justify-content:center">
+            <i class="fas fa-cut" style="font-size:5rem;color:rgba(212,175,55,.2)"></i>
+          </div>
+          <div style="border-radius:var(--radius-lg);overflow:hidden;background:linear-gradient(135deg,var(--navy-light),#1a4a7a);min-height:235px;display:flex;align-items:center;justify-content:center">
+            <i class="fas fa-spa" style="font-size:3rem;color:rgba(232,160,160,.3)"></i>
+          </div>
+          <div style="border-radius:var(--radius-lg);overflow:hidden;background:linear-gradient(135deg,#1a3a60,var(--navy));min-height:235px;display:flex;align-items:center;justify-content:center">
+            <i class="fas fa-star" style="font-size:3rem;color:rgba(212,175,55,.2)"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--cream" aria-labelledby="values-heading">
+  <div class="container">
+    <div class="section-header section-header--center" data-aos="fade-up">
+      <span class="section-eyebrow">What Drives Us</span>
+      <h2 class="section-title" id="values-heading">Our Values</h2>
+      <div class="divider-line divider-line--center"></div>
+    </div>
+
+    <div class="values-grid" data-aos="fade-up" data-aos-delay="100">
+      <div class="value-card">
+        <div class="value-card__icon"><i class="fas fa-medal"></i></div>
+        <h3 class="value-card__title">Excellence</h3>
+        <p class="value-card__text">We hold ourselves to an uncompromising standard in every cut, every stroke, every detail — because you deserve nothing less than perfect.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-card__icon"><i class="fas fa-heart"></i></div>
+        <h3 class="value-card__title">Genuine Care</h3>
+        <p class="value-card__text">Every client who sits in our chair is a person, not a number. We listen, we advise, and we make sure you leave feeling seen and cared for.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-card__icon"><i class="fas fa-lightbulb"></i></div>
+        <h3 class="value-card__title">Innovation</h3>
+        <p class="value-card__text">Trends evolve. We stay ahead of them — continuously training, learning, and bringing the latest techniques and products to Kampala.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-card__icon"><i class="fas fa-shield-alt"></i></div>
+        <h3 class="value-card__title">Hygiene & Safety</h3>
+        <p class="value-card__text">Our salon maintains clinical hygiene standards. Every tool is sterilised, every surface sanitised. Your safety is never an afterthought.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-card__icon"><i class="fas fa-users"></i></div>
+        <h3 class="value-card__title">Community</h3>
+        <p class="value-card__text">We are proudly Ugandan. We hire locally, source responsibly, and are committed to being a positive force in the Kampala community.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-card__icon"><i class="fas fa-leaf"></i></div>
+        <h3 class="value-card__title">Sustainability</h3>
+        <p class="value-card__text">We choose eco-conscious products and minimise waste wherever possible — because taking care of people and taking care of the planet go hand in hand.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if team %}
+<section class="section" aria-labelledby="team-about-heading">
+  <div class="container">
+    <div class="section-header section-header--center" data-aos="fade-up">
+      <span class="section-eyebrow">The People Behind the Experience</span>
+      <h2 class="section-title" id="team-about-heading">Meet Our Team</h2>
+      <div class="divider-line divider-line--center"></div>
+      <p class="section-subtitle">Trained professionals who are as passionate about your look as you are.</p>
+    </div>
+
+    <div class="grid grid-3" data-aos="fade-up" data-aos-delay="100">
+      {% for stylist in team %}
+      <a href="{% url 'team:detail' stylist.slug %}" class="team-card">
+        {% if stylist.photo %}
+          <img src="{{ stylist.photo_thumb.url }}" alt="{{ stylist.get_full_name }}" class="team-card__photo" loading="lazy">
+        {% else %}
+          <div class="team-card__photo-placeholder"><i class="fas fa-user-tie"></i></div>
+        {% endif %}
+        <div class="team-card__body">
+          <h3 class="team-card__name">{{ stylist.get_full_name }}</h3>
+          <div class="team-card__role">{{ stylist.get_role_display }}</div>
+          <p class="team-card__exp">{{ stylist.years_experience }} years of experience</p>
+          <div class="team-card__specs">
+            {% for spec in stylist.specializations.all %}
+              <span class="spec-tag">{{ spec.name }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section section--navy" aria-labelledby="cta-about-heading">
+  <div class="container" style="text-align:center" data-aos="fade-up">
+    <span class="section-eyebrow" style="display:block;justify-content:center">Come In</span>
+    <h2 class="section-title" id="cta-about-heading" style="color:var(--white)">Experience It for Yourself</h2>
+    <div class="divider-line divider-line--center"></div>
+    <p style="color:rgba(255,255,255,.65);max-width:460px;margin:0 auto 2.5rem;line-height:1.8">
+      Words can only go so far. The best way to understand what makes Balirah special is to take a seat and let us show you.
+    </p>
+    <a href="{% url 'bookings:book' %}" class="btn btn--primary btn--lg">
+      <i class="fas fa-calendar-check"></i> Book Your Visit
+    </a>
+  </div>
+</section>
+
+{% endblock %}

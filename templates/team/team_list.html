@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Our Team{% endblock %}
+{% block meta_description %}Meet the skilled barbers and nail technicians at Balirah Beauty Salon in Kampala.{% endblock %}
+
+{% block content %}
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__content">
+      <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'core:home' %}">Home</a>
+        <span class="page-hero__breadcrumb-sep">/</span>
+        <span>Our Team</span>
+      </nav>
+      <h1 class="page-hero__title">Meet the Team</h1>
+      <p class="page-hero__subtitle">Skilled hands. Genuine care. Years of dedicated craft.</p>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    {% if stylists %}
+    <div class="grid grid-4" data-aos="fade-up">
+      {% for stylist in stylists %}
+      <a href="{% url 'team:detail' stylist.slug %}" class="team-card">
+        {% if stylist.photo %}
+          <img src="{{ stylist.photo_thumb.url }}" alt="{{ stylist.get_full_name }}" class="team-card__photo" loading="lazy">
+        {% else %}
+          <div class="team-card__photo-placeholder"><i class="fas fa-user-tie"></i></div>
+        {% endif %}
+        <div class="team-card__body">
+          <h3 class="team-card__name">{{ stylist.get_full_name }}</h3>
+          <div class="team-card__role">{{ stylist.get_role_display }}</div>
+          <p class="team-card__exp">{{ stylist.years_experience }} years experience</p>
+          <div class="team-card__specs">
+            {% for spec in stylist.specializations.all %}
+              <span class="spec-tag">{{ spec.name }}</span>
+            {% endfor %}
+          </div>
+          {% if stylist.instagram %}
+          <a href="{{ stylist.instagram }}" class="team-card__instagram" target="_blank" rel="noopener" onclick="event.stopPropagation()" aria-label="{{ stylist.get_full_name }} Instagram">
+            <i class="fab fa-instagram"></i>
+          </a>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-state__icon"><i class="fas fa-users"></i></div>
+      <h3 class="empty-state__title">Team Profiles Coming Soon</h3>
+      <p class="empty-state__text">We're updating our team page. Check back shortly.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section section--navy" style="text-align:center">
+  <div class="container" data-aos="fade-up">
+    <span class="section-eyebrow" style="display:block;justify-content:center">Found Your Match?</span>
+    <h2 class="section-title" style="color:var(--white)">Book With Your Favourite Stylist</h2>
+    <div class="divider-line divider-line--center"></div>
+    <a href="{% url 'bookings:book' %}" class="btn btn--primary btn--lg">
+      <i class="fas fa-calendar-check"></i> Book Now
+    </a>
+  </div>
+</section>
+
+{% endblock %}

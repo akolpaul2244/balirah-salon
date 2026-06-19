@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Page Not Found{% endblock %}
+
+{% block content %}
+
+<div class="error-page">
+  <div class="error-page__inner">
+    <div class="error-page__code">404</div>
+    <div class="error-page__content">
+      <i class="fas fa-cut error-page__icon"></i>
+      <h1 class="error-page__title">Page Not Found</h1>
+      <p class="error-page__text">The page you're looking for doesn't exist or may have been moved. Let's get you back on track.</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <a href="{% url 'core:home' %}" class="btn btn--primary">
+          <i class="fas fa-home"></i> Back to Home
+        </a>
+        <a href="{% url 'bookings:book' %}" class="btn btn--outline">Book an Appointment</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

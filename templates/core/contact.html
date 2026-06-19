@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Contact Us{% endblock %}
+{% block meta_description %}Get in touch with Balirah Beauty Salon. Find our location, opening hours, and send us a message.{% endblock %}
+
+{% block content %}
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__content">
+      <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'core:home' %}">Home</a>
+        <span class="page-hero__breadcrumb-sep">/</span>
+        <span>Contact</span>
+      </nav>
+      <h1 class="page-hero__title">Get In Touch</h1>
+      <p class="page-hero__subtitle">We'd love to hear from you. Reach out with questions, feedback, or to plan your next visit.</p>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="contact-grid">
+      <div data-aos="fade-right">
+        <span class="section-eyebrow">Find Us</span>
+        <h2 class="section-title" style="font-size:1.875rem;margin-bottom:2rem">Visit the Salon</h2>
+
+        <div class="contact-info__item">
+          <div class="contact-info__icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div>
+            <div class="contact-info__label">Address</div>
+            <div class="contact-info__value">{{ salon.address|default:"Plot 12, Acacia Avenue, Kololo, Kampala, Uganda" }}</div>
+          </div>
+        </div>
+
+        {% if salon.phone_primary %}
+        <div class="contact-info__item">
+          <div class="contact-info__icon"><i class="fas fa-phone"></i></div>
+          <div>
+            <div class="contact-info__label">Phone</div>
+            <a href="tel:{{ salon.phone_primary }}" class="contact-info__value" style="color:var(--gold);font-weight:600">{{ salon.phone_primary }}</a>
+            {% if salon.phone_secondary %}
+            <a href="tel:{{ salon.phone_secondary }}" class="contact-info__value" style="display:block">{{ salon.phone_secondary }}</a>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if salon.email %}
+        <div class="contact-info__item">
+          <div class="contact-info__icon"><i class="fas fa-envelope"></i></div>
+          <div>
+            <div class="contact-info__label">Email</div>
+            <a href="mailto:{{ salon.email }}" class="contact-info__value" style="color:var(--gold);font-weight:600">{{ salon.email }}</a>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if salon.whatsapp_number %}
+        <div class="contact-info__item">
+          <div class="contact-info__icon" style="background:rgba(37,211,102,.1);color:#25D366"><i class="fab fa-whatsapp"></i></div>
+          <div>
+            <div class="contact-info__label">WhatsApp</div>
+            <a href="https://wa.me/{{ salon.whatsapp_number|cut:'+' }}" target="_blank" rel="noopener"
+               class="contact-info__value" style="color:#25D366;font-weight:600">{{ salon.whatsapp_number }}</a>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if opening_hours %}
+        <div style="margin-top:2rem">
+          <h3 style="font-size:1rem;font-family:var(--font-ui);font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:1rem">Opening Hours</h3>
+          {% with today=request.GET.day %}
+          <div class="hours-table">
+            {% for h in opening_hours %}
+            <div class="hours-row">
+              <span class="hours-row__day">{{ h.get_day_display }}</span>
+              <span class="hours-row__time {% if h.is_closed %}hours-row--closed{% endif %}">
+                {% if h.is_closed %}Closed{% else %}{{ h.open_time|time:"g:i A" }} – {{ h.close_time|time:"g:i A" }}{% endif %}
+              </span>
+            </div>
+            {% endfor %}
+          </div>
+          {% endwith %}
+        </div>
+        {% endif %}
+
+        {% if salon.google_maps_embed %}
+        <div class="map-embed" style="margin-top:2rem">
+          {{ salon.google_maps_embed|safe }}
+        </div>
+        {% endif %}
+      </div>
+
+      <div data-aos="fade-left">
+        <div class="form-card">
+          <span class="section-eyebrow">Send a Message</span>
+          <h2 style="font-size:1.875rem;font-family:var(--font-display);color:var(--navy);margin-bottom:.5rem">We'll Reply Within 24h</h2>
+          <p style="color:var(--grey-600);font-size:.875rem;margin-bottom:2rem">Have a question about our services or want to discuss something specific? Fill in the form below.</p>
+
+          <form method="post" action="{% url 'core:contact' %}" novalidate>
+            {% csrf_token %}
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="id_name">Full Name <span style="color:var(--error)">*</span></label>
+                <input type="text" id="id_name" name="name" class="form-control {% if form.name.errors %}form-control--error{% endif %}"
+                       value="{{ form.name.value|default:'' }}" placeholder="John Doe" required autocomplete="name">
+                {% if form.name.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.name.errors|join:", " }}</span>{% endif %}
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="id_email">Email Address <span style="color:var(--error)">*</span></label>
+                <input type="email" id="id_email" name="email" class="form-control {% if form.email.errors %}form-control--error{% endif %}"
+                       value="{{ form.email.value|default:'' }}" placeholder="you@example.com" required autocomplete="email">
+                {% if form.email.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.email.errors|join:", " }}</span>{% endif %}
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="id_phone">Phone Number</label>
+                <input type="tel" id="id_phone" name="phone" class="form-control"
+                       value="{{ form.phone.value|default:'' }}" placeholder="+256 700 000 000" autocomplete="tel">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="id_subject">Subject <span style="color:var(--error)">*</span></label>
+                <input type="text" id="id_subject" name="subject" class="form-control {% if form.subject.errors %}form-control--error{% endif %}"
+                       value="{{ form.subject.value|default:'' }}" placeholder="How can we help?" required>
+                {% if form.subject.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.subject.errors|join:", " }}</span>{% endif %}
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="id_message">Message <span style="color:var(--error)">*</span></label>
+              <textarea id="id_message" name="message" class="form-control {% if form.message.errors %}form-control--error{% endif %}"
+                        placeholder="Tell us what's on your mind..." required maxlength="2000">{{ form.message.value|default:'' }}</textarea>
+              {% if form.message.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.message.errors|join:", " }}</span>{% endif %}
+            </div>
+            <button type="submit" class="btn btn--primary btn--full btn--lg">
+              <i class="fas fa-paper-plane"></i> Send Message
+            </button>
+            <p style="font-size:.75rem;color:var(--grey-400);text-align:center;margin-top:1rem">
+              We typically respond within a few hours during business hours.
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

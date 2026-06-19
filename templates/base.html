@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>{% block title %}{{ salon.salon_name|default:"Balirah Beauty Salon" }}{% endblock %} | {% if salon %}{{ salon.salon_name }}{% else %}Balirah Beauty Salon{% endif %}</title>
+  <meta name="description" content="{% block meta_description %}{{ salon.meta_description|default:"Premium barber and nail services in Kampala, Uganda." }}{% endblock %}">
+  <meta name="keywords" content="{% block meta_keywords %}barber kampala, nail salon kampala, haircut kampala, balirah beauty{% endblock %}">
+  <meta name="author" content="{{ salon.salon_name|default:"Balirah Beauty Salon" }}">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{% block og_title %}{{ salon.salon_name|default:"Balirah Beauty Salon" }}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{{ salon.meta_description|default:"Premium barber and nail services in Kampala, Uganda." }}{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}{% if salon.hero_image %}{{ request.scheme }}://{{ request.get_host }}{{ salon.hero_image.url }}{% endif %}{% endblock %}">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="canonical" href="{{ request.build_absolute_uri }}">
+  {% if salon.favicon %}
+    <link rel="icon" type="image/x-icon" href="{{ salon.favicon.url }}">
+  {% else %}
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+  {% endif %}
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+  <meta name="theme-color" content="#0A2540">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
+  {% block extra_css %}{% endblock %}
+
+  {% if salon.google_analytics_id %}
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ salon.google_analytics_id }}"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','{{ salon.google_analytics_id }}');</script>
+  {% endif %}
+</head>
+<body class="site-body">
+
+  <noscript>
+    <div style="background:#0A2540;color:#fff;text-align:center;padding:.75rem 1rem;font-family:sans-serif;font-size:.875rem">
+      JavaScript is disabled in your browser. Some features like the booking calendar and image gallery may not work correctly. Please enable JavaScript for the best experience.
+    </div>
+  </noscript>
+
+  {% include "partials/navbar.html" %}
+
+  {% if messages %}
+  <div class="toast-container" id="toastContainer" aria-live="polite">
+    {% for message in messages %}
+    <div class="toast toast--{{ message.tags|default:'info' }}" role="alert">
+      <div class="toast__icon">
+        {% if message.tags == 'success' %}<i class="fas fa-check-circle"></i>
+        {% elif message.tags == 'error' %}<i class="fas fa-exclamation-circle"></i>
+        {% elif message.tags == 'warning' %}<i class="fas fa-exclamation-triangle"></i>
+        {% else %}<i class="fas fa-info-circle"></i>{% endif %}
+      </div>
+      <p class="toast__text">{{ message }}</p>
+      <button class="toast__close" onclick="this.parentElement.remove()" aria-label="Dismiss">&times;</button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <main id="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include "partials/footer.html" %}
+  {% include "partials/whatsapp_button.html" %}
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.min.js"></script>
+  <script src="{% static 'js/main.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+
+  <script>AOS.init({ duration: 700, once: true, offset: 60 });</script>
+  <script>
+    document.querySelectorAll('.toast').forEach(t => {
+      setTimeout(() => { if(t.parentElement) t.style.animation='slideOutRight 0.3s forwards'; setTimeout(()=>t.remove(),300); }, 5000);
+    });
+  </script>
+</body>
+</html>

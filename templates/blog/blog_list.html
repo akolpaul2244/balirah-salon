@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Blog{% endblock %}
+{% block meta_description %}Hair care tips, beard grooming advice, and nail trends from the Balirah Beauty Salon team.{% endblock %}
+
+{% block content %}
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__content">
+      <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'core:home' %}">Home</a>
+        <span class="page-hero__breadcrumb-sep">/</span>
+        <span>Blog</span>
+      </nav>
+      <h1 class="page-hero__title">Style Tips &amp; Trends</h1>
+      <p class="page-hero__subtitle">Grooming wisdom and nail inspiration from our experts.</p>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    {% if categories %}
+    <div class="gallery-filters" role="group" aria-label="Filter posts by category">
+      <a href="{% url 'blog:list' %}" class="gallery-filter {% if not active_category %}active{% endif %}">All</a>
+      {% for category in categories %}
+      <a href="?category={{ category.slug }}" class="gallery-filter {% if active_category == category.slug %}active{% endif %}">{{ category.name }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if page_obj %}
+    <div class="grid grid-3" data-aos="fade-up">
+      {% for post in page_obj %}
+      <article class="blog-card">
+        <a href="{{ post.get_absolute_url }}">
+          {% if post.featured_image %}
+            <img src="{{ post.featured_image_thumb.url }}" alt="{{ post.title }}" class="blog-card__image" loading="lazy">
+          {% else %}
+            <div class="blog-card__image-placeholder"><i class="fas fa-pen-nib"></i></div>
+          {% endif %}
+        </a>
+        <div class="blog-card__body">
+          {% if post.category %}<div class="blog-card__category">{{ post.category.name }}</div>{% endif %}
+          <h3 class="blog-card__title"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+          <p class="blog-card__excerpt">{{ post.excerpt|truncatewords:20 }}</p>
+          <div class="blog-card__meta">
+            <span>{{ post.published_at|date:"d M Y" }}</span>
+            {% if post.author %}<span class="blog-card__meta-sep">·</span><span>{{ post.author.get_full_name }}</span>{% endif %}
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <nav class="pagination" aria-label="Blog pagination">
+      {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}{% if active_category %}&category={{ active_category }}{% endif %}" class="page-link page-link--prev">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      {% endif %}
+      {% for num in page_obj.paginator.page_range %}
+        {% if num == page_obj.number %}
+        <span class="page-link active">{{ num }}</span>
+        {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+        <a href="?page={{ num }}{% if active_category %}&category={{ active_category }}{% endif %}" class="page-link">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% if active_category %}&category={{ active_category }}{% endif %}" class="page-link page-link--next">
+        <i class="fas fa-arrow-right"></i>
+      </a>
+      {% endif %}
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-state__icon"><i class="fas fa-pen-nib"></i></div>
+      <h3 class="empty-state__title">No Posts Yet</h3>
+      <p class="empty-state__text">We're working on our first articles. Check back soon for tips and trends.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}

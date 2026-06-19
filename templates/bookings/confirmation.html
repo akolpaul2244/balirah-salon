@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Booking Confirmed{% endblock %}
+
+{% block content %}
+
+<section class="section section--cream" style="min-height:calc(100vh - var(--nav-height));display:flex;align-items:center">
+  <div class="container">
+    <div class="status-card" data-aos="zoom-in">
+      <div class="status-card__icon">
+        <i class="fas fa-check"></i>
+      </div>
+      <h1 class="status-card__title">Booking Confirmed!</h1>
+      <p class="status-card__text">
+        Thank you, {{ appointment.client_name }}. Your appointment has been successfully booked. A confirmation has been sent to {% if appointment.client_phone %}your phone{% endif %}{% if appointment.client_phone and appointment.client_email %} and {% endif %}{% if appointment.client_email %}email{% endif %}.
+      </p>
+
+      <div class="ref-badge">
+        <i class="fas fa-hashtag"></i> {{ appointment.reference }}
+      </div>
+
+      <div style="background:var(--cream);border-radius:var(--radius-lg);padding:1.5rem;text-align:left;margin-bottom:2rem">
+        <div class="booking-summary__item">
+          <span class="booking-summary__label">Service</span>
+          <span class="booking-summary__value">{{ appointment.service.name }}</span>
+        </div>
+        <div class="booking-summary__item">
+          <span class="booking-summary__label">Stylist</span>
+          <span class="booking-summary__value">{{ appointment.stylist.get_full_name }}</span>
+        </div>
+        <div class="booking-summary__item">
+          <span class="booking-summary__label">Date</span>
+          <span class="booking-summary__value">{{ appointment.appointment_date|date:"l, d F Y" }}</span>
+        </div>
+        <div class="booking-summary__item">
+          <span class="booking-summary__label">Time</span>
+          <span class="booking-summary__value">{{ appointment.start_time|time:"g:i A" }}</span>
+        </div>
+        <div class="booking-summary__total">
+          <span>Total</span>
+          <span class="booking-summary__total-price">{{ appointment.service.price_display }}</span>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <a href="{% url 'core:home' %}" class="btn btn--outline">Back to Home</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'accounts:profile' %}" class="btn btn--primary">View My Bookings</a>
+        {% else %}
+        <a href="{% url 'accounts:register' %}" class="btn btn--primary">Create an Account</a>
+        {% endif %}
+      </div>
+
+      <p style="font-size:.75rem;color:var(--grey-400);margin-top:2rem">
+        Need to make a change? Contact us as soon as possible quoting your reference number.
+      </p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /accounts/
+Disallow: /bookings/cancel/
+Disallow: /api/v1/
+Disallow: /__debug__/
+Allow: /
+
+Sitemap: /sitemap.xml

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sign In{% endblock %}
+
+{% block content %}
+
+<div class="auth-layout">
+  <div class="auth-panel--left">
+    <div style="position:relative;z-index:1;max-width:420px">
+      <span class="hero__eyebrow">Welcome Back</span>
+      <h1 style="font-family:var(--font-display);font-size:2.5rem;color:var(--white);line-height:1.2;margin-bottom:1.5rem">
+        Good to See You Again
+      </h1>
+      <p style="color:rgba(255,255,255,.65);line-height:1.8">
+        Sign in to manage your appointments, view your booking history, and book your next visit in seconds.
+      </p>
+    </div>
+  </div>
+
+  <div class="auth-panel--right">
+    <div class="auth-form-wrapper" data-aos="fade-up">
+      <h2 class="auth-title">Sign In</h2>
+      <p class="auth-subtitle">New here? <a href="{% url 'accounts:register' %}" style="color:var(--gold);font-weight:600">Create an account</a></p>
+
+      {% if form.non_field_errors %}
+      <div style="background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.2);border-radius:var(--radius);padding:1rem;margin-bottom:1.5rem">
+        <p style="color:var(--error);font-size:.875rem"><i class="fas fa-exclamation-circle"></i> {{ form.non_field_errors|join:", " }}</p>
+      </div>
+      {% endif %}
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="form-label" for="id_username">Email Address</label>
+          <input type="email" id="id_username" name="username" class="form-control" required autocomplete="email" autofocus>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_password">Password</label>
+          <div style="position:relative">
+            <input type="password" id="id_password" name="password" class="form-control" required autocomplete="current-password">
+            <button type="button" data-password-toggle="id_password" aria-label="Show password" style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);color:var(--grey-400)">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+          <label style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--grey-600);cursor:pointer">
+            <input type="checkbox" name="remember_me" checked style="width:16px;height:16px;accent-color:var(--gold)">
+            Remember me
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full btn--lg">
+          Sign In
+        </button>
+      </form>
+
+      <p style="font-size:.8125rem;color:var(--grey-400);text-align:center;margin-top:2rem">
+        Having trouble? <a href="{% url 'core:contact' %}" style="color:var(--gold)">Contact support</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

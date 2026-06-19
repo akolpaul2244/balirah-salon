@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Appointment {{ appointment.reference }}{% endblock %}
+
+{% block content %}
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__content">
+      <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'core:home' %}">Home</a>
+        <span class="page-hero__breadcrumb-sep">/</span>
+        <a href="{% url 'accounts:profile' %}">My Profile</a>
+        <span class="page-hero__breadcrumb-sep">/</span>
+        <span>{{ appointment.reference }}</span>
+      </nav>
+      <h1 class="page-hero__title">Appointment Details</h1>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container" style="max-width:680px">
+    <div class="profile-section" data-aos="fade-up">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem">
+        <div>
+          <h2 style="font-size:1.5rem;margin-bottom:.25rem">{{ appointment.service.name }}</h2>
+          <span class="ref-badge" style="font-size:.875rem;padding:.5rem 1.25rem">{{ appointment.reference }}</span>
+        </div>
+        <span class="badge {% if appointment.status == 'confirmed' %}badge--success{% elif appointment.status == 'cancelled' %}badge--error{% elif appointment.status == 'pending' %}badge--warning{% else %}badge--navy{% endif %}">
+          {{ appointment.get_status_display }}
+        </span>
+      </div>
+
+      <div class="booking-summary">
+        <div class="booking-summary__item">
+          <span class="booking-summary__label">Client</span>
+          <span class="booking-summary__value">{{ appointment.client_name }}</span>
+        </div>
+        <div class="booking-summary__item">
+          <span class="booking-summary__label">Stylist</span>
+          <span class="booking-summary__value">{{ appointment.stylist.get_full_name }}</span>
+        </div>
+        <div class="booking-summary__item">
+          <span class="booking-summary__label">Date</span>
+          <span class="booking-summary__value">{{ appointment.appointment_date|date:"l, d F Y" }}</span>
+        </div>
+        <div class="booking-summary__item">
+          <span class="booking-summary__label">Time</span>
+          <span class="booking-summary__value">{{ appointment.start_time|time:"g:i A" }} – {{ appointment.end_time|time:"g:i A" }}</span>
+        </div>
+        {% if appointment.notes %}
+        <div class="booking-summary__item">
+          <span class="booking-summary__label">Notes</span>
+          <span class="booking-summary__value">{{ appointment.notes }}</span>
+        </div>
+        {% endif %}
+        <div class="booking-summary__total">
+          <span>Total</span>
+          <span class="booking-summary__total-price">{{ appointment.service.price_display }}</span>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap">
+        <a href="{% url 'accounts:profile' %}" class="btn btn--outline">Back to My Bookings</a>
+        {% if appointment.can_cancel and appointment.user == user %}
+        <a href="{% url 'bookings:cancel' appointment.reference %}" class="btn btn--navy">
+          <i class="fas fa-times"></i> Cancel Appointment
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

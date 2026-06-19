@@ -1,0 +1,346 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Kampala's Premier Barber & Nails Studio{% endblock %}
+{% block meta_description %}Balirah Beauty Salon – precision barbering and luxury nail services in Kampala, Uganda. Book your appointment online today.{% endblock %}
+
+{% block content %}
+
+<section class="hero" aria-label="Welcome to Balirah Beauty Salon">
+  <div class="hero__bg">
+    {% if salon.hero_image %}
+      <img src="{{ salon.hero_image.url }}" alt="Balirah Beauty Salon" fetchpriority="high">
+    {% else %}
+      <div class="hero__bg-fallback" aria-hidden="true"></div>
+    {% endif %}
+    <div class="hero__bg-overlay"></div>
+  </div>
+
+  <div class="container">
+    <div class="hero__content">
+      <span class="hero__eyebrow">Kampala, Uganda</span>
+      <h1 class="hero__title">
+        Where Every Cut<br>Tells a <em>Story</em>
+      </h1>
+      <p class="hero__subtitle">
+        Precision barbering and luxury nail artistry under one roof. Experience grooming redefined in the heart of Kampala.
+      </p>
+      <div class="hero__actions">
+        <a href="{% url 'bookings:book' %}" class="btn btn--primary btn--lg">
+          <i class="fas fa-calendar-check"></i> Book Appointment
+        </a>
+        <a href="{% url 'services:list' %}" class="btn btn--outline-white btn--lg">
+          Explore Services
+        </a>
+      </div>
+
+      <div class="hero__stats">
+        <div>
+          <div class="hero__stat-number" data-count="2000" data-suffix="+">0+</div>
+          <div class="hero__stat-label">Happy Clients</div>
+        </div>
+        <div>
+          <div class="hero__stat-number" data-count="5">0</div>
+          <div class="hero__stat-label">Expert Stylists</div>
+        </div>
+        <div>
+          <div class="hero__stat-number" data-count="98" data-suffix="%">0%</div>
+          <div class="hero__stat-label">Satisfaction Rate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero__scroll" aria-hidden="true">
+    <div class="hero__scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+{% if featured_services %}
+<section class="section section--cream" aria-labelledby="services-heading">
+  <div class="container">
+    <div class="section-header section-header--center" data-aos="fade-up">
+      <span class="section-eyebrow">What We Offer</span>
+      <h2 class="section-title" id="services-heading">Crafted for the Discerning</h2>
+      <div class="divider-line divider-line--center"></div>
+      <p class="section-subtitle">From precision fades to luxury nail artistry — every service is a commitment to excellence.</p>
+    </div>
+
+    <div class="grid grid-3" style="gap:1.5rem">
+      {% for service in featured_services %}
+      <article class="card card--service" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:1 }}00">
+        {% if service.image %}
+          <img src="{{ service.image_thumbnail.url }}" alt="{{ service.name }}" class="card__image" loading="lazy">
+        {% else %}
+          <div class="card__image" style="background:linear-gradient(135deg,var(--navy),var(--navy-light));display:flex;align-items:center;justify-content:center;min-height:200px">
+            <i class="{% if service.category.category_type == 'nails' %}fas fa-spa{% else %}fas fa-cut{% endif %}" style="font-size:3rem;color:rgba(212,175,55,.3)"></i>
+          </div>
+        {% endif %}
+        <span class="card__badge">{{ service.category.name }}</span>
+        <div class="card__body">
+          <h3 class="card__title">{{ service.name }}</h3>
+          <p class="card__text">{{ service.short_description|default:service.description|truncatewords:18 }}</p>
+          <div class="card__meta">
+            <span style="font-family:var(--font-ui);font-size:.875rem;font-weight:700;color:var(--gold)">{{ service.price_display }}</span>
+            <span style="font-size:.75rem;color:var(--grey-400)"><i class="fas fa-clock" style="margin-right:.25rem"></i>{{ service.duration_display }}</span>
+            <a href="{% url 'bookings:book' %}?service={{ service.pk }}" class="btn btn--navy btn--sm" style="margin-left:auto">Book</a>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <div style="text-align:center;margin-top:3rem" data-aos="fade-up">
+      <a href="{% url 'services:list' %}" class="btn btn--outline btn--lg">View All Services</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section section--navy" aria-labelledby="about-heading">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center">
+      <div data-aos="fade-right">
+        <span class="section-eyebrow">Our Story</span>
+        <h2 class="section-title" id="about-heading" style="color:var(--white)">More Than a Haircut.<br><em class="text-gold">An Experience.</em></h2>
+        <div class="divider-line"></div>
+        <p style="color:rgba(255,255,255,.7);line-height:1.9;margin-bottom:1.5rem">
+          {{ salon.about_short|default:"Balirah Beauty Salon was born from a single conviction: that grooming should feel like a luxury, not a chore. Nestled in the heart of Kampala, we have built a sanctuary where skilled hands, premium products, and genuine hospitality converge." }}
+        </p>
+        <p style="color:rgba(255,255,255,.65);line-height:1.9;margin-bottom:2.5rem;font-size:.9375rem">
+          Whether you are stepping in for a clean edge-up before a big meeting or indulging in a full nail set for a special occasion — we treat every appointment with the same meticulous care.
+        </p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap">
+          <a href="{% url 'core:about' %}" class="btn btn--primary">Our Story</a>
+          <a href="{% url 'team:list' %}" class="btn btn--outline">Meet the Team</a>
+        </div>
+      </div>
+
+      <div data-aos="fade-left">
+        <div class="about-stats-bar">
+          <div class="about-stat">
+            <div class="about-stat__number" data-count="10" data-suffix="+">10+</div>
+            <div class="about-stat__label">Years of craft</div>
+          </div>
+          <div class="about-stat">
+            <div class="about-stat__number" data-count="5">5</div>
+            <div class="about-stat__label">Expert stylists</div>
+          </div>
+          <div class="about-stat">
+            <div class="about-stat__number" data-count="2000" data-suffix="+">2000+</div>
+            <div class="about-stat__label">Clients served</div>
+          </div>
+          <div class="about-stat">
+            <div class="about-stat__number" data-count="98" data-suffix="%">98%</div>
+            <div class="about-stat__label">5-star reviews</div>
+          </div>
+        </div>
+
+        <div style="margin-top:2rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.15);border-radius:var(--radius-lg);padding:1.5rem;text-align:center">
+            <i class="fas fa-cut" style="font-size:2rem;color:var(--gold);margin-bottom:1rem;display:block"></i>
+            <div style="font-family:var(--font-ui);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.6)">Barber Services</div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.15);border-radius:var(--radius-lg);padding:1.5rem;text-align:center">
+            <i class="fas fa-spa" style="font-size:2rem;color:var(--rose);margin-bottom:1rem;display:block"></i>
+            <div style="font-family:var(--font-ui);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.6)">Nail Services</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if team %}
+<section class="section" aria-labelledby="team-heading">
+  <div class="container">
+    <div class="section-header section-header--center" data-aos="fade-up">
+      <span class="section-eyebrow">The Hands Behind the Work</span>
+      <h2 class="section-title" id="team-heading">Meet Our Stylists</h2>
+      <div class="divider-line divider-line--center"></div>
+    </div>
+
+    <div class="grid grid-4" data-aos="fade-up" data-aos-delay="100">
+      {% for stylist in team %}
+      <a href="{% url 'team:detail' stylist.slug %}" class="team-card">
+        {% if stylist.photo %}
+          <img src="{{ stylist.photo_thumb.url }}" alt="{{ stylist.get_full_name }}" class="team-card__photo" loading="lazy">
+        {% else %}
+          <div class="team-card__photo-placeholder">
+            <i class="fas fa-user-tie"></i>
+          </div>
+        {% endif %}
+        <div class="team-card__body">
+          <h3 class="team-card__name">{{ stylist.get_full_name }}</h3>
+          <div class="team-card__role">{{ stylist.get_role_display }}</div>
+          <p class="team-card__exp">{{ stylist.years_experience }} years experience</p>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+
+    <div style="text-align:center;margin-top:2.5rem" data-aos="fade-up">
+      <a href="{% url 'team:list' %}" class="btn btn--outline">View Full Team</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if gallery_images %}
+<section class="section section--cream" aria-labelledby="gallery-heading">
+  <div class="container">
+    <div class="section-header section-header--center" data-aos="fade-up">
+      <span class="section-eyebrow">Our Work</span>
+      <h2 class="section-title" id="gallery-heading">The Proof Is in the Cut</h2>
+      <div class="divider-line divider-line--center"></div>
+    </div>
+
+    <div class="gallery-grid" data-aos="fade-up" data-aos-delay="100">
+      {% for image in gallery_images %}
+      <div class="gallery-item"
+           data-lightbox="{{ image.image.url }}"
+           data-title="{{ image.title }}"
+           data-category="{{ image.category.slug }}"
+           role="button"
+           tabindex="0"
+           aria-label="View {{ image.title|default:"gallery image" }}">
+        <img src="{{ image.thumbnail.url }}" alt="{{ image.title|default:"Balirah salon work" }}" loading="lazy">
+        <div class="gallery-item__overlay">
+          <i class="fas fa-expand-alt gallery-item__overlay-icon"></i>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div style="text-align:center;margin-top:2.5rem" data-aos="fade-up">
+      <a href="{% url 'gallery:gallery' %}" class="btn btn--navy btn--lg">View Full Gallery</a>
+    </div>
+  </div>
+</section>
+
+<div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+  <button class="lightbox__close" aria-label="Close image viewer"><i class="fas fa-times"></i></button>
+  <button class="lightbox__prev" aria-label="Previous image"><i class="fas fa-chevron-left"></i></button>
+  <img src="" alt="" class="lightbox__img" tabindex="0">
+  <button class="lightbox__next" aria-label="Next image"><i class="fas fa-chevron-right"></i></button>
+</div>
+{% endif %}
+
+{% if testimonials %}
+<section class="section" aria-labelledby="testimonials-heading">
+  <div class="container">
+    <div class="section-header section-header--center" data-aos="fade-up">
+      <span class="section-eyebrow">Client Love</span>
+      <h2 class="section-title" id="testimonials-heading">What Our Clients Say</h2>
+      <div class="divider-line divider-line--center"></div>
+    </div>
+
+    <div class="testimonials-carousel" data-carousel data-aos="fade-up" data-aos-delay="100">
+      <div class="testimonials-track">
+        {% for testimonial in testimonials %}
+        <div class="testimonial-card">
+          <div class="testimonial-inner">
+            <div class="testimonial__stars" aria-label="{{ testimonial.rating }} out of 5 stars">
+              {% for i in "12345" %}
+                <i class="fas fa-star{% if forloop.counter > testimonial.rating %} " style="opacity:.25{% endif %}"></i>
+              {% endfor %}
+            </div>
+            <p class="testimonial__body">"{{ testimonial.body }}"</p>
+            <div class="testimonial__author">
+              {% if testimonial.client_photo %}
+                <img src="{{ testimonial.client_photo.url }}" alt="{{ testimonial.client_name }}" class="testimonial__avatar" loading="lazy">
+              {% else %}
+                <div class="testimonial__avatar-placeholder" aria-hidden="true">{{ testimonial.client_name|first|upper }}</div>
+              {% endif %}
+              <div>
+                <div class="testimonial__name">{{ testimonial.client_name }}</div>
+                {% if testimonial.service %}<div class="testimonial__service">{{ testimonial.service.name }}</div>{% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="carousel-nav">
+        <button class="carousel-btn" data-carousel-prev aria-label="Previous review"><i class="fas fa-arrow-left"></i></button>
+        <button class="carousel-btn" data-carousel-next aria-label="Next review"><i class="fas fa-arrow-right"></i></button>
+      </div>
+      <div class="carousel-dots" role="tablist" aria-label="Review navigation">
+        {% for testimonial in testimonials %}
+        <button class="carousel-dot{% if forloop.first %} active{% endif %}" role="tab" aria-label="Review {{ forloop.counter }}"></button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:2.5rem">
+      <a href="{% url 'testimonials:submit' %}" class="btn btn--outline">Leave a Review</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if latest_posts %}
+<section class="section section--cream" aria-labelledby="blog-heading">
+  <div class="container">
+    <div class="section-header section-header--center" data-aos="fade-up">
+      <span class="section-eyebrow">From the Blog</span>
+      <h2 class="section-title" id="blog-heading">Style Tips & Trends</h2>
+      <div class="divider-line divider-line--center"></div>
+    </div>
+
+    <div class="grid grid-3" data-aos="fade-up" data-aos-delay="100">
+      {% for post in latest_posts %}
+      <article class="blog-card">
+        <a href="{{ post.get_absolute_url }}">
+          {% if post.featured_image %}
+            <img src="{{ post.featured_image_thumb.url }}" alt="{{ post.title }}" class="blog-card__image" loading="lazy">
+          {% else %}
+            <div class="blog-card__image-placeholder"><i class="fas fa-pen-nib"></i></div>
+          {% endif %}
+        </a>
+        <div class="blog-card__body">
+          {% if post.category %}<div class="blog-card__category">{{ post.category.name }}</div>{% endif %}
+          <h3 class="blog-card__title"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+          <p class="blog-card__excerpt">{{ post.excerpt|truncatewords:20 }}</p>
+          <div class="blog-card__meta">
+            <span>{{ post.published_at|date:"d M Y" }}</span>
+            {% if post.author %}<span class="blog-card__meta-sep">·</span><span>{{ post.author.get_full_name }}</span>{% endif %}
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <div style="text-align:center;margin-top:2.5rem" data-aos="fade-up">
+      <a href="{% url 'blog:list' %}" class="btn btn--outline">Read All Posts</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section section--navy" aria-labelledby="cta-heading">
+  <div class="container" style="text-align:center">
+    <div data-aos="fade-up">
+      <span class="section-eyebrow" style="justify-content:center;display:block">Ready?</span>
+      <h2 class="section-title" id="cta-heading" style="color:var(--white)">Your Best Look<br>Is One Booking Away</h2>
+      <div class="divider-line divider-line--center"></div>
+      <p style="color:rgba(255,255,255,.65);max-width:480px;margin:0 auto 2.5rem;line-height:1.8">
+        Choose your service, pick your stylist, and select a time that works for you. It takes less than two minutes.
+      </p>
+      <div style="display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap">
+        <a href="{% url 'bookings:book' %}" class="btn btn--primary btn--lg">
+          <i class="fas fa-calendar-check"></i> Book Now
+        </a>
+        {% if whatsapp_number %}
+        <a href="https://wa.me/{{ whatsapp_number|cut:'+' }}" class="btn btn--outline btn--lg" target="_blank" rel="noopener">
+          <i class="fab fa-whatsapp"></i> WhatsApp Us
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Share Your Experience{% endblock %}
+
+{% block content %}
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__content">
+      <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'core:home' %}">Home</a>
+        <span class="page-hero__breadcrumb-sep">/</span>
+        <a href="{% url 'testimonials:list' %}">Reviews</a>
+        <span class="page-hero__breadcrumb-sep">/</span>
+        <span>Share Your Experience</span>
+      </nav>
+      <h1 class="page-hero__title">Share Your Experience</h1>
+      <p class="page-hero__subtitle">We'd love to hear how your visit went.</p>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container" style="max-width:600px">
+    <div class="form-card" data-aos="fade-up">
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {% if not user.is_authenticated %}
+        <div class="form-group">
+          <label class="form-label" for="id_client_name">Your Name</label>
+          <input type="text" id="id_client_name" name="client_name" class="form-control {% if form.client_name.errors %}form-control--error{% endif %}"
+                 value="{{ form.client_name.value|default:'' }}" required>
+          {% if form.client_name.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.client_name.errors|join:", " }}</span>{% endif %}
+        </div>
+        {% endif %}
+
+        <div class="form-group">
+          <label class="form-label" for="id_service">Which Service?</label>
+          <select id="id_service" name="service" class="form-control">
+            <option value="">Select a service (optional)</option>
+            {% for service in form.fields.service.queryset %}
+            <option value="{{ service.pk }}" {% if form.service.value == service.pk|stringformat:"s" %}selected{% endif %}>{{ service.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Your Rating</label>
+          <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
+            {% for i in "54321" %}
+            <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.875rem;color:var(--grey-600)">
+              <input type="radio" name="rating" value="{{ i }}" {% if i == "5" %}checked{% endif %} style="accent-color:var(--gold)">
+              {{ i }} <i class="fas fa-star" style="color:var(--gold);font-size:.75rem"></i>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_body">Your Review</label>
+          <textarea id="id_body" name="body" class="form-control {% if form.body.errors %}form-control--error{% endif %}" rows="5"
+                    placeholder="Tell us about your experience..." required maxlength="800">{{ form.body.value|default:'' }}</textarea>
+          {% if form.body.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.body.errors|join:", " }}</span>{% endif %}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_client_photo">Your Photo (optional)</label>
+          <input type="file" id="id_client_photo" name="client_photo" class="form-control" accept="image/*">
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full btn--lg">
+          <i class="fas fa-paper-plane"></i> Submit Review
+        </button>
+
+        <p style="font-size:.75rem;color:var(--grey-400);text-align:center;margin-top:1rem">
+          Your review will be published after a quick moderation check.
+        </p>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

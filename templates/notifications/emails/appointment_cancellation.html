@@ -1,0 +1,20 @@
+{% extends "notifications/emails/_base_email.html" %}
+
+{% block email_content %}
+<h1 style="margin:0 0 16px;font-family:Georgia,serif;font-size:24px;color:#0A2540;">Appointment Cancelled</h1>
+<p style="margin:0 0 24px;font-size:15px;line-height:1.7;color:#555555;">
+Hi {{ appointment.client_name }}, your appointment at {{ salon_name }} has been cancelled as requested.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#FAF7F2;border-radius:8px;margin-bottom:24px;">
+<tr><td style="padding:24px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><td style="padding:8px 0;font-size:14px;color:#555555;">Reference</td><td style="padding:8px 0;font-size:14px;font-weight:700;color:#0A2540;text-align:right;">{{ appointment.reference }}</td></tr>
+<tr><td style="padding:8px 0;font-size:14px;color:#555555;border-top:1px solid rgba(0,0,0,0.06);">Service</td><td style="padding:8px 0;font-size:14px;font-weight:700;color:#0A2540;text-align:right;border-top:1px solid rgba(0,0,0,0.06);">{{ appointment.service.name }}</td></tr>
+<tr><td style="padding:8px 0;font-size:14px;color:#555555;border-top:1px solid rgba(0,0,0,0.06);">Original Date</td><td style="padding:8px 0;font-size:14px;font-weight:700;color:#0A2540;text-align:right;border-top:1px solid rgba(0,0,0,0.06);">{{ appointment.appointment_date|date:"l, d F Y" }}</td></tr>
+</table>
+</td></tr>
+</table>
+
+<p style="margin:0 0 16px;font-size:14px;line-height:1.7;color:#555555;">We're sorry to see this one go. Whenever you're ready to rebook, we'll be here.</p>
+{% endblock %}

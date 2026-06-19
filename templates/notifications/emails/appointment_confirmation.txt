@@ -1,0 +1,17 @@
+APPOINTMENT CONFIRMED
+
+Hi {{ appointment.client_name }},
+
+Your appointment at {{ salon_name }} has been confirmed. We look forward to seeing you.
+
+Reference: {{ appointment.reference }}
+Service: {{ appointment.service.name }}
+Stylist: {{ appointment.stylist.get_full_name }}
+Date: {{ appointment.appointment_date|date:"l, d F Y" }}
+Time: {{ appointment.start_time|time:"g:i A" }}
+Total: {{ appointment.service.price_display }}
+
+Need to cancel or reschedule? You can do so up to 2 hours before your appointment via your account or by contacting us directly.
+
+{{ salon_name }}
+Kampala, Uganda

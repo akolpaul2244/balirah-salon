@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Privacy Policy{% endblock %}
+{% block meta_description %}Read Balirah Beauty Salon's privacy policy regarding the collection and use of personal data.{% endblock %}
+
+{% block content %}
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__content">
+      <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'core:home' %}">Home</a>
+        <span class="page-hero__breadcrumb-sep">/</span>
+        <span>Privacy Policy</span>
+      </nav>
+      <h1 class="page-hero__title">Privacy Policy</h1>
+      <p class="page-hero__subtitle">Last updated {% now "F Y" %}</p>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container" style="max-width:760px">
+    {% if salon.privacy_policy %}
+    <div style="color:var(--grey-800);line-height:1.9;font-size:1rem">
+      {{ salon.privacy_policy|safe }}
+    </div>
+    {% else %}
+    <div style="color:var(--grey-800);line-height:1.9;font-size:1rem">
+      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">1. Information We Collect</h2>
+      <p style="margin-bottom:1rem;color:var(--grey-600)">We collect information you provide directly to us, including your name, email address, phone number, and appointment preferences when you create an account or book a service.</p>
+
+      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">2. How We Use Your Information</h2>
+      <p style="margin-bottom:1rem;color:var(--grey-600)">We use your information to process bookings, send appointment confirmations and reminders via SMS and email, improve our services, and communicate promotional offers if you have opted in.</p>
+
+      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">3. SMS and Email Communications</h2>
+      <p style="margin-bottom:1rem;color:var(--grey-600)">By providing your phone number, you consent to receive appointment-related SMS messages. You may opt out of promotional messages at any time through your account settings.</p>
+
+      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">4. Data Security</h2>
+      <p style="margin-bottom:1rem;color:var(--grey-600)">We implement industry-standard security measures including encrypted password storage, secure connections, and restricted access to protect your personal information.</p>
+
+      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">5. Data Sharing</h2>
+      <p style="margin-bottom:1rem;color:var(--grey-600)">We do not sell your personal information. We may share data with trusted service providers (such as SMS and email delivery services) solely to deliver our services to you.</p>
+
+      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">6. Your Rights</h2>
+      <p style="margin-bottom:1rem;color:var(--grey-600)">You may access, update, or request deletion of your personal data at any time by contacting us or through your account settings.</p>
+
+      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">7. Contact Us</h2>
+      <p style="margin-bottom:1rem;color:var(--grey-600)">If you have questions about this privacy policy, please contact us at {{ salon.email|default:"hello@balirahsalon.com" }}.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}

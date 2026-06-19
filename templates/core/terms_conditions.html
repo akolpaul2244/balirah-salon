@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Terms & Conditions{% endblock %}
+{% block meta_description %}Read the terms and conditions for using Balirah Beauty Salon's services and website.{% endblock %}
+
+{% block content %}
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__content">
+      <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'core:home' %}">Home</a>
+        <span class="page-hero__breadcrumb-sep">/</span>
+        <span>Terms &amp; Conditions</span>
+      </nav>
+      <h1 class="page-hero__title">Terms &amp; Conditions</h1>
+      <p class="page-hero__subtitle">Last updated {% now "F Y" %}</p>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container" style="max-width:760px">
+    {% if salon.terms_conditions %}
+    <div style="color:var(--grey-800);line-height:1.9;font-size:1rem">
+      {{ salon.terms_conditions|safe }}
+    </div>
+    {% else %}
+    <div style="color:var(--grey-800);line-height:1.9;font-size:1rem">
+      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">1. Bookings</h2>
+      <p style="margin-bottom:1rem;color:var(--grey-600)">All appointments are subject to availability. Bookings can be made online, by phone, or via WhatsApp. A confirmation will be sent via SMS and/or email.</p>
+
+      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">2. Cancellations</h2>
+      <p style="margin-bottom:1rem;color:var(--grey-600)">Appointments may be cancelled or rescheduled free of charge up to 2 hours before the scheduled time. Late cancellations or no-shows may affect future booking privileges.</p>
+
+      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">3. Pricing</h2>
+      <p style="margin-bottom:1rem;color:var(--grey-600)">Prices displayed on our website are accurate at the time of publishing and are subject to change. Services with variable pricing will be confirmed with you before treatment begins.</p>
+
+      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">4. Payment</h2>
+      <p style="margin-bottom:1rem;color:var(--grey-600)">Payment is collected at the salon upon completion of service unless otherwise stated. We accept cash and mobile money.</p>
+
+      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">5. Client Conduct</h2>
+      <p style="margin-bottom:1rem;color:var(--grey-600)">We reserve the right to refuse service to anyone behaving in a manner that is unsafe, abusive, or disruptive to staff or other clients.</p>
+
+      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">6. Liability</h2>
+      <p style="margin-bottom:1rem;color:var(--grey-600)">While we take every precaution to ensure client safety and satisfaction, Balirah Beauty Salon is not liable for allergic reactions to products not disclosed by the client beforehand.</p>
+
+      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">7. Changes to Terms</h2>
+      <p style="margin-bottom:1rem;color:var(--grey-600)">We may update these terms from time to time. Continued use of our services constitutes acceptance of the updated terms.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}

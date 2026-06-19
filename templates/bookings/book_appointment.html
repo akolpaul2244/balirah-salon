@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Book an Appointment{% endblock %}
+{% block meta_description %}Book your barber or nail appointment at Balirah Beauty Salon online. Choose your service, stylist, and preferred time.{% endblock %}
+
+{% block content %}
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__content">
+      <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'core:home' %}">Home</a>
+        <span class="page-hero__breadcrumb-sep">/</span>
+        <span>Book Appointment</span>
+      </nav>
+      <h1 class="page-hero__title">Book Your Appointment</h1>
+      <p class="page-hero__subtitle">Choose your service, pick a stylist, and select a time — it takes under two minutes.</p>
+    </div>
+  </div>
+</div>
+
+<section class="section section--cream">
+  <div class="container">
+
+    <div class="booking-steps" aria-label="Booking steps">
+      <div class="booking-step active"><span class="booking-step__label">Service & Stylist</span></div>
+      <div class="booking-step-connector"></div>
+      <div class="booking-step"><span class="booking-step__label">Date & Time</span></div>
+      <div class="booking-step-connector"></div>
+      <div class="booking-step"><span class="booking-step__label">Confirm</span></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:2rem;align-items:start">
+
+      <div class="form-card" data-aos="fade-right">
+        <form method="post" action="{% url 'bookings:book' %}" id="bookingForm" novalidate>
+          {% csrf_token %}
+
+          <h2 style="font-size:1.5rem;margin-bottom:.25rem">Select Your Service</h2>
+          <p style="color:var(--grey-600);font-size:.875rem;margin-bottom:2rem">All prices include VAT.</p>
+
+          <div class="form-group">
+            <label class="form-label" for="id_service">Service <span style="color:var(--error)">*</span></label>
+            <select name="service" id="id_service" class="form-control {% if form.service.errors %}form-control--error{% endif %}" required>
+              <option value="">Choose a service...</option>
+              {% for service in form.fields.service.queryset %}
+              <option value="{{ service.pk }}"
+                      data-price="{{ service.price_display }}"
+                      data-duration="{{ service.duration_display }}"
+                      {% if form.service.value == service.pk|stringformat:"s" %}selected{% endif %}>
+                {{ service.category.name }} – {{ service.name }} ({{ service.price_display }})
+              </option>
+              {% endfor %}
+            </select>
+            {% if form.service.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.service.errors|join:", " }}</span>{% endif %}
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="id_stylist">Preferred Stylist</label>
+            <select name="stylist" id="id_stylist" class="form-control">
+              <option value="">Any Available Stylist</option>
+              {% for stylist in form.fields.stylist.queryset %}
+              <option value="{{ stylist.pk }}" {% if form.stylist.value == stylist.pk|stringformat:"s" %}selected{% endif %}>
+                {{ stylist.get_full_name }} ({{ stylist.get_role_display }})
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-divider"></div>
+          <h3 style="font-size:1.125rem;margin-bottom:1.25rem;color:var(--navy)">Choose a Date</h3>
+
+          <div class="form-group">
+            <label class="form-label" for="id_appointment_date">Date <span style="color:var(--error)">*</span></label>
+            <input type="date" id="id_appointment_date" name="appointment_date"
+                   class="form-control {% if form.appointment_date.errors %}form-control--error{% endif %}"
+                   value="{{ form.appointment_date.value|default:'' }}" required>
+            {% if form.appointment_date.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.appointment_date.errors|join:", " }}</span>{% endif %}
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Available Time Slots</label>
+            <div id="slotsWrapper" style="min-height:60px">
+              <p style="color:var(--grey-400);font-size:.875rem">Select a service and date to see available slots.</p>
+            </div>
+            <input type="hidden" name="time_slot" id="id_time_slot" value="{{ form.time_slot.value|default:'' }}" required>
+            {% if form.time_slot.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.time_slot.errors|join:", " }}</span>{% endif %}
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="id_notes">Special Requests</label>
+            <textarea id="id_notes" name="notes" class="form-control" rows="3"
+                      placeholder="Any allergies, preferences, or special requests...">{{ form.notes.value|default:'' }}</textarea>
+          </div>
+
+          {% if not user.is_authenticated %}
+          <div class="form-divider"></div>
+          <h3 style="font-size:1.125rem;margin-bottom:.5rem;color:var(--navy)">Your Details</h3>
+          <p style="color:var(--grey-600);font-size:.8125rem;margin-bottom:1.25rem">
+            <a href="{% url 'accounts:login' %}?next={% url 'bookings:book' %}" style="color:var(--gold);font-weight:600">Sign in</a> for faster booking and booking history.
+          </p>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="id_guest_name">Full Name <span style="color:var(--error)">*</span></label>
+              <input type="text" id="id_guest_name" name="guest_name" class="form-control {% if form.guest_name.errors %}form-control--error{% endif %}"
+                     value="{{ form.guest_name.value|default:'' }}" placeholder="Your name" required autocomplete="name">
+              {% if form.guest_name.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.guest_name.errors|join:", " }}</span>{% endif %}
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="id_guest_phone">Phone Number <span style="color:var(--error)">*</span></label>
+              <input type="tel" id="id_guest_phone" name="guest_phone" class="form-control {% if form.guest_phone.errors %}form-control--error{% endif %}"
+                     value="{{ form.guest_phone.value|default:'' }}" placeholder="+256 700 000 000" required autocomplete="tel">
+              {% if form.guest_phone.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.guest_phone.errors|join:", " }}</span>{% endif %}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="id_guest_email">Email Address</label>
+            <input type="email" id="id_guest_email" name="guest_email" class="form-control"
+                   value="{{ form.guest_email.value|default:'' }}" placeholder="For confirmation email" autocomplete="email">
+          </div>
+          {% endif %}
+
+          <div class="form-group" style="margin-top:2rem">
+            <button type="submit" class="btn btn--primary btn--full btn--lg">
+              <i class="fas fa-calendar-check"></i> Confirm Booking
+            </button>
+            <p style="text-align:center;font-size:.75rem;color:var(--grey-400);margin-top:.75rem">
+              Free cancellation up to 2 hours before your appointment.
+            </p>
+          </div>
+
+          {% if form.non_field_errors %}
+          <div style="background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.2);border-radius:var(--radius);padding:1rem;margin-top:1rem">
+            <p style="color:var(--error);font-size:.875rem">{{ form.non_field_errors|join:", " }}</p>
+          </div>
+          {% endif %}
+        </form>
+      </div>
+
+      <div data-aos="fade-left">
+        <div class="booking-summary" style="position:sticky;top:calc(var(--nav-height) + 1.5rem)">
+          <h3 style="font-family:var(--font-ui);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);margin-bottom:1.25rem">Booking Summary</h3>
+          <div class="booking-summary__item">
+            <span class="booking-summary__label">Service</span>
+            <span class="booking-summary__value" id="summaryService">—</span>
+          </div>
+          <div class="booking-summary__item">
+            <span class="booking-summary__label">Stylist</span>
+            <span class="booking-summary__value" id="summaryStylist">Any Available</span>
+          </div>
+          <div class="booking-summary__item">
+            <span class="booking-summary__label">Date</span>
+            <span class="booking-summary__value" id="summaryDate">—</span>
+          </div>
+          <div class="booking-summary__item">
+            <span class="booking-summary__label">Time</span>
+            <span class="booking-summary__value" id="summaryTime">—</span>
+          </div>
+          <div class="booking-summary__item">
+            <span class="booking-summary__label">Duration</span>
+            <span class="booking-summary__value" id="summaryDuration">—</span>
+          </div>
+          <div class="booking-summary__total">
+            <span>Total</span>
+            <span class="booking-summary__total-price" id="summaryPrice">—</span>
+          </div>
+
+          <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08)">
+            <p style="font-size:.75rem;color:var(--grey-600);line-height:1.7;margin-bottom:.75rem">
+              <i class="fas fa-shield-alt" style="color:var(--gold);margin-right:.25rem"></i>
+              Payment is collected at the salon. No card required online.
+            </p>
+            <p style="font-size:.75rem;color:var(--grey-600);line-height:1.7">
+              <i class="fas fa-bell" style="color:var(--gold);margin-right:.25rem"></i>
+              SMS and email confirmation sent immediately after booking.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

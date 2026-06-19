@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Pricing{% endblock %}
+{% block meta_description %}Clear, transparent pricing for all barber and nail services at Balirah Beauty Salon, Kampala.{% endblock %}
+
+{% block content %}
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__content">
+      <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'core:home' %}">Home</a>
+        <span class="page-hero__breadcrumb-sep">/</span>
+        <span>Pricing</span>
+      </nav>
+      <h1 class="page-hero__title">Pricing</h1>
+      <p class="page-hero__subtitle">Transparent pricing. No surprises. Just exceptional results.</p>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    {% if categories %}
+    <div style="display:flex;flex-direction:column;gap:2.5rem">
+      {% for category in categories %}
+      {% if category.services.all %}
+      <div class="pricing-table" data-aos="fade-up">
+        <div class="pricing-table__header">
+          {% if category.icon %}<i class="fas {{ category.icon }}" style="color:var(--gold)"></i>{% endif %}
+          <span class="pricing-table__category">{{ category.name }}</span>
+        </div>
+        {% for service in category.services.all %}
+        <div class="pricing-row">
+          <div>
+            <div class="pricing-row__name">{{ service.name }}</div>
+            <div class="pricing-row__duration">{{ service.duration_display }}</div>
+          </div>
+          <a href="{% url 'bookings:book' %}?service={{ service.pk }}" class="btn btn--outline btn--sm">Book</a>
+          <div class="pricing-row__price">{{ service.price_display }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-state__icon"><i class="fas fa-receipt"></i></div>
+      <h3 class="empty-state__title">Pricing Coming Soon</h3>
+      <p class="empty-state__text">We're updating our price list. Contact us for current rates.</p>
+    </div>
+    {% endif %}
+
+    <div style="margin-top:3rem;padding:2rem;background:var(--cream);border-radius:var(--radius-lg);display:flex;align-items:flex-start;gap:1rem">
+      <i class="fas fa-info-circle" style="color:var(--gold);font-size:1.25rem;margin-top:2px"></i>
+      <p style="color:var(--grey-600);font-size:.875rem;line-height:1.7">
+        Prices shown are in Ugandan Shillings (UGX) and include all materials. Services marked with a price range depend on hair/nail length and complexity — your stylist will confirm the exact price before starting.
+      </p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

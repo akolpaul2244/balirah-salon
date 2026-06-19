@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ service.name }}{% endblock %}
+{% block meta_description %}{{ service.short_description|default:service.description|truncatechars:155 }}{% endblock %}
+
+{% block content %}
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__content">
+      <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'core:home' %}">Home</a>
+        <span class="page-hero__breadcrumb-sep">/</span>
+        <a href="{% url 'services:list' %}">Services</a>
+        <span class="page-hero__breadcrumb-sep">/</span>
+        <span>{{ service.name }}</span>
+      </nav>
+      <h1 class="page-hero__title">{{ service.name }}</h1>
+      <p class="page-hero__subtitle">{{ service.category.name }}</p>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:3rem;align-items:start">
+      <div data-aos="fade-right">
+        {% if service.image %}
+          <img src="{{ service.image.url }}" alt="{{ service.name }}" style="width:100%;border-radius:var(--radius-lg);margin-bottom:2rem;aspect-ratio:16/10;object-fit:cover">
+        {% else %}
+          <div style="width:100%;aspect-ratio:16/10;border-radius:var(--radius-lg);margin-bottom:2rem;background:linear-gradient(135deg,var(--navy),var(--navy-light));display:flex;align-items:center;justify-content:center">
+            <i class="{% if service.category.category_type == 'nails' %}fas fa-spa{% else %}fas fa-cut{% endif %}" style="font-size:4rem;color:rgba(212,175,55,.25)"></i>
+          </div>
+        {% endif %}
+
+        <span class="section-eyebrow">About This Service</span>
+        <h2 style="font-size:1.75rem;margin-bottom:1.25rem">{{ service.name }}</h2>
+        <p style="color:var(--grey-600);line-height:1.9;font-size:1.0625rem">{{ service.description }}</p>
+
+        {% if related_services %}
+        <div style="margin-top:3rem">
+          <h3 style="font-size:1.25rem;margin-bottom:1.5rem">You Might Also Like</h3>
+          <div class="grid grid-2">
+            {% for related in related_services %}
+            <a href="{% url 'services:detail' related.slug %}" class="service-item" style="text-decoration:none">
+              <div class="service-item__header">
+                <h4 class="service-item__name" style="font-size:1rem">{{ related.name }}</h4>
+                <span class="service-item__price">{{ related.price_display }}</span>
+              </div>
+              <p class="service-item__desc">{{ related.short_description|default:related.description|truncatewords:14 }}</p>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div data-aos="fade-left">
+        <div class="form-card" style="position:sticky;top:calc(var(--nav-height) + 1.5rem)">
+          <span class="badge badge--gold" style="margin-bottom:1rem">{{ service.category.name }}</span>
+          <div style="display:flex;align-items:baseline;gap:.5rem;margin-bottom:.5rem">
+            <span style="font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--navy)">{{ service.price_display }}</span>
+          </div>
+          <p style="color:var(--grey-400);font-size:.875rem;margin-bottom:2rem">
+            <i class="fas fa-clock"></i> {{ service.duration_display }}
+          </p>
+
+          <a href="{% url 'bookings:book' %}?service={{ service.pk }}" class="btn btn--primary btn--full btn--lg">
+            <i class="fas fa-calendar-check"></i> Book This Service
+          </a>
+
+          <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--grey-100)">
+            <div style="display:flex;gap:.75rem;margin-bottom:1rem;align-items:flex-start">
+              <i class="fas fa-check-circle" style="color:var(--success);margin-top:2px"></i>
+              <span style="font-size:.8125rem;color:var(--grey-600)">Free cancellation up to 2 hours before</span>
+            </div>
+            <div style="display:flex;gap:.75rem;margin-bottom:1rem;align-items:flex-start">
+              <i class="fas fa-check-circle" style="color:var(--success);margin-top:2px"></i>
+              <span style="font-size:.8125rem;color:var(--grey-600)">Instant SMS &amp; email confirmation</span>
+            </div>
+            <div style="display:flex;gap:.75rem;align-items:flex-start">
+              <i class="fas fa-check-circle" style="color:var(--success);margin-top:2px"></i>
+              <span style="font-size:.8125rem;color:var(--grey-600)">Choose your preferred stylist</span>
+            </div>
+          </div>
+
+          {% if whatsapp_number %}
+          <a href="https://wa.me/{{ whatsapp_number|cut:'+' }}" target="_blank" rel="noopener"
+             style="display:flex;align-items:center;justify-content:center;gap:.5rem;margin-top:1.5rem;color:#25D366;font-family:var(--font-ui);font-size:.875rem;font-weight:600">
+            <i class="fab fa-whatsapp"></i> Have a question? Chat with us
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

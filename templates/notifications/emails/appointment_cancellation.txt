@@ -1,0 +1,14 @@
+APPOINTMENT CANCELLED
+
+Hi {{ appointment.client_name }},
+
+Your appointment at {{ salon_name }} has been cancelled as requested.
+
+Reference: {{ appointment.reference }}
+Service: {{ appointment.service.name }}
+Original Date: {{ appointment.appointment_date|date:"l, d F Y" }}
+
+We're sorry to see this one go. Whenever you're ready to rebook, we'll be here.
+
+{{ salon_name }}
+Kampala, Uganda

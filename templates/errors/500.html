@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Server Error{% endblock %}
+
+{% block content %}
+
+<div class="error-page">
+  <div class="error-page__inner">
+    <div class="error-page__code">500</div>
+    <div class="error-page__content">
+      <i class="fas fa-tools error-page__icon"></i>
+      <h1 class="error-page__title">Something Went Wrong</h1>
+      <p class="error-page__text">We're experiencing a technical issue on our end. Our team has been notified and is working on it.</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <a href="{% url 'core:home' %}" class="btn btn--primary">
+          <i class="fas fa-home"></i> Back to Home
+        </a>
+        <a href="{% url 'core:contact' %}" class="btn btn--outline">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

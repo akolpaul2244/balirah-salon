@@ -1,0 +1,19 @@
+{
+  "name": "Balirah Beauty Salon",
+  "short_name": "Balirah",
+  "description": "Kampala's premier barber and nails studio. Book your appointment online.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0A2540",
+  "theme_color": "#0A2540",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/static/images/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

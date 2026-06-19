@@ -1,0 +1,41 @@
+@media print {
+  .navbar, .navbar__mobile, .whatsapp-btn, .toast-container, .hero__scroll,
+  .footer, .lightbox, .carousel-nav, .carousel-dots, .gallery-filters,
+  .service-tab-nav, .skip-link, .page-hero::before, .promo-banner {
+    display: none !important;
+  }
+
+  .site-body { padding-top: 0; }
+
+  body { background: #fff; color: #000; font-size: 12pt; }
+
+  .hero, .page-hero, .section--navy, .section--charcoal {
+    background: #fff !important;
+    color: #000 !important;
+    padding: 1cm 0;
+  }
+
+  .hero__title, .page-hero__title, .section-title, h1, h2, h3 {
+    color: #000 !important;
+  }
+
+  .hero__subtitle, .page-hero__subtitle, .section-subtitle {
+    color: #333 !important;
+  }
+
+  .card, .service-item, .form-card, .status-card, .profile-section,
+  .booking-summary, .testimonial-inner {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+
+  .btn { border: 1px solid #000 !important; color: #000 !important; background: none !important; }
+
+  a { color: #000 !important; text-decoration: underline; }
+
+  .container { max-width: 100% !important; padding: 0 1cm !important; }
+
+  img { max-width: 100% !important; }
+
+  .gallery-item__overlay, .card__badge { display: none !important; }
+}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cancel Appointment{% endblock %}
+
+{% block content %}
+
+<section class="section section--cream" style="min-height:calc(100vh - var(--nav-height));display:flex;align-items:center">
+  <div class="container" style="max-width:560px">
+    <div class="form-card" data-aos="zoom-in">
+      <div style="text-align:center;margin-bottom:2rem">
+        <div class="status-card__icon status-card__icon--error" style="margin-bottom:1.5rem">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h1 style="font-size:1.75rem;margin-bottom:.5rem">Cancel Appointment?</h1>
+        <p style="color:var(--grey-600);font-size:.9375rem">This action cannot be undone. Your time slot will be released.</p>
+      </div>
+
+      <div class="booking-summary" style="margin-bottom:2rem">
+        <div class="booking-summary__item">
+          <span class="booking-summary__label">Reference</span>
+          <span class="booking-summary__value">{{ appointment.reference }}</span>
+        </div>
+        <div class="booking-summary__item">
+          <span class="booking-summary__label">Service</span>
+          <span class="booking-summary__value">{{ appointment.service.name }}</span>
+        </div>
+        <div class="booking-summary__item">
+          <span class="booking-summary__label">Date</span>
+          <span class="booking-summary__value">{{ appointment.appointment_date|date:"l, d F Y" }}</span>
+        </div>
+        <div class="booking-summary__item">
+          <span class="booking-summary__label">Time</span>
+          <span class="booking-summary__value">{{ appointment.start_time|time:"g:i A" }}</span>
+        </div>
+      </div>
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="form-label" for="id_reason">{{ form.reason.label }}</label>
+          <textarea id="id_reason" name="reason" class="form-control" rows="3"
+                    placeholder="Let us know why you're cancelling (optional)...">{{ form.reason.value|default:'' }}</textarea>
+        </div>
+        <div style="display:flex;gap:1rem;margin-top:1.5rem">
+          <a href="{% url 'accounts:profile' %}" class="btn btn--outline btn--full">Keep Appointment</a>
+          <button type="submit" class="btn btn--navy btn--full">
+            <i class="fas fa-times"></i> Confirm Cancellation
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Frequently Asked Questions{% endblock %}
+{% block meta_description %}Answers to common questions about booking, services, and visiting Balirah Beauty Salon.{% endblock %}
+
+{% block content %}
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__content">
+      <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'core:home' %}">Home</a>
+        <span class="page-hero__breadcrumb-sep">/</span>
+        <span>FAQs</span>
+      </nav>
+      <h1 class="page-hero__title">Frequently Asked Questions</h1>
+      <p class="page-hero__subtitle">Everything you need to know before your visit.</p>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container" style="max-width:760px">
+    {% if categories %}
+    {% for category in categories %}
+    <div class="faq-category" data-aos="fade-up">
+      <h2 class="faq-category__title">{{ category.name }}</h2>
+      {% for faq in category.faqs.all %}
+      {% if faq.is_active %}
+      <div class="faq-item">
+        <div class="faq-question">
+          <span class="faq-question__text">{{ faq.question }}</span>
+          <span class="faq-question__icon"><i class="fas fa-plus"></i></span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer__inner">{{ faq.answer }}</div>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-state__icon"><i class="fas fa-question-circle"></i></div>
+      <h3 class="empty-state__title">No FAQs Yet</h3>
+      <p class="empty-state__text">Have a question? Reach out and we'll be happy to help.</p>
+    </div>
+    {% endif %}
+
+    <div style="margin-top:3rem;padding:2.5rem;background:var(--cream);border-radius:var(--radius-xl);text-align:center" data-aos="fade-up">
+      <h3 style="font-size:1.25rem;margin-bottom:.75rem">Still Have Questions?</h3>
+      <p style="color:var(--grey-600);margin-bottom:1.5rem">Our team is happy to help with anything not covered above.</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <a href="{% url 'core:contact' %}" class="btn btn--outline">Contact Us</a>
+        {% if whatsapp_number %}
+        <a href="https://wa.me/{{ whatsapp_number|cut:'+' }}" class="btn btn--navy" target="_blank" rel="noopener">
+          <i class="fab fa-whatsapp"></i> WhatsApp Us
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
