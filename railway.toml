@@ -1,5 +1,5 @@
 [deploy]
-startCommand = "gunicorn balirah_salon.wsgi:application --config gunicorn.conf.py"
+startCommand = "python manage.py migrate accounts --noinput && python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn balirah_salon.wsgi:application --config gunicorn.conf.py"
 healthcheckPath = "/health/"
 healthcheckTimeout = 60
 restartPolicyType = "ON_FAILURE"
