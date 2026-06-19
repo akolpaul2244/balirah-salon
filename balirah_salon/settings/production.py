@@ -47,6 +47,7 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+SECURE_REDIRECT_EXEMPT = [r'^health/$']
 
 # Trust Railway's reverse proxy
 USE_X_FORWARDED_HOST = True
