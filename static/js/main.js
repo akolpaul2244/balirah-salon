@@ -1,46 +1,4 @@
 const Balirah = (() => {
-  const navbar = () => {
-    const nav = document.getElementById('navbar');
-    if (!nav) return;
-    const hamburger = nav.querySelector('.navbar__hamburger');
-    const mobile = document.getElementById('mobileMenu');
-
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 30);
-    }, { passive: true });
-
-    if (hamburger && mobile) {
-      hamburger.addEventListener('click', () => {
-        const open = hamburger.classList.toggle('open');
-        mobile.classList.toggle('open', open);
-        document.body.style.overflow = open ? 'hidden' : '';
-        hamburger.setAttribute('aria-expanded', open);
-      });
-      mobile.querySelectorAll('.navbar__mobile-link').forEach(link => {
-        link.addEventListener('click', () => {
-          hamburger.classList.remove('open');
-          mobile.classList.remove('open');
-          document.body.style.overflow = '';
-        });
-      });
-      document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && mobile.classList.contains('open')) {
-          hamburger.classList.remove('open');
-          mobile.classList.remove('open');
-          document.body.style.overflow = '';
-        }
-      });
-    }
-
-    const currentPath = window.location.pathname;
-    nav.querySelectorAll('.navbar__link').forEach(link => {
-      const href = link.getAttribute('href');
-      if (href && (currentPath === href || (href !== '/' && currentPath.startsWith(href)))) {
-        link.classList.add('active');
-      }
-    });
-  };
-
   const carousel = () => {
     document.querySelectorAll('[data-carousel]').forEach(wrapper => {
       const track = wrapper.querySelector('.testimonials-track');
@@ -366,7 +324,6 @@ const Balirah = (() => {
 
   const init = () => {
     navbar();
-    carousel();
     lightbox();
     faq();
     galleryFilter();
@@ -379,5 +336,5 @@ const Balirah = (() => {
 
   document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', init) : init();
 
-  return { navbar, fetchSlots: bookingFlow };
+  return { fetchSlots: bookingFlow };
 })();

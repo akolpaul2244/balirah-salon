@@ -9,24 +9,24 @@
   <div class="auth-panel--left">
     <div style="position:relative;z-index:1;max-width:420px">
       <span class="hero__eyebrow">Join Balirah</span>
-      <h1 style="font-family:var(--font-display);font-size:2.5rem;color:var(--white);line-height:1.2;margin-bottom:1.5rem">
+      <h1 style="font-family:var(--font-display);font-size:2.5rem;color:var(--footer-text);line-height:1.2;margin-bottom:1.5rem">
         Create Your Account
       </h1>
-      <p style="color:rgba(255,255,255,.65);line-height:1.8;margin-bottom:2.5rem">
+      <p style="color:rgba(212,200,154,.75);line-height:1.8;margin-bottom:2.5rem">
         Sign up to book faster, track your appointment history, and receive exclusive offers tailored to you.
       </p>
-      <div style="display:flex;flex-direction:column;gap:1.25rem">
-        <div style="display:flex;gap:1rem;align-items:flex-start">
-          <i class="fas fa-bolt" style="color:var(--gold);margin-top:3px"></i>
-          <span style="color:rgba(255,255,255,.7);font-size:.9375rem">Faster checkout with saved details</span>
+      <div class="auth-feature-list">
+        <div class="auth-feature-item">
+          <i class="fas fa-bolt"></i>
+          <span>Faster checkout with saved details</span>
         </div>
-        <div style="display:flex;gap:1rem;align-items:flex-start">
-          <i class="fas fa-history" style="color:var(--gold);margin-top:3px"></i>
-          <span style="color:rgba(255,255,255,.7);font-size:.9375rem">Full appointment history at a glance</span>
+        <div class="auth-feature-item">
+          <i class="fas fa-history"></i>
+          <span>Full appointment history at a glance</span>
         </div>
-        <div style="display:flex;gap:1rem;align-items:flex-start">
-          <i class="fas fa-gift" style="color:var(--gold);margin-top:3px"></i>
-          <span style="color:rgba(255,255,255,.7);font-size:.9375rem">Exclusive promotions and birthday treats</span>
+        <div class="auth-feature-item">
+          <i class="fas fa-gift"></i>
+          <span>Exclusive promotions and birthday treats</span>
         </div>
       </div>
     </div>
@@ -69,14 +69,14 @@
 
         <div class="form-group">
           <label class="form-label" for="id_password1">Password</label>
-          <div style="position:relative">
+          <div class="input-icon-wrap">
             <input type="password" id="id_password1" name="password1" class="form-control {% if form.password1.errors %}form-control--error{% endif %}" required autocomplete="new-password">
-            <button type="button" class="password-toggle-btn" data-password-toggle="id_password1" aria-label="Show password" style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);color:var(--grey-400)">
+            <button type="button" class="input-icon-btn" data-password-toggle="id_password1" aria-label="Show password">
               <i class="fas fa-eye"></i>
             </button>
           </div>
           {% if form.password1.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.password1.errors|join:", " }}</span>{% endif %}
-          <p style="font-size:.75rem;color:var(--grey-400);margin-top:.5rem">Minimum 8 characters, not entirely numeric.</p>
+          <p class="hint-text">Minimum 8 characters, not entirely numeric.</p>
         </div>
 
         <div class="form-group">
@@ -89,7 +89,7 @@
           Create Account
         </button>
 
-        <p style="font-size:.75rem;color:var(--grey-400);text-align:center;margin-top:1.5rem">
+        <p class="hint-text" style="text-align:center;margin-top:1.5rem">
           By signing up, you agree to our <a href="{% url 'core:terms_conditions' %}" style="color:var(--gold)">Terms</a> and <a href="{% url 'core:privacy_policy' %}" style="color:var(--gold)">Privacy Policy</a>.
         </p>
       </form>

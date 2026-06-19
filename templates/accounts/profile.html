@@ -38,7 +38,7 @@
           <a href="{% url 'bookings:book' %}" class="profile-nav__link"><i class="fas fa-plus-circle"></i> New Booking</a>
           <form method="post" action="{% url 'accounts:logout' %}">
             {% csrf_token %}
-            <button type="submit" class="profile-nav__link" style="width:100%;text-align:left;border:none;background:none"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+            <button type="submit" class="profile-nav__link"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
           </form>
         </nav>
       </aside>
@@ -61,7 +61,7 @@
                 <div class="appt-card__ref">Ref: {{ appt.reference }}</div>
               </div>
               <div class="appt-card__actions">
-                <span class="badge {% if appt.status == 'confirmed' %}badge--success{% elif appt.status == 'cancelled' %}badge--error{% elif appt.status == 'pending' %}badge--warning{% else %}badge--navy{% endif %}">
+                <span class="badge {% if appt.status == 'confirmed' %}badge--success{% elif appt.status == 'cancelled' %}badge--error{% elif appt.status == 'pending' %}badge--warning{% else %}badge--neutral{% endif %}">
                   {{ appt.get_status_display }}
                 </span>
                 <a href="{% url 'bookings:detail' appt.reference %}" class="btn btn--outline btn--sm">View</a>

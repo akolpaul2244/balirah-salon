@@ -4,26 +4,26 @@
     <div class="container">
       <div class="footer__grid">
         <div class="footer__brand">
-          <div class="footer__logo-text">Balirah<span> Beauty Salon</span></div>
+          <a href="{% url 'core:home' %}" class="footer__logo-text">Balirah<span> Beauty Salon</span></a>
           <p class="footer__tagline">{{ salon.tagline|default:"Where style meets elegance. Kampala's premier barber shop and nails parlor." }}</p>
           <div class="footer__social">
             {% if salon.instagram_url %}
-            <a href="{{ salon.instagram_url }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="Instagram">
+            <a href="{{ salon.instagram_url }}" class="footer__social-link" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <i class="fab fa-instagram"></i>
             </a>
             {% endif %}
             {% if salon.facebook_url %}
-            <a href="{{ salon.facebook_url }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="Facebook">
+            <a href="{{ salon.facebook_url }}" class="footer__social-link" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
               <i class="fab fa-facebook-f"></i>
             </a>
             {% endif %}
             {% if salon.tiktok_url %}
-            <a href="{{ salon.tiktok_url }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="TikTok">
+            <a href="{{ salon.tiktok_url }}" class="footer__social-link" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
               <i class="fab fa-tiktok"></i>
             </a>
             {% endif %}
             {% if salon.whatsapp_number %}
-            <a href="https://wa.me/{{ salon.whatsapp_number|cut:'+' }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="WhatsApp">
+            <a href="https://wa.me/{{ salon.whatsapp_number|cut:'+' }}" class="footer__social-link" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
               <i class="fab fa-whatsapp"></i>
             </a>
             {% endif %}
@@ -59,25 +59,25 @@
           <p class="footer__heading">Contact</p>
           {% if salon.address %}
           <div class="footer__contact-item">
-            <i class="fas fa-map-marker-alt footer__contact-icon"></i>
+            <i class="fas fa-map-marker-alt footer__contact-icon" aria-hidden="true"></i>
             <span class="footer__contact-text">{{ salon.address }}</span>
           </div>
           {% endif %}
           {% if salon.phone_primary %}
           <div class="footer__contact-item">
-            <i class="fas fa-phone footer__contact-icon"></i>
+            <i class="fas fa-phone footer__contact-icon" aria-hidden="true"></i>
             <a href="tel:{{ salon.phone_primary }}" class="footer__contact-text footer__link">{{ salon.phone_primary }}</a>
           </div>
           {% endif %}
           {% if salon.email %}
           <div class="footer__contact-item">
-            <i class="fas fa-envelope footer__contact-icon"></i>
+            <i class="fas fa-envelope footer__contact-icon" aria-hidden="true"></i>
             <a href="mailto:{{ salon.email }}" class="footer__contact-text footer__link">{{ salon.email }}</a>
           </div>
           {% endif %}
           {% if opening_hours %}
           <div class="footer__contact-item" style="margin-top:1rem">
-            <i class="fas fa-clock footer__contact-icon"></i>
+            <i class="fas fa-clock footer__contact-icon" aria-hidden="true"></i>
             <div>
               {% for h in opening_hours %}
               <div class="footer__contact-text" style="font-size:.75rem;margin-bottom:.25rem">

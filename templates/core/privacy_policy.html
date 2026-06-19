@@ -23,31 +23,31 @@
 <section class="section">
   <div class="container" style="max-width:760px">
     {% if salon.privacy_policy %}
-    <div style="color:var(--grey-800);line-height:1.9;font-size:1rem">
+    <div style="color:var(--text-primary);line-height:1.9;font-size:1rem">
       {{ salon.privacy_policy|safe }}
     </div>
     {% else %}
-    <div style="color:var(--grey-800);line-height:1.9;font-size:1rem">
+    <div style="color:var(--text-primary);line-height:1.9;font-size:1rem">
       <h2 style="font-size:1.375rem;margin:2rem 0 1rem">1. Information We Collect</h2>
-      <p style="margin-bottom:1rem;color:var(--grey-600)">We collect information you provide directly to us, including your name, email address, phone number, and appointment preferences when you create an account or book a service.</p>
+      <p style="margin-bottom:1rem;color:var(--text-secondary)">We collect information you provide directly to us, including your name, email address, phone number, and appointment preferences when you create an account or book a service.</p>
 
       <h2 style="font-size:1.375rem;margin:2rem 0 1rem">2. How We Use Your Information</h2>
-      <p style="margin-bottom:1rem;color:var(--grey-600)">We use your information to process bookings, send appointment confirmations and reminders via SMS and email, improve our services, and communicate promotional offers if you have opted in.</p>
+      <p style="margin-bottom:1rem;color:var(--text-secondary)">We use your information to process bookings, send appointment confirmations and reminders via SMS and email, improve our services, and communicate promotional offers if you have opted in.</p>
 
       <h2 style="font-size:1.375rem;margin:2rem 0 1rem">3. SMS and Email Communications</h2>
-      <p style="margin-bottom:1rem;color:var(--grey-600)">By providing your phone number, you consent to receive appointment-related SMS messages. You may opt out of promotional messages at any time through your account settings.</p>
+      <p style="margin-bottom:1rem;color:var(--text-secondary)">By providing your phone number, you consent to receive appointment-related SMS messages. You may opt out of promotional messages at any time through your account settings.</p>
 
       <h2 style="font-size:1.375rem;margin:2rem 0 1rem">4. Data Security</h2>
-      <p style="margin-bottom:1rem;color:var(--grey-600)">We implement industry-standard security measures including encrypted password storage, secure connections, and restricted access to protect your personal information.</p>
+      <p style="margin-bottom:1rem;color:var(--text-secondary)">We implement industry-standard security measures including encrypted password storage, secure connections, and restricted access to protect your personal information.</p>
 
       <h2 style="font-size:1.375rem;margin:2rem 0 1rem">5. Data Sharing</h2>
-      <p style="margin-bottom:1rem;color:var(--grey-600)">We do not sell your personal information. We may share data with trusted service providers (such as SMS and email delivery services) solely to deliver our services to you.</p>
+      <p style="margin-bottom:1rem;color:var(--text-secondary)">We do not sell your personal information. We may share data with trusted service providers (such as SMS and email delivery services) solely to deliver our services to you.</p>
 
       <h2 style="font-size:1.375rem;margin:2rem 0 1rem">6. Your Rights</h2>
-      <p style="margin-bottom:1rem;color:var(--grey-600)">You may access, update, or request deletion of your personal data at any time by contacting us or through your account settings.</p>
+      <p style="margin-bottom:1rem;color:var(--text-secondary)">You may access, update, or request deletion of your personal data at any time by contacting us or through your account settings.</p>
 
       <h2 style="font-size:1.375rem;margin:2rem 0 1rem">7. Contact Us</h2>
-      <p style="margin-bottom:1rem;color:var(--grey-600)">If you have questions about this privacy policy, please contact us at {{ salon.email|default:"hello@balirahsalon.com" }}.</p>
+      <p style="margin-bottom:1rem;color:var(--text-secondary)">If you have questions about this privacy policy, please contact us at {{ salon.email|default:"hello@balirahsalon.com" }}.</p>
     </div>
     {% endif %}
   </div>

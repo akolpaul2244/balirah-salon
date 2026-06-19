@@ -9,68 +9,302 @@
   <title>{% block title %}{{ salon.salon_name|default:"Balirah Beauty Salon" }}{% endblock %} | {% if salon %}{{ salon.salon_name }}{% else %}Balirah Beauty Salon{% endif %}</title>
   <meta name="description" content="{% block meta_description %}{{ salon.meta_description|default:"Premium barber and nail services in Kampala, Uganda." }}{% endblock %}">
   <meta name="keywords" content="{% block meta_keywords %}barber kampala, nail salon kampala, haircut kampala, balirah beauty{% endblock %}">
-  <meta name="author" content="{{ salon.salon_name|default:"Balirah Beauty Salon" }}">
+  <meta name="author" content="{{ salon.salon_name|default:'Balirah Beauty Salon' }}">
 
   <meta property="og:type" content="website">
   <meta property="og:title" content="{% block og_title %}{{ salon.salon_name|default:"Balirah Beauty Salon" }}{% endblock %}">
   <meta property="og:description" content="{% block og_description %}{{ salon.meta_description|default:"Premium barber and nail services in Kampala, Uganda." }}{% endblock %}">
   <meta property="og:image" content="{% block og_image %}{% if salon.hero_image %}{{ request.scheme }}://{{ request.get_host }}{{ salon.hero_image.url }}{% endif %}{% endblock %}">
   <meta property="og:url" content="{{ request.build_absolute_uri }}">
-
   <meta name="twitter:card" content="summary_large_image">
-
   <link rel="canonical" href="{{ request.build_absolute_uri }}">
+
   {% if salon.favicon %}
     <link rel="icon" type="image/x-icon" href="{{ salon.favicon.url }}">
   {% else %}
     <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
   {% endif %}
   <link rel="manifest" href="{% static 'manifest.json' %}">
-  <meta name="theme-color" content="#0A2540">
+  <meta name="theme-color" content="#C9A84C" id="theme-color-meta">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
-
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
+
+  <style>
+    /* ── Theme tokens — single source of truth ───────────────── */
+    :root {
+      --gold:       #C9A84C;
+      --gold-light: #E2C97E;
+      --gold-dark:  #A07832;
+      --gold-faint: rgba(201, 168, 76, 0.12);
+    }
+
+    :root,
+    [data-theme="light"] {
+      color-scheme: light;
+
+      --bg-primary:   #FFFFFF;
+      --bg-secondary: #F8F6F2;
+      --bg-card:      #FFFFFF;
+      --bg-overlay:   rgba(255, 255, 255, 0.95);
+
+      --text-primary:   #1A1A1A;
+      --text-secondary: #4A4A4A;
+      --text-muted:     #767676;
+      --text-inverse:   #FFFFFF;
+
+      --border-color:  #E8E4DC;
+      --border-subtle: #F0EDE8;
+
+      --shadow-sm:   0 1px 3px rgba(0, 0, 0, 0.08);
+      --shadow-md:   0 4px 16px rgba(0, 0, 0, 0.10);
+      --shadow-lg:   0 8px 32px rgba(0, 0, 0, 0.12);
+      --shadow-gold: 0 4px 24px rgba(201, 168, 76, 0.18);
+
+      --nav-bg:     rgba(255, 255, 255, 0.97);
+      --nav-border: rgba(232, 228, 220, 0.8);
+      --footer-bg:  #1A1208;
+      --footer-text: #D4C89A;
+
+      --toast-success-bg:     #F0FBF4;
+      --toast-success-border: #2D7A4F;
+      --toast-error-bg:       #FEF2F2;
+      --toast-error-border:   #DC2626;
+      --toast-warning-bg:     #FFFBEB;
+      --toast-warning-border: #D97706;
+      --toast-info-bg:        #EFF6FF;
+      --toast-info-border:    #2563EB;
+    }
+
+    [data-theme="dark"] {
+      color-scheme: dark;
+
+      --bg-primary:   #0F0D0A;
+      --bg-secondary: #1A1610;
+      --bg-card:      #1E1A13;
+      --bg-overlay:   rgba(15, 13, 10, 0.97);
+
+      --text-primary:   #F5F0E8;
+      --text-secondary: #C8BEA8;
+      --text-muted:     #8A7F6A;
+      --text-inverse:   #0F0D0A;
+
+      --border-color:  #2E2A20;
+      --border-subtle: #252118;
+
+      --shadow-sm:   0 1px 3px rgba(0, 0, 0, 0.30);
+      --shadow-md:   0 4px 16px rgba(0, 0, 0, 0.40);
+      --shadow-lg:   0 8px 32px rgba(0, 0, 0, 0.50);
+      --shadow-gold: 0 4px 24px rgba(201, 168, 76, 0.22);
+
+      --nav-bg:      rgba(15, 13, 10, 0.97);
+      --nav-border:  rgba(46, 42, 32, 0.9);
+      --footer-bg:   #080705;
+      --footer-text: #C8BEA8;
+
+      --toast-success-bg:     #0D1F14;
+      --toast-success-border: #2D7A4F;
+      --toast-error-bg:       #1F0D0D;
+      --toast-error-border:   #DC2626;
+      --toast-warning-bg:     #1F1A0D;
+      --toast-warning-border: #D97706;
+      --toast-info-bg:        #0D1420;
+      --toast-info-border:    #2563EB;
+    }
+
+    /* ── Base reset (only what main.css doesn't cover) ───────── */
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.65;
+      transition: background-color var(--transition), color var(--transition);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    main { flex: 1; }
+
+    ::selection {
+      background: var(--gold);
+      color: #000;
+    }
+
+    /* ── No-JS banner ────────────────────────────────────────── */
+    .noscript-banner {
+      background: var(--gold-dark);
+      color: #fff;
+      text-align: center;
+      padding: 0.6rem 1rem;
+      font-size: 0.8rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ── Theme toggle icon animation ─────────────────────────── */
+    .theme-toggle .icon-sun,
+    .theme-toggle .icon-moon {
+      position: absolute;
+      font-size: 0.95rem;
+      transition: opacity 0.18s ease, transform 0.22s ease;
+      pointer-events: none;
+    }
+
+    [data-theme="light"] .theme-toggle .icon-sun  { opacity: 1; transform: rotate(0deg)   scale(1);   }
+    [data-theme="light"] .theme-toggle .icon-moon { opacity: 0; transform: rotate(90deg)  scale(0.7); }
+    [data-theme="dark"]  .theme-toggle .icon-sun  { opacity: 0; transform: rotate(-90deg) scale(0.7); }
+    [data-theme="dark"]  .theme-toggle .icon-moon { opacity: 1; transform: rotate(0deg)   scale(1);   }
+
+    /* ── Toast notifications ─────────────────────────────────── */
+    .toast-container {
+      position: fixed;
+      top: 5rem;
+      right: 1rem;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      max-width: min(380px, calc(100vw - 2rem));
+      pointer-events: none;
+    }
+
+    .toast {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.875rem 1rem;
+      border-radius: var(--radius-md);
+      border-left: 3px solid;
+      box-shadow: var(--shadow-lg);
+      pointer-events: all;
+      animation: toastSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+    }
+
+    .toast--success { background: var(--toast-success-bg); border-color: var(--toast-success-border); }
+    .toast--error   { background: var(--toast-error-bg);   border-color: var(--toast-error-border); }
+    .toast--warning { background: var(--toast-warning-bg); border-color: var(--toast-warning-border); }
+    .toast--info,
+    .toast--debug   { background: var(--toast-info-bg);    border-color: var(--toast-info-border); }
+
+    .toast__icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .toast--success .toast__icon { color: var(--toast-success-border); }
+    .toast--error   .toast__icon { color: var(--toast-error-border); }
+    .toast--warning .toast__icon { color: var(--toast-warning-border); }
+    .toast--info    .toast__icon,
+    .toast--debug   .toast__icon { color: var(--toast-info-border); }
+
+    .toast__text {
+      flex: 1;
+      font-size: 0.875rem;
+      color: var(--text-primary);
+      line-height: 1.45;
+    }
+
+    .toast__close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      line-height: 1;
+      padding: 0;
+      flex-shrink: 0;
+      transition: color var(--transition);
+    }
+
+    .toast__close:hover { color: var(--text-primary); }
+
+    @keyframes toastSlideIn {
+      from { opacity: 0; transform: translateX(110%); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes toastSlideOut {
+      from { opacity: 1; transform: translateX(0);    max-height: 100px; margin-bottom: 0; }
+      to   { opacity: 0; transform: translateX(110%); max-height: 0;     margin-bottom: -0.6rem; }
+    }
+
+    @media (max-width: 480px) {
+      .toast-container {
+        top: auto;
+        bottom: 1.5rem;
+        right: 0.75rem;
+        left: 0.75rem;
+        max-width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+
   {% block extra_css %}{% endblock %}
 
   {% if salon.google_analytics_id %}
   <script async src="https://www.googletagmanager.com/gtag/js?id={{ salon.google_analytics_id }}"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','{{ salon.google_analytics_id }}');</script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', '{{ salon.google_analytics_id }}', { anonymize_ip: true });
+  </script>
   {% endif %}
+
+  <!-- Must run before first paint to prevent flash of wrong theme -->
+  <script>
+    (function () {
+      var saved = localStorage.getItem('balirah-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+    })();
+  </script>
 </head>
 <body class="site-body">
 
   <noscript>
-    <div style="background:#0A2540;color:#fff;text-align:center;padding:.75rem 1rem;font-family:sans-serif;font-size:.875rem">
-      JavaScript is disabled in your browser. Some features like the booking calendar and image gallery may not work correctly. Please enable JavaScript for the best experience.
+    <div class="noscript-banner">
+      JavaScript is disabled. Some features like the booking calendar may not work correctly.
     </div>
   </noscript>
 
   {% include "partials/navbar.html" %}
 
   {% if messages %}
-  <div class="toast-container" id="toastContainer" aria-live="polite">
+  <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="false">
     {% for message in messages %}
-    <div class="toast toast--{{ message.tags|default:'info' }}" role="alert">
-      <div class="toast__icon">
+    <div class="toast toast--{{ message.tags|default:'info' }}" role="alert" aria-live="assertive">
+      <span class="toast__icon" aria-hidden="true">
         {% if message.tags == 'success' %}<i class="fas fa-check-circle"></i>
         {% elif message.tags == 'error' %}<i class="fas fa-exclamation-circle"></i>
         {% elif message.tags == 'warning' %}<i class="fas fa-exclamation-triangle"></i>
-        {% else %}<i class="fas fa-info-circle"></i>{% endif %}
-      </div>
+        {% else %}<i class="fas fa-info-circle"></i>
+        {% endif %}
+      </span>
       <p class="toast__text">{{ message }}</p>
-      <button class="toast__close" onclick="this.parentElement.remove()" aria-label="Dismiss">&times;</button>
+      <button class="toast__close" onclick="dismissToast(this.parentElement)" aria-label="Dismiss notification">&times;</button>
     </div>
     {% endfor %}
   </div>
   {% endif %}
 
-  <main id="main-content">
+  <main id="main-content" tabindex="-1">
     {% block content %}{% endblock %}
   </main>
 
@@ -81,11 +315,93 @@
   <script src="{% static 'js/main.js' %}"></script>
   {% block extra_js %}{% endblock %}
 
-  <script>AOS.init({ duration: 700, once: true, offset: 60 });</script>
   <script>
-    document.querySelectorAll('.toast').forEach(t => {
-      setTimeout(() => { if(t.parentElement) t.style.animation='slideOutRight 0.3s forwards'; setTimeout(()=>t.remove(),300); }, 5000);
+    AOS.init({ duration: 650, once: true, offset: 50, easing: 'ease-out-cubic' });
+
+    function dismissToast(el) {
+      el.style.animation = 'toastSlideOut 0.3s forwards';
+      setTimeout(function () { if (el.parentElement) el.remove(); }, 300);
+    }
+
+    document.querySelectorAll('.toast').forEach(function (t) {
+      setTimeout(function () { dismissToast(t); }, 5000);
     });
+
+    function toggleTheme() {
+      var html = document.documentElement;
+      var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('balirah-theme', next);
+      document.getElementById('theme-color-meta').setAttribute('content', next === 'dark' ? '#0F0D0A' : '#C9A84C');
+      document.querySelectorAll('.theme-toggle[aria-pressed]').forEach(function (btn) {
+        btn.setAttribute('aria-pressed', next === 'dark' ? 'true' : 'false');
+      });
+    }
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+      if (!localStorage.getItem('balirah-theme')) {
+        document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+      }
+    });
+
+    // Hamburger + navbar scroll — kept here so main.js stays clean
+    (function () {
+      var hamburger = document.getElementById('hamburgerBtn');
+      var mobileMenu = document.getElementById('mobileMenu');
+      var navbar = document.getElementById('navbar');
+
+      function openMenu() {
+        mobileMenu.classList.add('open');
+        mobileMenu.setAttribute('aria-hidden', 'false');
+        hamburger.classList.add('open');
+        hamburger.setAttribute('aria-expanded', 'true');
+        hamburger.setAttribute('aria-label', 'Close menu');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeMenu() {
+        mobileMenu.classList.remove('open');
+        mobileMenu.setAttribute('aria-hidden', 'true');
+        hamburger.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.setAttribute('aria-label', 'Open menu');
+        document.body.style.overflow = '';
+      }
+
+      if (hamburger && mobileMenu) {
+        hamburger.addEventListener('click', function () {
+          mobileMenu.classList.contains('open') ? closeMenu() : openMenu();
+        });
+
+        document.addEventListener('click', function (e) {
+          if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+            closeMenu();
+          }
+        });
+
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && mobileMenu.classList.contains('open')) {
+            closeMenu();
+            hamburger.focus();
+          }
+        });
+      }
+
+      if (navbar) {
+        window.addEventListener('scroll', function () {
+          navbar.classList.toggle('scrolled', window.scrollY > 8);
+        }, { passive: true });
+      }
+
+      // Active nav link
+      var path = window.location.pathname;
+      document.querySelectorAll('.navbar__link, .navbar__mobile-link').forEach(function (link) {
+        if (link.getAttribute('href') === path) {
+          link.classList.add('active');
+          link.setAttribute('aria-current', 'page');
+        }
+      });
+    })();
   </script>
 </body>
 </html>
