@@ -3,6 +3,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
 from django.core.mail import mail_admins
+from django.db import connection
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views.decorators.cache import cache_page
@@ -101,6 +103,25 @@ def privacy_policy(request):
 def terms_conditions(request):
     salon = SalonSettings.get()
     return render(request, 'core/terms_conditions.html', {'salon': salon})
+
+
+def health_check(request):
+    status = {"db": False, "cache": False}
+    try:
+        connection.ensure_connection()
+        status["db"] = True
+    except Exception as e:
+        logger.error(f'Health check DB failure: {e}')
+    try:
+        cache.set("_health", "1", timeout=5)
+        status["cache"] = cache.get("_health") == "1"
+    except Exception as e:
+        logger.error(f'Health check cache failure: {e}')
+    all_ok = all(status.values())
+    return JsonResponse(
+        {"status": "ok" if all_ok else "degraded", **status},
+        status=200 if all_ok else 503,
+    )
 
 
 def error_400(request, exception=None):
