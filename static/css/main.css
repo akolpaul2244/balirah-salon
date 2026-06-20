@@ -1972,6 +1972,42 @@ select.form-control {
 .auth-feature-item i { color: var(--gold); margin-top: 3px; }
 .auth-feature-item span { color: rgba(212, 200, 154, 0.75); font-size: 0.9375rem; }
 
+.auth-intro {
+  position: relative;
+  z-index: 1;
+  max-width: 420px;
+}
+
+.auth-intro__title {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  color: var(--footer-text);
+  line-height: 1.2;
+  margin-bottom: var(--space-6);
+}
+
+.auth-intro__text {
+  color: rgba(212, 200, 154, 0.75);
+  line-height: 1.8;
+}
+
+.auth-link {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.auth-form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.hint-text--center {
+  text-align: center;
+  margin-top: var(--space-8);
+}
+
 /* Profile */
 .profile-layout {
   display: grid;
