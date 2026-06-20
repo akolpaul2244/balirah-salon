@@ -5,30 +5,30 @@
 
 {% block content %}
 
-<section class="section section--alt" style="min-height:calc(100vh - var(--nav-height));display:flex;align-items:center">
-  <div class="container" style="max-width:480px">
-    <div class="form-card" data-aos="zoom-in">
-      <div style="text-align:center;margin-bottom:2rem">
-        <div class="status-card__icon" style="background:var(--gold-faint)">
-          <i class="fas fa-envelope" style="color:var(--gold)"></i>
+<section class="section section--alt auth-standalone">
+  <div class="container auth-standalone__container">
+    <div class="form-card">
+      <div class="auth-standalone__header">
+        <div class="status-card__icon status-card__icon--gold">
+          <i class="fas fa-envelope"></i>
         </div>
-        <h1 style="font-size:1.5rem;margin-bottom:.5rem">Resend Verification Email</h1>
-        <p style="color:var(--text-secondary);font-size:.9375rem">Enter your email address and we'll send a new verification link.</p>
+        <h1 class="auth-standalone__title">Resend Verification Email</h1>
+        <p class="auth-standalone__text">Enter your email address and we'll send a new verification link.</p>
       </div>
 
       <form method="post" novalidate>
         {% csrf_token %}
         <div class="form-group">
           <label class="form-label" for="id_email">Email Address</label>
-          <input type="email" id="id_email" name="email" class="form-control" required autocomplete="email" autofocus>
+          <input type="email" id="id_email" name="email" class="form-control" required autocomplete="email" inputmode="email" autofocus>
         </div>
         <button type="submit" class="btn btn--primary btn--full btn--lg">
           <i class="fas fa-paper-plane"></i> Send Verification Link
         </button>
       </form>
 
-      <p class="hint-text" style="text-align:center;margin-top:1.5rem">
-        <a href="{% url 'accounts:login' %}" style="color:var(--gold)">Back to sign in</a>
+      <p class="hint-text hint-text--center">
+        <a href="{% url 'accounts:login' %}" class="text-gold">Back to sign in</a>
       </p>
     </div>
   </div>

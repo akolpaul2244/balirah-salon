@@ -7,12 +7,10 @@
 
 <div class="auth-layout">
   <div class="auth-panel--left">
-    <div style="position:relative;z-index:1;max-width:420px">
+    <div class="auth-intro">
       <span class="hero__eyebrow">Join Balirah</span>
-      <h1 style="font-family:var(--font-display);font-size:2.5rem;color:var(--footer-text);line-height:1.2;margin-bottom:1.5rem">
-        Create Your Account
-      </h1>
-      <p style="color:rgba(212,200,154,.75);line-height:1.8;margin-bottom:2.5rem">
+      <h1 class="auth-intro__title">Create Your Account</h1>
+      <p class="auth-intro__text">
         Sign up to book faster, track your appointment history, and receive exclusive offers tailored to you.
       </p>
       <div class="auth-feature-list">
@@ -33,9 +31,9 @@
   </div>
 
   <div class="auth-panel--right">
-    <div class="auth-form-wrapper" data-aos="fade-up">
+    <div class="auth-form-wrapper">
       <h2 class="auth-title">Create Account</h2>
-      <p class="auth-subtitle">Already have an account? <a href="{% url 'accounts:login' %}" style="color:var(--gold);font-weight:600">Sign in</a></p>
+      <p class="auth-subtitle">Already have an account? <a href="{% url 'accounts:login' %}" class="auth-link">Sign in</a></p>
 
       <form method="post" novalidate>
         {% csrf_token %}
@@ -57,7 +55,7 @@
         <div class="form-group">
           <label class="form-label" for="id_email">Email Address</label>
           <input type="email" id="id_email" name="email" class="form-control {% if form.email.errors %}form-control--error{% endif %}"
-                 value="{{ form.email.value|default:'' }}" required autocomplete="email">
+                 value="{{ form.email.value|default:'' }}" required autocomplete="email" inputmode="email">
           {% if form.email.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.email.errors|join:", " }}</span>{% endif %}
         </div>
 
@@ -85,12 +83,12 @@
           {% if form.password2.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.password2.errors|join:", " }}</span>{% endif %}
         </div>
 
-        <button type="submit" class="btn btn--primary btn--full btn--lg" style="margin-top:.5rem">
+        <button type="submit" class="btn btn--primary btn--full btn--lg">
           Create Account
         </button>
 
-        <p class="hint-text" style="text-align:center;margin-top:1.5rem">
-          By signing up, you agree to our <a href="{% url 'core:terms_conditions' %}" style="color:var(--gold)">Terms</a> and <a href="{% url 'core:privacy_policy' %}" style="color:var(--gold)">Privacy Policy</a>.
+        <p class="hint-text hint-text--center">
+          By signing up, you agree to our <a href="{% url 'core:terms_conditions' %}" class="text-gold">Terms</a> and <a href="{% url 'core:privacy_policy' %}" class="text-gold">Privacy Policy</a>.
         </p>
       </form>
     </div>
