@@ -5,10 +5,14 @@
   <div class="container">
     <div class="navbar__inner">
 
+      <!-- Logo -->
       <a href="{% url 'core:home' %}" class="navbar__logo"
          aria-label="{{ salon.salon_name|default:'Balirah Beauty Salon' }} — home">
         {% if salon.logo %}
-          <img src="{{ salon.logo.url }}" alt="{{ salon.salon_name }}" class="navbar__logo-img">
+          <img src="{{ salon.logo.url }}"
+               alt="{{ salon.salon_name }}"
+               class="navbar__logo-img"
+               width="44" height="44">
         {% else %}
           <div class="navbar__logo-text">
             Balirah<span>Beauty Salon</span>
@@ -16,6 +20,7 @@
         {% endif %}
       </a>
 
+      <!-- Desktop nav -->
       <nav class="navbar__nav" aria-label="Site navigation">
         <a href="{% url 'core:home' %}"       class="navbar__link">Home</a>
         <a href="{% url 'core:about' %}"      class="navbar__link">About</a>
@@ -26,6 +31,7 @@
         <a href="{% url 'core:contact' %}"    class="navbar__link">Contact</a>
       </nav>
 
+      <!-- Desktop actions -->
       <div class="navbar__actions">
         {% if user.is_authenticated %}
           <a href="{% url 'accounts:profile' %}" class="navbar__auth">
@@ -35,9 +41,12 @@
         {% else %}
           <a href="{% url 'accounts:login' %}" class="navbar__auth">Sign in</a>
         {% endif %}
-        <a href="{% url 'bookings:book' %}" class="navbar__book">Book Now</a>
+        <a href="{% url 'bookings:book' %}" class="navbar__book">
+          <i class="fas fa-calendar-check" aria-hidden="true"></i> Book Now
+        </a>
       </div>
 
+      <!-- Hamburger — three bars -->
       <button
         class="navbar__hamburger"
         id="hamburgerBtn"
@@ -46,15 +55,16 @@
         aria-expanded="false"
         aria-controls="mobileMenu"
       >
-        <span></span>
-        <span></span>
-        <span></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
       </button>
 
     </div>
   </div>
 </nav>
 
+<!-- Mobile drawer -->
 <div
   class="navbar__mobile"
   id="mobileMenu"
@@ -63,15 +73,68 @@
   aria-modal="true"
   aria-hidden="true"
 >
-  <a href="{% url 'core:home' %}"         class="navbar__mobile-link">Home</a>
-  <a href="{% url 'core:about' %}"        class="navbar__mobile-link">About</a>
-  <a href="{% url 'services:list' %}"     class="navbar__mobile-link">Services</a>
-  <a href="{% url 'services:pricing' %}"  class="navbar__mobile-link">Pricing</a>
-  <a href="{% url 'team:list' %}"         class="navbar__mobile-link">Our Team</a>
-  <a href="{% url 'gallery:gallery' %}"   class="navbar__mobile-link">Gallery</a>
-  <a href="{% url 'blog:list' %}"         class="navbar__mobile-link">Blog</a>
-  <a href="{% url 'faqs:list' %}"         class="navbar__mobile-link">FAQs</a>
-  <a href="{% url 'core:contact' %}"      class="navbar__mobile-link">Contact</a>
+  <!-- Close bar -->
+  <div class="navbar__mobile-header">
+    <div class="navbar__logo-text" style="font-size:var(--text-lg)">
+      Balirah<span>Beauty Salon</span>
+    </div>
+    <button
+      class="navbar__mobile-close"
+      id="mobileMenuClose"
+      type="button"
+      aria-label="Close menu"
+    >
+      <i class="fas fa-times" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <nav aria-label="Mobile site navigation">
+    <a href="{% url 'core:home' %}"         class="navbar__mobile-link">
+      <i class="fas fa-home"            aria-hidden="true"></i> Home
+    </a>
+    <a href="{% url 'core:about' %}"        class="navbar__mobile-link">
+      <i class="fas fa-info-circle"     aria-hidden="true"></i> About
+    </a>
+    <a href="{% url 'services:list' %}"     class="navbar__mobile-link">
+      <i class="fas fa-cut"             aria-hidden="true"></i> Services
+    </a>
+    <a href="{% url 'services:pricing' %}"  class="navbar__mobile-link">
+      <i class="fas fa-tags"            aria-hidden="true"></i> Pricing
+    </a>
+    <a href="{% url 'team:list' %}"         class="navbar__mobile-link">
+      <i class="fas fa-users"           aria-hidden="true"></i> Our Team
+    </a>
+    <a href="{% url 'gallery:gallery' %}"   class="navbar__mobile-link">
+      <i class="fas fa-images"          aria-hidden="true"></i> Gallery
+    </a>
+    <a href="{% url 'blog:list' %}"         class="navbar__mobile-link">
+      <i class="fas fa-newspaper"       aria-hidden="true"></i> Blog
+    </a>
+    <a href="{% url 'faqs:list' %}"         class="navbar__mobile-link">
+      <i class="fas fa-question-circle" aria-hidden="true"></i> FAQs
+    </a>
+    <a href="{% url 'core:contact' %}"      class="navbar__mobile-link">
+      <i class="fas fa-envelope"        aria-hidden="true"></i> Contact
+    </a>
+  </nav>
+
+  <!-- Quick-contact strip -->
+  <div class="navbar__mobile-contact">
+    {% if salon.phone_primary %}
+    <a href="tel:{{ salon.phone_primary }}" class="navbar__mobile-contact-link">
+      <i class="fas fa-phone" aria-hidden="true"></i>
+      {{ salon.phone_primary }}
+    </a>
+    {% endif %}
+    {% if salon.whatsapp_number %}
+    <a href="https://wa.me/{{ salon.whatsapp_number|cut:'+' }}"
+       class="navbar__mobile-contact-link navbar__mobile-contact-link--whatsapp"
+       target="_blank" rel="noopener noreferrer">
+      <i class="fab fa-whatsapp" aria-hidden="true"></i>
+      WhatsApp
+    </a>
+    {% endif %}
+  </div>
 
   <div class="navbar__mobile-actions">
     <a href="{% url 'bookings:book' %}" class="btn btn--primary btn--full">
@@ -83,11 +146,238 @@
       </a>
       <form method="post" action="{% url 'accounts:logout' %}">
         {% csrf_token %}
-        <button type="submit" class="btn btn--ghost btn--full">Sign Out</button>
+        <button type="submit" class="btn btn--ghost btn--full">
+          <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Sign Out
+        </button>
       </form>
     {% else %}
-      <a href="{% url 'accounts:login' %}"    class="btn btn--outline btn--full">Sign In</a>
-      <a href="{% url 'accounts:register' %}" class="btn btn--ghost btn--full">Create Account</a>
+      <a href="{% url 'accounts:login' %}"    class="btn btn--outline btn--full">
+        <i class="fas fa-sign-in-alt" aria-hidden="true"></i> Sign In
+      </a>
+      <a href="{% url 'accounts:register' %}" class="btn btn--ghost btn--full">
+        <i class="fas fa-user-plus" aria-hidden="true"></i> Create Account
+      </a>
     {% endif %}
   </div>
 </div>
+
+<!-- Backdrop -->
+<div class="navbar__backdrop" id="menuBackdrop" aria-hidden="true"></div>
+
+<style>
+/* ── Navbar mobile drawer — self-contained fixes ─────────────────────────
+   These rules live here (not main.css) so they travel with the partial.
+   They override the base display:none on .navbar__mobile and add the
+   backdrop + close button that fix the hamburger not responding.
+   ──────────────────────────────────────────────────────────────────────── */
+
+/* Mobile header row inside drawer */
+.navbar__mobile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: var(--space-4);
+}
+
+.navbar__mobile-close {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--border-color);
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+.navbar__mobile-close:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* Each mobile link gets an icon prefix */
+.navbar__mobile-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.navbar__mobile-link i {
+  width: 18px;
+  text-align: center;
+  color: var(--gold);
+  font-size: var(--text-sm);
+  flex-shrink: 0;
+}
+
+/* Quick-contact strip */
+.navbar__mobile-contact {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-5) var(--space-6);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  margin: var(--space-4) 0;
+}
+.navbar__mobile-contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: var(--space-2) var(--space-4);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-full);
+  transition: all var(--transition);
+  text-decoration: none;
+}
+.navbar__mobile-contact-link:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.navbar__mobile-contact-link--whatsapp { color: #25D366; border-color: rgba(37,211,102,0.35); }
+.navbar__mobile-contact-link--whatsapp:hover { border-color: #25D366; color: #25D366; background: rgba(37,211,102,0.06); }
+
+/* Backdrop */
+.navbar__backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 998;
+  background: rgba(15, 13, 10, 0.55);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity var(--transition-slow);
+}
+.navbar__backdrop.open {
+  display: block;
+  opacity: 1;
+}
+
+/* ── Core fix: drawer must be block at mobile widths ─────────────────── */
+@media (max-width: 900px) {
+  .navbar__mobile {
+    /* Override the global display:none — transform handles the hide/show */
+    display: block !important;
+  }
+}
+</style>
+
+<script>
+/* ── Navbar: hamburger + backdrop + close button + keyboard trap ─────── */
+(function () {
+  'use strict';
+
+  var hamburger   = document.getElementById('hamburgerBtn');
+  var closeBtn    = document.getElementById('mobileMenuClose');
+  var mobileMenu  = document.getElementById('mobileMenu');
+  var backdrop    = document.getElementById('menuBackdrop');
+  var navbar      = document.getElementById('navbar');
+
+  if (!hamburger || !mobileMenu) return;
+
+  /* ── Focus trap helpers ──────────────────────────────────────────────── */
+  var focusableSelectors = [
+    'a[href]', 'button:not([disabled])',
+    'input:not([disabled])', 'textarea:not([disabled])',
+    'select:not([disabled])', '[tabindex]:not([tabindex="-1"])'
+  ].join(', ');
+
+  function getFocusable () {
+    return Array.from(mobileMenu.querySelectorAll(focusableSelectors));
+  }
+
+  function trapFocus (e) {
+    var focusable = getFocusable();
+    if (!focusable.length) return;
+    var first = focusable[0];
+    var last  = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault(); last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault(); first.focus();
+    }
+  }
+
+  /* ── Open ────────────────────────────────────────────────────────────── */
+  function openMenu () {
+    mobileMenu.classList.add('open');
+    mobileMenu.setAttribute('aria-hidden', 'false');
+    hamburger.classList.add('open');
+    hamburger.setAttribute('aria-expanded', 'true');
+    hamburger.setAttribute('aria-label', 'Close menu');
+    if (backdrop) backdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    /* Move focus to first focusable element in drawer */
+    var focusable = getFocusable();
+    if (focusable.length) setTimeout(function () { focusable[0].focus(); }, 50);
+
+    document.addEventListener('keydown', handleKey);
+  }
+
+  /* ── Close ───────────────────────────────────────────────────────────── */
+  function closeMenu () {
+    mobileMenu.classList.remove('open');
+    mobileMenu.setAttribute('aria-hidden', 'true');
+    hamburger.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+    hamburger.setAttribute('aria-label', 'Open menu');
+    if (backdrop) backdrop.classList.remove('open');
+    document.body.style.overflow = '';
+    document.removeEventListener('keydown', handleKey);
+    hamburger.focus();
+  }
+
+  /* ── Key handler ─────────────────────────────────────────────────────── */
+  function handleKey (e) {
+    if (e.key === 'Escape') { closeMenu(); return; }
+    if (e.key === 'Tab')    { trapFocus(e); }
+  }
+
+  /* ── Wire up ─────────────────────────────────────────────────────────── */
+  hamburger.addEventListener('click', function () {
+    mobileMenu.classList.contains('open') ? closeMenu() : openMenu();
+  });
+
+  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+
+  if (backdrop) {
+    backdrop.addEventListener('click', closeMenu);
+  }
+
+  /* ── Scroll shadow on navbar ─────────────────────────────────────────── */
+  if (navbar) {
+    window.addEventListener('scroll', function () {
+      navbar.classList.toggle('scrolled', window.scrollY > 8);
+    }, { passive: true });
+  }
+
+  /* ── Active link highlight ───────────────────────────────────────────── */
+  var path = window.location.pathname;
+  document.querySelectorAll('.navbar__link, .navbar__mobile-link').forEach(function (link) {
+    var href = link.getAttribute('href');
+    if (href && (href === path || (href !== '/' && path.startsWith(href)))) {
+      link.classList.add('active');
+      link.setAttribute('aria-current', 'page');
+    }
+  });
+
+  /* ── Close drawer when a nav link is tapped (SPA-style nav) ─────────── */
+  mobileMenu.querySelectorAll('.navbar__mobile-link').forEach(function (link) {
+    link.addEventListener('click', function () {
+      if (mobileMenu.classList.contains('open')) closeMenu();
+    });
+  });
+
+}());
+</script>
