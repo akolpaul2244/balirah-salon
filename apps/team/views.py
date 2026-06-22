@@ -2,9 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.core.cache import cache
 from django.views.decorators.http import require_http_methods
 from .models import Stylist
-
-TEAM_CACHE_KEY = 'team_stylists_active'
-TEAM_CACHE_TTL = 60 * 30
+from .constants import TEAM_CACHE_KEY, TEAM_CACHE_TTL
 
 
 @require_http_methods(['GET'])
