@@ -2,84 +2,467 @@
 {% load static %}
 
 {% block title %}Share Your Experience{% endblock %}
+{% block meta_description %}Tell us how your visit at Balirah Beauty Salon went. Your review helps us grow and helps others choose confidently.{% endblock %}
 
 {% block content %}
 
-<div class="page-hero">
+<div class="page-hero page-hero--review">
+  <div class="page-hero__accent" aria-hidden="true"></div>
   <div class="container">
-    <div class="page-hero__content">
+    <div class="page-hero__content" data-aos="fade-up">
       <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
         <a href="{% url 'core:home' %}">Home</a>
-        <span class="page-hero__breadcrumb-sep">/</span>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
         <a href="{% url 'testimonials:list' %}">Reviews</a>
-        <span class="page-hero__breadcrumb-sep">/</span>
-        <span>Share Your Experience</span>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">Share Your Experience</span>
       </nav>
-      <h1 class="page-hero__title">Share Your Experience</h1>
-      <p class="page-hero__subtitle">We'd love to hear how your visit went.</p>
+      <h1 class="page-hero__title">Share Your <em style="color:var(--gold);font-style:italic">Experience</em></h1>
+      <p class="page-hero__subtitle">Every word helps us grow — and helps the next guest choose confidently.</p>
     </div>
   </div>
 </div>
 
-<section class="section">
-  <div class="container" style="max-width:600px">
-    <div class="form-card" data-aos="fade-up">
-      <form method="post" enctype="multipart/form-data" novalidate>
-        {% csrf_token %}
+<section class="section section--alt">
+  <div class="container">
+    <div class="review-form-layout">
 
-        {% if not user.is_authenticated %}
-        <div class="form-group">
-          <label class="form-label" for="id_client_name">Your Name</label>
-          <input type="text" id="id_client_name" name="client_name" class="form-control {% if form.client_name.errors %}form-control--error{% endif %}"
-                 value="{{ form.client_name.value|default:'' }}" required>
-          {% if form.client_name.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.client_name.errors|join:", " }}</span>{% endif %}
-        </div>
-        {% endif %}
-
-        <div class="form-group">
-          <label class="form-label" for="id_service">Which Service?</label>
-          <select id="id_service" name="service" class="form-control">
-            <option value="">Select a service (optional)</option>
-            {% for service in form.fields.service.queryset %}
-            <option value="{{ service.pk }}" {% if form.service.value == service.pk|stringformat:"s" %}selected{% endif %}>{{ service.name }}</option>
-            {% endfor %}
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Your Rating</label>
-          <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
-            {% for i in "54321" %}
-            <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.875rem;color:var(--grey-600)">
-              <input type="radio" name="rating" value="{{ i }}" {% if i == "5" %}checked{% endif %} style="accent-color:var(--gold)">
-              {{ i }} <i class="fas fa-star" style="color:var(--gold);font-size:.75rem"></i>
-            </label>
-            {% endfor %}
+      <!-- ── Left: trust signals ──────────────────────────────────────── -->
+      <aside class="review-trust" data-aos="fade-right">
+        <div class="review-trust__card">
+          <div class="review-trust__icon" aria-hidden="true">
+            <i class="fas fa-star"></i>
+          </div>
+          <h2 class="review-trust__heading">Why your review matters</h2>
+          <ul class="review-trust__list">
+            <li>
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <span>Helps us improve every single visit</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <span>Guides new guests to the right stylist</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <span>Published after a quick moderation check</span>
+            </li>
+            <li>
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <span>Takes less than two minutes to submit</span>
+            </li>
+          </ul>
+          <div class="review-trust__quote">
+            <i class="fas fa-quote-left" aria-hidden="true"></i>
+            <p>"The team at Balirah always listens. Reading your stories keeps us sharp."</p>
+            <span>— Balirah Team</span>
           </div>
         </div>
+      </aside>
 
-        <div class="form-group">
-          <label class="form-label" for="id_body">Your Review</label>
-          <textarea id="id_body" name="body" class="form-control {% if form.body.errors %}form-control--error{% endif %}" rows="5"
-                    placeholder="Tell us about your experience..." required maxlength="800">{{ form.body.value|default:'' }}</textarea>
-          {% if form.body.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.body.errors|join:", " }}</span>{% endif %}
+      <!-- ── Right: form ──────────────────────────────────────────────── -->
+      <div class="review-form-wrap" data-aos="fade-left" data-aos-delay="80">
+        <div class="form-card">
+
+          <div class="review-form__header">
+            <span class="section-eyebrow">Your Story</span>
+            <h2 style="font-size:var(--text-2xl);margin-bottom:var(--space-2)">Write a Review</h2>
+            <p style="color:var(--text-secondary);font-size:var(--text-sm);line-height:1.7">
+              All fields marked <span style="color:var(--toast-error-border)">*</span> are required.
+            </p>
+          </div>
+
+          <form method="post" enctype="multipart/form-data" novalidate aria-label="Review submission form">
+            {% csrf_token %}
+
+            {% if not user.is_authenticated %}
+            <div class="form-group">
+              <label class="form-label" for="id_client_name">
+                Your Name <span style="color:var(--toast-error-border)" aria-hidden="true">*</span>
+              </label>
+              <div class="input-icon-wrap">
+                <i class="fas fa-user review-form__input-icon" aria-hidden="true"></i>
+                <input
+                  type="text"
+                  id="id_client_name"
+                  name="client_name"
+                  class="form-control form-control--icon {% if form.client_name.errors %}form-control--error{% endif %}"
+                  value="{{ form.client_name.value|default:'' }}"
+                  placeholder="e.g. Sarah K."
+                  required
+                  autocomplete="name"
+                  aria-required="true"
+                  {% if form.client_name.errors %}aria-describedby="err-client-name"{% endif %}
+                >
+              </div>
+              {% if form.client_name.errors %}
+              <span class="form-error" id="err-client-name" role="alert">
+                <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                {{ form.client_name.errors|join:", " }}
+              </span>
+              {% endif %}
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+              <label class="form-label" for="id_service">Which Service Did You Try?</label>
+              <div class="input-icon-wrap">
+                <i class="fas fa-scissors review-form__input-icon" aria-hidden="true"></i>
+                <select
+                  id="id_service"
+                  name="service"
+                  class="form-control form-control--icon"
+                  aria-label="Select the service you received (optional)"
+                >
+                  <option value="">Any service — or leave blank</option>
+                  {% for service in form.fields.service.queryset %}
+                  <option value="{{ service.pk }}"
+                    {% if form.service.value == service.pk|stringformat:"s" %}selected{% endif %}>
+                    {{ service.name }}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
+            <!-- Star rating — custom interactive widget -->
+            <div class="form-group">
+              <span class="form-label" id="rating-label">
+                Your Rating <span style="color:var(--toast-error-border)" aria-hidden="true">*</span>
+              </span>
+              <div class="star-rating" role="radiogroup" aria-labelledby="rating-label" aria-required="true">
+                {% for val, label in "5,Excellent|4,Very good|3,Good|2,Fair|1,Poor"|slice:"5"|default:"" %}{% endfor %}
+                {% for i in "54321" %}
+                <label class="star-rating__label" title="{{ i }} star{% if i != '1' %}s{% endif %}">
+                  <input
+                    type="radio"
+                    name="rating"
+                    value="{{ i }}"
+                    class="star-rating__input sr-only"
+                    {% if i == "5" %}checked{% endif %}
+                    aria-label="{{ i }} star{% if i != '1' %}s{% endif %}"
+                  >
+                  <i class="fas fa-star star-rating__star" aria-hidden="true"></i>
+                </label>
+                {% endfor %}
+                <span class="star-rating__text" aria-live="polite">5 stars — Excellent</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="id_body">
+                Your Review <span style="color:var(--toast-error-border)" aria-hidden="true">*</span>
+              </label>
+              <textarea
+                id="id_body"
+                name="body"
+                class="form-control {% if form.body.errors %}form-control--error{% endif %}"
+                rows="5"
+                placeholder="What did you enjoy? What stood out? How did you feel leaving the salon?"
+                required
+                maxlength="800"
+                aria-required="true"
+                {% if form.body.errors %}aria-describedby="err-body body-count"{% else %}aria-describedby="body-count"{% endif %}
+              >{{ form.body.value|default:'' }}</textarea>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:var(--space-2)">
+                {% if form.body.errors %}
+                <span class="form-error" id="err-body" role="alert">
+                  <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                  {{ form.body.errors|join:", " }}
+                </span>
+                {% else %}
+                <span></span>
+                {% endif %}
+                <span id="body-count" class="hint-text" aria-live="polite" style="text-align:right">
+                  <span id="charCount">0</span> / 800
+                </span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="id_client_photo">
+                Add a Photo
+                <span class="hint-text" style="margin:0;display:inline;font-weight:400">&nbsp;(optional)</span>
+              </label>
+              <label class="file-upload-label" for="id_client_photo">
+                <i class="fas fa-camera" aria-hidden="true"></i>
+                <span class="file-upload-label__text">Click to choose or drag an image here</span>
+                <span class="file-upload-label__name" id="fileNameDisplay">No file chosen</span>
+              </label>
+              <input
+                type="file"
+                id="id_client_photo"
+                name="client_photo"
+                class="sr-only"
+                accept="image/jpeg,image/png,image/webp"
+                aria-describedby="photo-hint"
+              >
+              <span id="photo-hint" class="hint-text">JPEG, PNG or WebP · Max 5 MB</span>
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--full btn--lg" style="margin-top:var(--space-4)">
+              <i class="fas fa-paper-plane" aria-hidden="true"></i>
+              Submit Review
+            </button>
+
+            <p style="font-size:var(--text-xs);color:var(--text-muted);text-align:center;margin-top:var(--space-4);line-height:1.6">
+              <i class="fas fa-shield-alt" aria-hidden="true" style="color:var(--gold);margin-right:4px"></i>
+              Reviews go live after a brief moderation check — usually within a few hours.
+            </p>
+          </form>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label class="form-label" for="id_client_photo">Your Photo (optional)</label>
-          <input type="file" id="id_client_photo" name="client_photo" class="form-control" accept="image/*">
-        </div>
-
-        <button type="submit" class="btn btn--primary btn--full btn--lg">
-          <i class="fas fa-paper-plane"></i> Submit Review
-        </button>
-
-        <p style="font-size:.75rem;color:var(--grey-400);text-align:center;margin-top:1rem">
-          Your review will be published after a quick moderation check.
-        </p>
-      </form>
     </div>
   </div>
 </section>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  /* ── Star rating ──────────────────────────────────────────────────── */
+  const ratingLabels = { '5': 'Excellent', '4': 'Very good', '3': 'Good', '2': 'Fair', '1': 'Poor' };
+  const stars   = document.querySelectorAll('.star-rating__label');
+  const inputs  = document.querySelectorAll('.star-rating__input');
+  const ratingText = document.querySelector('.star-rating__text');
+
+  function updateStars (val) {
+    val = parseInt(val, 10);
+    stars.forEach(function (lbl, i) {
+      /* Stars are rendered 5→1, so index 0 = star 5 */
+      lbl.classList.toggle('active', (5 - i) <= val);
+    });
+    if (ratingText) {
+      ratingText.textContent = val + ' star' + (val !== 1 ? 's' : '') + ' — ' + (ratingLabels[val] || '');
+    }
+  }
+
+  inputs.forEach(function (input) {
+    if (input.checked) updateStars(input.value);
+    input.addEventListener('change', function () { updateStars(this.value); });
+  });
+
+  /* Hover preview */
+  stars.forEach(function (lbl, i) {
+    lbl.addEventListener('mouseenter', function () { updateStars(5 - i); });
+    lbl.addEventListener('mouseleave', function () {
+      const checked = document.querySelector('.star-rating__input:checked');
+      if (checked) updateStars(checked.value);
+    });
+  });
+
+  /* ── Character counter ────────────────────────────────────────────── */
+  const body      = document.getElementById('id_body');
+  const charCount = document.getElementById('charCount');
+  if (body && charCount) {
+    charCount.textContent = body.value.length;
+    body.addEventListener('input', function () {
+      charCount.textContent = this.value.length;
+      charCount.style.color = this.value.length > 750 ? 'var(--toast-error-border)' : '';
+    });
+  }
+
+  /* ── File upload label ────────────────────────────────────────────── */
+  const fileInput   = document.getElementById('id_client_photo');
+  const fileDisplay = document.getElementById('fileNameDisplay');
+  if (fileInput && fileDisplay) {
+    fileInput.addEventListener('change', function () {
+      fileDisplay.textContent = this.files.length ? this.files[0].name : 'No file chosen';
+    });
+  }
+
+  /* ── Drag-over state on file label ───────────────────────────────── */
+  const fileLabel = document.querySelector('.file-upload-label');
+  if (fileLabel && fileInput) {
+    fileLabel.addEventListener('dragover', function (e) { e.preventDefault(); fileLabel.classList.add('drag-over'); });
+    fileLabel.addEventListener('dragleave', function ()  { fileLabel.classList.remove('drag-over'); });
+    fileLabel.addEventListener('drop',     function (e) {
+      e.preventDefault();
+      fileLabel.classList.remove('drag-over');
+      if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        fileDisplay.textContent = e.dataTransfer.files[0].name;
+      }
+    });
+  }
+}());
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── Review form layout ───────────────────────────────────────────────── */
+.review-form-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: var(--space-12);
+  align-items: start;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* ── Trust sidebar ────────────────────────────────────────────────────── */
+.review-trust__card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: calc(var(--nav-height) + var(--space-6));
+}
+.review-trust__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--gold-faint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-size: 1.4rem;
+  margin-bottom: var(--space-5);
+}
+.review-trust__heading {
+  font-size: var(--text-xl);
+  margin-bottom: var(--space-5);
+  color: var(--text-primary);
+}
+.review-trust__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.review-trust__list li {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.review-trust__list li i {
+  color: var(--toast-success-border);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.review-trust__quote {
+  font-style: italic;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.75;
+}
+.review-trust__quote i {
+  color: var(--gold);
+  margin-bottom: var(--space-3);
+  display: block;
+  font-size: 1.1rem;
+}
+.review-trust__quote span {
+  display: block;
+  margin-top: var(--space-3);
+  font-style: normal;
+  font-weight: 600;
+  font-size: var(--text-xs);
+  letter-spacing: 0.05em;
+  color: var(--gold);
+}
+
+/* ── Form card header ─────────────────────────────────────────────────── */
+.review-form__header {
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* ── Input with leading icon ──────────────────────────────────────────── */
+.review-form__input-icon {
+  position: absolute;
+  left: var(--space-4);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  pointer-events: none;
+}
+.form-control--icon { padding-left: 2.75rem; }
+
+/* ── Star rating widget ───────────────────────────────────────────────── */
+.star-rating {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+}
+.star-rating__label {
+  cursor: pointer;
+  line-height: 1;
+  /* Reverse visual order so RTL-trick works without flex-direction:row-reverse */
+}
+.star-rating__star {
+  font-size: 1.75rem;
+  color: var(--border-color);
+  transition: color var(--transition), transform var(--transition);
+  display: block;
+}
+.star-rating__label.active .star-rating__star,
+.star-rating__label:hover .star-rating__star {
+  color: var(--gold);
+  transform: scale(1.15);
+}
+.star-rating__input:focus-visible + i { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+.star-rating__text {
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--gold-dark);
+  margin-left: var(--space-3);
+}
+
+/* ── File upload  */
+.file-upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-4);
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  text-align: center;
+  margin-top: var(--space-2);
+}
+.file-upload-label:hover,
+.file-upload-label.drag-over {
+  border-color: var(--gold);
+  background: var(--gold-faint);
+}
+.file-upload-label i {
+  font-size: 1.5rem;
+  color: var(--gold);
+}
+.file-upload-label__text {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+.file-upload-label__name {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+}
+
+/* ── Responsive  */
+@media (max-width: 900px) {
+  .review-form-layout { grid-template-columns: 1fr; }
+  .review-trust__card { position: static; }
+}
+</style>
 {% endblock %}

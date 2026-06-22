@@ -2,37 +2,88 @@
 {% load static %}
 
 {% block title %}Appointment {{ appointment.reference }}{% endblock %}
+{% block meta_description %}Appointment details for {{ appointment.reference }} — {{ appointment.service.name }} at Balirah Beauty Salon.{% endblock %}
+
+{% block extra_css %}
+<style>
+  .appt-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--border-subtle);
+    flex-wrap: wrap;
+  }
+  .appt-detail-ref {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: var(--footer-bg);
+    color: var(--gold);
+    font-family: var(--font-ui);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    padding: var(--space-2) var(--space-5);
+    border-radius: var(--radius-full);
+    letter-spacing: 0.08em;
+    margin-top: var(--space-3);
+    display: inline-flex;
+  }
+  .appt-detail-service {
+    font-size: var(--text-2xl);
+    color: var(--text-primary);
+    margin-bottom: var(--space-1);
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 
+<!-- Page Hero -->
 <div class="page-hero">
   <div class="container">
     <div class="page-hero__content">
       <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
         <a href="{% url 'core:home' %}">Home</a>
-        <span class="page-hero__breadcrumb-sep">/</span>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
         <a href="{% url 'accounts:profile' %}">My Profile</a>
-        <span class="page-hero__breadcrumb-sep">/</span>
-        <span>{{ appointment.reference }}</span>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{{ appointment.reference }}</span>
       </nav>
       <h1 class="page-hero__title">Appointment Details</h1>
+      <p class="page-hero__subtitle">Review your booking information below.</p>
     </div>
   </div>
 </div>
 
+<!-- Detail Content -->
 <section class="section">
   <div class="container" style="max-width:680px">
     <div class="profile-section" data-aos="fade-up">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem">
+
+      <div class="appt-detail-header">
         <div>
-          <h2 style="font-size:1.5rem;margin-bottom:.25rem">{{ appointment.service.name }}</h2>
-          <span class="ref-badge" style="font-size:.875rem;padding:.5rem 1.25rem">{{ appointment.reference }}</span>
+          <h2 class="appt-detail-service">{{ appointment.service.name }}</h2>
+          <span class="appt-detail-ref">
+            <i class="fas fa-hashtag" aria-hidden="true"></i>
+            {{ appointment.reference }}
+          </span>
         </div>
-        <span class="badge {% if appointment.status == 'confirmed' %}badge--success{% elif appointment.status == 'cancelled' %}badge--error{% elif appointment.status == 'pending' %}badge--warning{% else %}badge--navy{% endif %}">
+        <span class="badge
+          {% if appointment.status == 'confirmed' %}badge--success
+          {% elif appointment.status == 'cancelled' %}badge--error
+          {% elif appointment.status == 'pending' %}badge--warning
+          {% else %}badge--neutral
+          {% endif %}"
+          style="font-size:var(--text-xs)"
+        >
           {{ appointment.get_status_display }}
         </span>
       </div>
 
+      <!-- Summary rows -->
       <div class="booking-summary">
         <div class="booking-summary__item">
           <span class="booking-summary__label">Client</span>
@@ -44,17 +95,23 @@
         </div>
         <div class="booking-summary__item">
           <span class="booking-summary__label">Date</span>
-          <span class="booking-summary__value">{{ appointment.appointment_date|date:"l, d F Y" }}</span>
+          <span class="booking-summary__value">
+            <time datetime="{{ appointment.appointment_date|date:'Y-m-d' }}">
+              {{ appointment.appointment_date|date:"l, d F Y" }}
+            </time>
+          </span>
         </div>
         <div class="booking-summary__item">
           <span class="booking-summary__label">Time</span>
-          <span class="booking-summary__value">{{ appointment.start_time|time:"g:i A" }} – {{ appointment.end_time|time:"g:i A" }}</span>
+          <span class="booking-summary__value">
+            {{ appointment.start_time|time:"g:i A" }} – {{ appointment.end_time|time:"g:i A" }}
+          </span>
         </div>
         {% if appointment.notes %}
-        <div class="booking-summary__item">
-          <span class="booking-summary__label">Notes</span>
-          <span class="booking-summary__value">{{ appointment.notes }}</span>
-        </div>
+          <div class="booking-summary__item" style="align-items:flex-start">
+            <span class="booking-summary__label">Notes</span>
+            <span class="booking-summary__value" style="max-width:60%;text-align:right">{{ appointment.notes }}</span>
+          </div>
         {% endif %}
         <div class="booking-summary__total">
           <span>Total</span>
@@ -62,14 +119,34 @@
         </div>
       </div>
 
-      <div style="display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap">
-        <a href="{% url 'accounts:profile' %}" class="btn btn--outline">Back to My Bookings</a>
-        {% if appointment.can_cancel and appointment.user == user %}
-        <a href="{% url 'bookings:cancel' appointment.reference %}" class="btn btn--navy">
-          <i class="fas fa-times"></i> Cancel Appointment
+      <!-- Info note for pending/confirmed -->
+      {% if appointment.status == 'pending' %}
+        <div class="info-banner" style="margin-top:var(--space-6)">
+          <i class="fas fa-info-circle" aria-hidden="true"></i>
+          <p>Your appointment is awaiting confirmation. We'll notify you once it's confirmed.</p>
+        </div>
+      {% elif appointment.status == 'confirmed' %}
+        <div class="info-banner" style="margin-top:var(--space-6)">
+          <i class="fas fa-check-circle" aria-hidden="true" style="color:var(--toast-success-border)"></i>
+          <p>Your appointment is confirmed. Please arrive 5 minutes early. See you soon!</p>
+        </div>
+      {% endif %}
+
+      <!-- Actions -->
+      <div class="form-actions" style="margin-top:var(--space-8)">
+        <a href="{% url 'accounts:profile' %}" class="btn btn--ghost">
+          <i class="fas fa-arrow-left" aria-hidden="true"></i> My Bookings
         </a>
+        {% if appointment.can_cancel and appointment.user == user %}
+          <a href="{% url 'bookings:cancel' appointment.reference %}" class="btn btn--navy">
+            <i class="fas fa-times" aria-hidden="true"></i> Cancel Appointment
+          </a>
         {% endif %}
+        <a href="{% url 'bookings:book' %}" class="btn btn--primary" style="margin-left:auto">
+          <i class="fas fa-calendar-plus" aria-hidden="true"></i> New Booking
+        </a>
       </div>
+
     </div>
   </div>
 </section>

@@ -3,103 +3,143 @@
   <div class="footer__top">
     <div class="container">
       <div class="footer__grid">
+
+        <!-- Brand column -->
         <div class="footer__brand">
-          <a href="{% url 'core:home' %}" class="footer__logo-text">Balirah<span> Beauty Salon</span></a>
-          <p class="footer__tagline">{{ salon.tagline|default:"Where style meets elegance. Kampala's premier barber shop and nails parlor." }}</p>
-          <div class="footer__social">
+          <a href="{% url 'core:home' %}" class="footer__logo-text" aria-label="Balirah Beauty Salon home">
+            Balirah<span> Beauty Salon</span>
+          </a>
+          <p class="footer__tagline">
+            {{ salon.tagline|default:"Where style meets elegance. Kampala's premier barber shop and nail parlour." }}
+          </p>
+          <div class="footer__social" aria-label="Social media links">
             {% if salon.instagram_url %}
-            <a href="{{ salon.instagram_url }}" class="footer__social-link" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-              <i class="fab fa-instagram"></i>
-            </a>
+              <a href="{{ salon.instagram_url }}"
+                 class="footer__social-link"
+                 target="_blank" rel="noopener noreferrer"
+                 aria-label="Follow us on Instagram">
+                <i class="fab fa-instagram" aria-hidden="true"></i>
+              </a>
             {% endif %}
             {% if salon.facebook_url %}
-            <a href="{{ salon.facebook_url }}" class="footer__social-link" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-              <i class="fab fa-facebook-f"></i>
-            </a>
+              <a href="{{ salon.facebook_url }}"
+                 class="footer__social-link"
+                 target="_blank" rel="noopener noreferrer"
+                 aria-label="Follow us on Facebook">
+                <i class="fab fa-facebook-f" aria-hidden="true"></i>
+              </a>
             {% endif %}
             {% if salon.tiktok_url %}
-            <a href="{{ salon.tiktok_url }}" class="footer__social-link" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-              <i class="fab fa-tiktok"></i>
-            </a>
+              <a href="{{ salon.tiktok_url }}"
+                 class="footer__social-link"
+                 target="_blank" rel="noopener noreferrer"
+                 aria-label="Follow us on TikTok">
+                <i class="fab fa-tiktok" aria-hidden="true"></i>
+              </a>
             {% endif %}
             {% if salon.whatsapp_number %}
-            <a href="https://wa.me/{{ salon.whatsapp_number|cut:'+' }}" class="footer__social-link" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
-              <i class="fab fa-whatsapp"></i>
-            </a>
+              <a href="https://wa.me/{{ salon.whatsapp_number|cut:'+' }}"
+                 class="footer__social-link"
+                 target="_blank" rel="noopener noreferrer"
+                 aria-label="Chat with us on WhatsApp">
+                <i class="fab fa-whatsapp" aria-hidden="true"></i>
+              </a>
             {% endif %}
           </div>
         </div>
 
+        <!-- Quick links -->
         <div>
           <p class="footer__heading">Quick Links</p>
-          <ul class="footer__links">
-            <li><a href="{% url 'core:home' %}" class="footer__link">Home</a></li>
-            <li><a href="{% url 'core:about' %}" class="footer__link">About Us</a></li>
-            <li><a href="{% url 'services:list' %}" class="footer__link">Services</a></li>
+          <ul class="footer__links" aria-label="Quick links">
+            <li><a href="{% url 'core:home' %}"       class="footer__link">Home</a></li>
+            <li><a href="{% url 'core:about' %}"      class="footer__link">About Us</a></li>
+            <li><a href="{% url 'services:list' %}"   class="footer__link">Services</a></li>
             <li><a href="{% url 'services:pricing' %}" class="footer__link">Pricing</a></li>
-            <li><a href="{% url 'team:list' %}" class="footer__link">Our Team</a></li>
-            <li><a href="{% url 'gallery:gallery' %}" class="footer__link">Gallery</a></li>
-            <li><a href="{% url 'bookings:book' %}" class="footer__link">Book Now</a></li>
+            <li><a href="{% url 'team:list' %}"        class="footer__link">Our Team</a></li>
+            <li><a href="{% url 'gallery:gallery' %}"  class="footer__link">Gallery</a></li>
+            <li><a href="{% url 'bookings:book' %}"    class="footer__link">Book Now</a></li>
           </ul>
         </div>
 
+        <!-- More links -->
         <div>
           <p class="footer__heading">More</p>
-          <ul class="footer__links">
-            <li><a href="{% url 'blog:list' %}" class="footer__link">Blog</a></li>
-            <li><a href="{% url 'testimonials:list' %}" class="footer__link">Reviews</a></li>
-            <li><a href="{% url 'faqs:list' %}" class="footer__link">FAQs</a></li>
-            <li><a href="{% url 'core:contact' %}" class="footer__link">Contact Us</a></li>
-            <li><a href="{% url 'core:privacy_policy' %}" class="footer__link">Privacy Policy</a></li>
-            <li><a href="{% url 'core:terms_conditions' %}" class="footer__link">Terms &amp; Conditions</a></li>
+          <ul class="footer__links" aria-label="Additional links">
+            <li><a href="{% url 'blog:list' %}"              class="footer__link">Blog</a></li>
+            <li><a href="{% url 'testimonials:list' %}"      class="footer__link">Reviews</a></li>
+            <li><a href="{% url 'faqs:list' %}"              class="footer__link">FAQs</a></li>
+            <li><a href="{% url 'core:contact' %}"           class="footer__link">Contact Us</a></li>
+            <li><a href="{% url 'core:privacy_policy' %}"    class="footer__link">Privacy Policy</a></li>
+            <li><a href="{% url 'core:terms_conditions' %}"  class="footer__link">Terms &amp; Conditions</a></li>
           </ul>
         </div>
 
+        <!-- Contact column -->
         <div>
           <p class="footer__heading">Contact</p>
+
           {% if salon.address %}
-          <div class="footer__contact-item">
-            <i class="fas fa-map-marker-alt footer__contact-icon" aria-hidden="true"></i>
-            <span class="footer__contact-text">{{ salon.address }}</span>
-          </div>
+            <address class="footer__contact-item" style="font-style:normal">
+              <i class="fas fa-map-marker-alt footer__contact-icon" aria-hidden="true"></i>
+              <span class="footer__contact-text">{{ salon.address }}</span>
+            </address>
           {% endif %}
+
           {% if salon.phone_primary %}
-          <div class="footer__contact-item">
-            <i class="fas fa-phone footer__contact-icon" aria-hidden="true"></i>
-            <a href="tel:{{ salon.phone_primary }}" class="footer__contact-text footer__link">{{ salon.phone_primary }}</a>
-          </div>
-          {% endif %}
-          {% if salon.email %}
-          <div class="footer__contact-item">
-            <i class="fas fa-envelope footer__contact-icon" aria-hidden="true"></i>
-            <a href="mailto:{{ salon.email }}" class="footer__contact-text footer__link">{{ salon.email }}</a>
-          </div>
-          {% endif %}
-          {% if opening_hours %}
-          <div class="footer__contact-item" style="margin-top:1rem">
-            <i class="fas fa-clock footer__contact-icon" aria-hidden="true"></i>
-            <div>
-              {% for h in opening_hours %}
-              <div class="footer__contact-text" style="font-size:.75rem;margin-bottom:.25rem">
-                <strong>{{ h.get_day_display }}:</strong>
-                {% if h.is_closed %}Closed{% else %}{{ h.open_time|time:"g:i A" }} – {{ h.close_time|time:"g:i A" }}{% endif %}
-              </div>
-              {% endfor %}
+            <div class="footer__contact-item">
+              <i class="fas fa-phone footer__contact-icon" aria-hidden="true"></i>
+              <a href="tel:{{ salon.phone_primary }}"
+                 class="footer__contact-text footer__link"
+                 aria-label="Call us at {{ salon.phone_primary }}">
+                {{ salon.phone_primary }}
+              </a>
             </div>
-          </div>
+          {% endif %}
+
+          {% if salon.email %}
+            <div class="footer__contact-item">
+              <i class="fas fa-envelope footer__contact-icon" aria-hidden="true"></i>
+              <a href="mailto:{{ salon.email }}"
+                 class="footer__contact-text footer__link"
+                 aria-label="Email us at {{ salon.email }}">
+                {{ salon.email }}
+              </a>
+            </div>
+          {% endif %}
+
+          {% if opening_hours %}
+            <div class="footer__contact-item" style="margin-top:var(--space-4);align-items:flex-start">
+              <i class="fas fa-clock footer__contact-icon" aria-hidden="true" style="margin-top:2px"></i>
+              <div>
+                {% for h in opening_hours %}
+                  <div class="footer__contact-text" style="font-size:var(--text-xs);margin-bottom:var(--space-1);line-height:1.5">
+                    <strong>{{ h.get_day_display }}:</strong>
+                    {% if h.is_closed %}
+                      <span style="color:rgba(212,200,154,0.4)">Closed</span>
+                    {% else %}
+                      {{ h.open_time|time:"g:i A" }} – {{ h.close_time|time:"g:i A" }}
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
           {% endif %}
         </div>
+
       </div>
     </div>
   </div>
 
   <div class="footer__bottom">
-    <div class="container" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
-      <p class="footer__copy">&copy; {% now "Y" %} {{ salon.salon_name|default:"Balirah Beauty Salon" }}. All rights reserved.</p>
-      <div class="footer__legal">
-        <a href="{% url 'core:privacy_policy' %}" class="footer__legal-link">Privacy Policy</a>
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4)">
+      <p class="footer__copy">
+        &copy; {% now "Y" %} {{ salon.salon_name|default:"Balirah Beauty Salon" }}. All rights reserved.
+      </p>
+      <nav class="footer__legal" aria-label="Legal links">
+        <a href="{% url 'core:privacy_policy' %}"   class="footer__legal-link">Privacy Policy</a>
         <a href="{% url 'core:terms_conditions' %}" class="footer__legal-link">Terms &amp; Conditions</a>
-      </div>
+      </nav>
     </div>
   </div>
 </footer>

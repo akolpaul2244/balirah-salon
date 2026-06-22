@@ -3,82 +3,305 @@
 
 {% block title %}{{ post.title }}{% endblock %}
 {% block meta_description %}{{ post.meta_description }}{% endblock %}
-{% block og_title %}{{ post.meta_title }}{% endblock %}
+{% block og_title %}{{ post.meta_title|default:post.title }}{% endblock %}
 {% block og_description %}{{ post.meta_description }}{% endblock %}
 {% block og_image %}{% if post.featured_image %}{{ request.scheme }}://{{ request.get_host }}{{ post.featured_image.url }}{% endif %}{% endblock %}
 
+{% block extra_css %}
+<style>
+  .post-hero {
+    background: var(--footer-bg);
+    padding: var(--space-20) 0 var(--space-16);
+    position: relative;
+    overflow: hidden;
+  }
+  .post-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.05) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .post-hero__content { position: relative; z-index: 1; max-width: 760px; }
+
+  .post-body {
+    font-size: 1.0625rem;
+    line-height: 1.9;
+    color: var(--text-primary);
+  }
+  .post-body p   { margin-bottom: var(--space-5); }
+  .post-body h2  { font-size: var(--text-2xl); margin: var(--space-10) 0 var(--space-4); color: var(--text-primary); }
+  .post-body h3  { font-size: var(--text-xl);  margin: var(--space-8)  0 var(--space-3); color: var(--text-primary); }
+  .post-body ul,
+  .post-body ol  { padding-left: var(--space-6); margin-bottom: var(--space-5); display: flex; flex-direction: column; gap: var(--space-2); }
+  .post-body ul  { list-style: disc; }
+  .post-body ol  { list-style: decimal; }
+  .post-body li  { color: var(--text-secondary); line-height: 1.75; }
+  .post-body blockquote {
+    border-left: 3px solid var(--gold);
+    margin: var(--space-8) 0;
+    padding: var(--space-5) var(--space-6);
+    background: var(--bg-secondary);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    font-style: italic;
+    color: var(--text-secondary);
+    font-size: var(--text-lg);
+    line-height: 1.75;
+  }
+  .post-body a   { color: var(--gold); border-bottom: 1px solid rgba(201,168,76,0.35); transition: border-color var(--transition); }
+  .post-body a:hover { border-color: var(--gold); }
+  .post-body img { border-radius: var(--radius-md); margin: var(--space-6) 0; }
+  .post-body strong { color: var(--text-primary); font-weight: 700; }
+
+  .post-footer {
+    margin-top: var(--space-12);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .post-author-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    margin-top: var(--space-10);
+    border: 1px solid var(--border-subtle);
+  }
+  .post-author-bar__avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-full);
+    background: var(--gold-faint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    border: 2px solid var(--border-color);
+  }
+  .post-author-bar__name  { font-weight: 700; color: var(--text-primary); font-size: var(--text-sm); margin-bottom: var(--space-1); }
+  .post-author-bar__label { font-size: var(--text-xs); color: var(--text-muted); font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    flex-wrap: wrap;
+    margin-top: var(--space-5);
+  }
+  .post-meta__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    color: rgba(212,200,154,0.6);
+    letter-spacing: 0.04em;
+  }
+  .post-meta__item i { color: var(--gold); }
+
+  .read-progress {
+    position: fixed;
+    top: var(--nav-height);
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: transparent;
+    z-index: 999;
+  }
+  .read-progress__bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    transition: width 0.1s linear;
+    border-radius: 0 2px 2px 0;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 
-<div class="page-hero">
+<!-- Reading progress indicator -->
+<div class="read-progress" aria-hidden="true">
+  <div class="read-progress__bar" id="readProgress"></div>
+</div>
+
+<!-- Post Hero -->
+<div class="post-hero">
   <div class="container">
-    <div class="page-hero__content">
+    <div class="post-hero__content">
+
       <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
         <a href="{% url 'core:home' %}">Home</a>
-        <span class="page-hero__breadcrumb-sep">/</span>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
         <a href="{% url 'blog:list' %}">Blog</a>
-        <span class="page-hero__breadcrumb-sep">/</span>
-        <span>{{ post.title|truncatechars:40 }}</span>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{{ post.title|truncatechars:40 }}</span>
       </nav>
-      {% if post.category %}<span class="badge badge--gold" style="margin-bottom:1rem">{{ post.category.name }}</span>{% endif %}
-      <h1 class="page-hero__title">{{ post.title }}</h1>
-      <div style="display:flex;gap:1rem;align-items:center;margin-top:1.5rem;color:rgba(255,255,255,.6);font-size:.875rem;font-family:var(--font-ui)">
-        {% if post.author %}<span><i class="fas fa-user"></i> {{ post.author.get_full_name }}</span><span>·</span>{% endif %}
-        <span><i class="fas fa-calendar"></i> {{ post.published_at|date:"d F Y" }}</span>
+
+      {% if post.category %}
+        <span class="badge badge--gold" style="margin-bottom:var(--space-4)">
+          {{ post.category.name }}
+        </span>
+      {% endif %}
+
+      <h1 class="page-hero__title" style="margin-top:var(--space-3)">{{ post.title }}</h1>
+
+      <div class="post-meta">
+        {% if post.author %}
+          <span class="post-meta__item">
+            <i class="fas fa-user" aria-hidden="true"></i>
+            {{ post.author.get_full_name }}
+          </span>
+          <span class="post-meta__item" aria-hidden="true" style="color:rgba(212,200,154,0.2)">·</span>
+        {% endif %}
+        <span class="post-meta__item">
+          <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+          <time datetime="{{ post.published_at|date:'Y-m-d' }}">{{ post.published_at|date:"d F Y" }}</time>
+        </span>
+        {% if post.read_time %}
+          <span class="post-meta__item" aria-hidden="true" style="color:rgba(212,200,154,0.2)">·</span>
+          <span class="post-meta__item">
+            <i class="fas fa-clock" aria-hidden="true"></i>
+            {{ post.read_time }} min read
+          </span>
+        {% endif %}
       </div>
+
     </div>
   </div>
 </div>
 
+<!-- Post Content -->
 <section class="section">
   <div class="container" style="max-width:760px">
+
     {% if post.featured_image %}
-    <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" style="width:100%;border-radius:var(--radius-lg);margin-bottom:2.5rem;aspect-ratio:16/9;object-fit:cover" data-aos="fade-up">
+      <figure style="margin:0 0 var(--space-10)" data-aos="fade-up">
+        <img
+          src="{{ post.featured_image.url }}"
+          alt="{{ post.title }}"
+          style="width:100%;border-radius:var(--radius-lg);aspect-ratio:16/9;object-fit:cover;display:block"
+          loading="eager"
+        >
+      </figure>
     {% endif %}
 
-    <div style="font-size:1.0625rem;line-height:1.9;color:var(--grey-800)" data-aos="fade-up">
+    <!-- Body copy -->
+    <div class="post-body" data-aos="fade-up">
       {{ post.content|linebreaks }}
     </div>
 
-    <div style="margin-top:3rem;padding-top:2rem;border-top:1px solid var(--grey-100);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
-      <a href="{% url 'blog:list' %}" class="btn btn--outline">
-        <i class="fas fa-arrow-left"></i> Back to Blog
+    <!-- Author bar -->
+    {% if post.author %}
+      <div class="post-author-bar" data-aos="fade-up">
+        <div class="post-author-bar__avatar">
+          <i class="fas fa-user" aria-hidden="true"></i>
+        </div>
+        <div>
+          <div class="post-author-bar__label">Written by</div>
+          <div class="post-author-bar__name">{{ post.author.get_full_name }}</div>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Footer nav -->
+    <div class="post-footer" data-aos="fade-up">
+      <a href="{% url 'blog:list' %}" class="btn btn--ghost btn--sm">
+        <i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Blog
       </a>
-      <a href="{% url 'bookings:book' %}" class="btn btn--primary">
-        <i class="fas fa-calendar-check"></i> Book an Appointment
+      <a href="{% url 'bookings:book' %}" class="btn btn--primary btn--sm">
+        <i class="fas fa-calendar-check" aria-hidden="true"></i> Book an Appointment
       </a>
     </div>
+
   </div>
 </section>
 
+<!-- Related Posts -->
 {% if related_posts %}
-<section class="section section--cream">
+<section class="section section--alt">
   <div class="container">
+
     <div class="section-header section-header--center" data-aos="fade-up">
       <span class="section-eyebrow">Continue Reading</span>
       <h2 class="section-title">Related Articles</h2>
       <div class="divider-line divider-line--center"></div>
     </div>
 
-    <div class="grid grid-3" data-aos="fade-up" data-aos-delay="100">
+    <div class="grid grid-3" data-stagger data-stagger-step="100">
       {% for related in related_posts %}
-      <article class="blog-card">
-        <a href="{{ related.get_absolute_url }}">
-          {% if related.featured_image %}
-            <img src="{{ related.featured_image_thumb.url }}" alt="{{ related.title }}" class="blog-card__image" loading="lazy">
-          {% else %}
-            <div class="blog-card__image-placeholder"><i class="fas fa-pen-nib"></i></div>
-          {% endif %}
-        </a>
-        <div class="blog-card__body">
-          {% if related.category %}<div class="blog-card__category">{{ related.category.name }}</div>{% endif %}
-          <h3 class="blog-card__title"><a href="{{ related.get_absolute_url }}">{{ related.title }}</a></h3>
-          <p class="blog-card__excerpt">{{ related.excerpt|truncatewords:16 }}</p>
-        </div>
-      </article>
+        <article class="blog-card" data-aos="fade-up">
+          <a href="{{ related.get_absolute_url }}" aria-label="Read: {{ related.title }}" tabindex="-1">
+            {% if related.featured_image %}
+              <div class="blog-card__image-wrap">
+                <img
+                  src="{{ related.featured_image.url }}"
+                  alt="{{ related.title }}"
+                  class="blog-card__image"
+                  loading="lazy"
+                >
+              </div>
+            {% else %}
+              <div class="blog-card__image-placeholder">
+                <i class="fas fa-pen-nib" aria-hidden="true"></i>
+              </div>
+            {% endif %}
+          </a>
+          <div class="blog-card__body">
+            {% if related.category %}
+              <div class="blog-card__category">{{ related.category.name }}</div>
+            {% endif %}
+            <h3 class="blog-card__title">
+              <a href="{{ related.get_absolute_url }}">{{ related.title }}</a>
+            </h3>
+            <p class="blog-card__excerpt">{{ related.excerpt|truncatewords:20 }}</p>
+            <div class="blog-card__meta">
+              <time datetime="{{ related.published_at|date:'Y-m-d' }}">{{ related.published_at|date:"d M Y" }}</time>
+              {% if related.read_time %}
+                <span class="blog-card__meta-sep" aria-hidden="true">·</span>
+                <span>{{ related.read_time }} min read</span>
+              {% endif %}
+            </div>
+          </div>
+        </article>
       {% endfor %}
     </div>
+
   </div>
 </section>
 {% endif %}
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  /* Reading progress bar */
+  (function () {
+    var bar     = document.getElementById('readProgress');
+    var article = document.querySelector('.post-body');
+    if (!bar || !article) return;
+
+    function update() {
+      var rect   = article.getBoundingClientRect();
+      var total  = rect.height;
+      var scrolled = window.innerHeight - rect.top;
+      var pct    = Math.min(Math.max(scrolled / total, 0), 1);
+      bar.style.width = (pct * 100) + '%';
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  }());
+</script>
 {% endblock %}

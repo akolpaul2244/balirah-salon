@@ -4,15 +4,35 @@
 {% block title %}Client Reviews{% endblock %}
 {% block meta_description %}Read what our clients say about their experience at Balirah Beauty Salon, Kampala.{% endblock %}
 
+{% block extra_css %}
+<style>
+  /* Grid of full testimonial cards */
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+  }
+  .testimonials-grid .testimonial-inner { margin: 0; height: 100%; }
+
+  /* Star rendering — separate filled / empty clearly */
+  .star-filled { color: var(--gold); }
+  .star-empty  { color: var(--border-color); }
+
+  @media (max-width: 900px) { .testimonials-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) { .testimonials-grid { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
 {% block content %}
 
+<!-- Page hero -->
 <div class="page-hero">
   <div class="container">
     <div class="page-hero__content">
       <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
         <a href="{% url 'core:home' %}">Home</a>
-        <span class="page-hero__breadcrumb-sep">/</span>
-        <span>Reviews</span>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">Reviews</span>
       </nav>
       <h1 class="page-hero__title">Client Reviews</h1>
       <p class="page-hero__subtitle">Real words from real clients.</p>
@@ -20,45 +40,71 @@
   </div>
 </div>
 
+<!-- Reviews grid -->
 <section class="section">
   <div class="container">
+
     {% if testimonials %}
-    <div class="grid grid-3" data-aos="fade-up">
-      {% for testimonial in testimonials %}
-      <div class="testimonial-inner" style="margin:0">
-        <div class="testimonial__stars" aria-label="{{ testimonial.rating }} out of 5 stars">
-          {% for i in "12345" %}
-            <i class="fas fa-star{% if forloop.counter > testimonial.rating %} " style="opacity:.25{% endif %}"></i>
-          {% endfor %}
-        </div>
-        <p class="testimonial__body">"{{ testimonial.body }}"</p>
-        <div class="testimonial__author">
-          {% if testimonial.client_photo %}
-            <img src="{{ testimonial.client_photo.url }}" alt="{{ testimonial.client_name }}" class="testimonial__avatar" loading="lazy">
-          {% else %}
-            <div class="testimonial__avatar-placeholder">{{ testimonial.client_name|first|upper }}</div>
-          {% endif %}
-          <div>
-            <div class="testimonial__name">{{ testimonial.client_name }}</div>
-            {% if testimonial.service %}<div class="testimonial__service">{{ testimonial.service.name }}</div>{% endif %}
+      <div class="testimonials-grid" data-stagger data-stagger-step="80">
+        {% for testimonial in testimonials %}
+          <div class="testimonial-inner" data-aos="fade-up">
+
+            <!-- Stars -->
+            <div class="testimonial__stars"
+                 role="img"
+                 aria-label="{{ testimonial.rating }} out of 5 stars">
+              {% for i in "12345" %}
+                <i class="fas fa-star {% if forloop.counter <= testimonial.rating %}star-filled{% else %}star-empty{% endif %}"
+                   aria-hidden="true"></i>
+              {% endfor %}
+            </div>
+
+            <p class="testimonial__body">&ldquo;{{ testimonial.body }}&rdquo;</p>
+
+            <div class="testimonial__author">
+              {% if testimonial.client_photo %}
+                <img
+                  src="{{ testimonial.client_photo.url }}"
+                  alt="{{ testimonial.client_name }}"
+                  class="testimonial__avatar"
+                  loading="lazy"
+                  decoding="async"
+                >
+              {% else %}
+                <div class="testimonial__avatar-placeholder" aria-hidden="true">
+                  {{ testimonial.client_name|first|upper }}
+                </div>
+              {% endif %}
+              <div>
+                <div class="testimonial__name">{{ testimonial.client_name }}</div>
+                {% if testimonial.service %}
+                  <div class="testimonial__service">{{ testimonial.service.name }}</div>
+                {% endif %}
+              </div>
+            </div>
+
           </div>
-        </div>
+        {% endfor %}
       </div>
-      {% endfor %}
-    </div>
+
     {% else %}
-    <div class="empty-state">
-      <div class="empty-state__icon"><i class="fas fa-star"></i></div>
-      <h3 class="empty-state__title">No Reviews Yet</h3>
-      <p class="empty-state__text">Be the first to share your experience with us.</p>
-    </div>
+      <div class="empty-state">
+        <div class="empty-state__icon" aria-hidden="true"><i class="fas fa-star"></i></div>
+        <h3 class="empty-state__title">No Reviews Yet</h3>
+        <p class="empty-state__text">Be the first to share your experience with us.</p>
+      </div>
     {% endif %}
 
-    <div style="text-align:center;margin-top:3rem" data-aos="fade-up">
+    <!-- Submit CTA -->
+    <div style="text-align:center;margin-top:var(--space-12)" data-aos="fade-up">
+      <p style="font-family:var(--font-ui);font-size:var(--text-sm);color:var(--text-muted);margin-bottom:var(--space-4)">
+        Had a great visit? We'd love to hear about it.
+      </p>
       <a href="{% url 'testimonials:submit' %}" class="btn btn--primary btn--lg">
-        <i class="fas fa-pen"></i> Share Your Experience
+        <i class="fas fa-pen" aria-hidden="true"></i> Share Your Experience
       </a>
     </div>
+
   </div>
 </section>
 

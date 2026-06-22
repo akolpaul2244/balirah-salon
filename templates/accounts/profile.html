@@ -2,18 +2,20 @@
 {% load static %}
 
 {% block title %}My Profile{% endblock %}
+{% block meta_description %}Manage your Balirah Beauty Salon account, view appointments, and update your details.{% endblock %}
 
 {% block content %}
 
 <div class="page-hero">
   <div class="container">
-    <div class="page-hero__content">
+    <div class="page-hero__content" data-reveal>
       <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
         <a href="{% url 'core:home' %}">Home</a>
-        <span class="page-hero__breadcrumb-sep">/</span>
-        <span>My Profile</span>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">My Account</span>
       </nav>
       <h1 class="page-hero__title">My Account</h1>
+      <p class="page-hero__subtitle">Manage your bookings and personal details.</p>
     </div>
   </div>
 </div>
@@ -21,64 +23,164 @@
 <section class="section">
   <div class="container">
     <div class="profile-layout">
-      <aside class="profile-sidebar">
+
+      <!-- Sidebar -->
+      <aside class="profile-sidebar" aria-label="Account navigation sidebar">
         <div class="profile-sidebar__header">
           {% if user.profile_picture %}
-            <img src="{{ user.profile_picture.url }}" alt="{{ user.get_full_name }}" class="profile-avatar">
+            <img
+              src="{{ user.profile_picture.url }}"
+              alt="{{ user.get_full_name }}'s profile photo"
+              class="profile-avatar"
+              width="80"
+              height="80"
+            >
           {% else %}
-            <div class="profile-avatar-placeholder"><i class="fas fa-user"></i></div>
+            <div class="profile-avatar-placeholder" aria-hidden="true">
+              <i class="fas fa-user"></i>
+            </div>
           {% endif %}
           <div class="profile-sidebar__name">{{ user.get_full_name }}</div>
           <div class="profile-sidebar__email">{{ user.email }}</div>
         </div>
+
         <nav class="profile-nav" aria-label="Account navigation">
-          <a href="{% url 'accounts:profile' %}" class="profile-nav__link active"><i class="fas fa-calendar-alt"></i> My Bookings</a>
-          <a href="{% url 'accounts:edit_profile' %}" class="profile-nav__link"><i class="fas fa-user-edit"></i> Edit Profile</a>
-          <a href="{% url 'accounts:change_password' %}" class="profile-nav__link"><i class="fas fa-lock"></i> Change Password</a>
-          <a href="{% url 'bookings:book' %}" class="profile-nav__link"><i class="fas fa-plus-circle"></i> New Booking</a>
+          <a href="{% url 'accounts:profile' %}" class="profile-nav__link active" aria-current="page">
+            <i class="fas fa-calendar-alt" aria-hidden="true"></i> My Bookings
+          </a>
+          <a href="{% url 'accounts:edit_profile' %}" class="profile-nav__link">
+            <i class="fas fa-user-edit" aria-hidden="true"></i> Edit Profile
+          </a>
+          <a href="{% url 'accounts:change_password' %}" class="profile-nav__link">
+            <i class="fas fa-lock" aria-hidden="true"></i> Change Password
+          </a>
+          <a href="{% url 'bookings:book' %}" class="profile-nav__link">
+            <i class="fas fa-plus-circle" aria-hidden="true"></i> New Booking
+          </a>
           <form method="post" action="{% url 'accounts:logout' %}">
             {% csrf_token %}
-            <button type="submit" class="profile-nav__link"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+            <button
+              type="submit"
+              class="profile-nav__link"
+              style="color:var(--toast-error-border)"
+              onclick="return confirm('Sign out of your account?')"
+            >
+              <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Sign Out
+            </button>
           </form>
         </nav>
+
+        <!-- Quick stats -->
+        {% if bookings %}
+        <div style="padding:var(--space-5) var(--space-6);border-top:1px solid var(--border-subtle)">
+          <p style="font-family:var(--font-ui);font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:var(--space-4)">Quick Stats</p>
+          <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+            <div style="display:flex;justify-content:space-between;font-size:var(--text-sm)">
+              <span style="color:var(--text-secondary)">Total Visits</span>
+              <strong style="color:var(--text-primary)">{{ bookings|length }}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:var(--text-sm)">
+              <span style="color:var(--text-secondary)">Confirmed</span>
+              <strong style="color:var(--toast-success-border)">
+                {{ bookings|dictsort:"status"|length }}
+              </strong>
+            </div>
+          </div>
+        </div>
+        {% endif %}
       </aside>
 
+      <!-- Main content -->
       <div class="profile-main">
         <div class="profile-section">
           <h2 class="profile-section__title">My Appointments</h2>
 
           {% if bookings %}
-          <div class="appt-list">
+          <div class="appt-list" data-stagger>
             {% for appt in bookings %}
-            <div class="appt-card">
+            <article class="appt-card" aria-label="Appointment: {{ appt.service.name }}">
               <div>
                 <h3 class="appt-card__service">{{ appt.service.name }}</h3>
                 <div class="appt-card__meta">
-                  <span class="appt-card__meta-item"><i class="fas fa-user-tie"></i> {{ appt.stylist.get_full_name }}</span>
-                  <span class="appt-card__meta-item"><i class="fas fa-calendar"></i> {{ appt.appointment_date|date:"d M Y" }}</span>
-                  <span class="appt-card__meta-item"><i class="fas fa-clock"></i> {{ appt.start_time|time:"g:i A" }}</span>
+                  <span class="appt-card__meta-item">
+                    <i class="fas fa-user-tie" aria-hidden="true"></i>
+                    {{ appt.stylist.get_full_name }}
+                  </span>
+                  <span class="appt-card__meta-item">
+                    <i class="fas fa-calendar" aria-hidden="true"></i>
+                    <time datetime="{{ appt.appointment_date|date:'Y-m-d' }}">
+                      {{ appt.appointment_date|date:"d M Y" }}
+                    </time>
+                  </span>
+                  <span class="appt-card__meta-item">
+                    <i class="fas fa-clock" aria-hidden="true"></i>
+                    <time datetime="{{ appt.start_time|time:'H:i' }}">
+                      {{ appt.start_time|time:"g:i A" }}
+                    </time>
+                  </span>
+                  {% if appt.service.price %}
+                  <span class="appt-card__meta-item" style="color:var(--gold);font-weight:700">
+                    UGX {{ appt.service.price|floatformat:"0" }}
+                  </span>
+                  {% endif %}
                 </div>
-                <div class="appt-card__ref">Ref: {{ appt.reference }}</div>
+                <div class="appt-card__ref">Ref: <strong>{{ appt.reference }}</strong></div>
               </div>
               <div class="appt-card__actions">
-                <span class="badge {% if appt.status == 'confirmed' %}badge--success{% elif appt.status == 'cancelled' %}badge--error{% elif appt.status == 'pending' %}badge--warning{% else %}badge--neutral{% endif %}">
+                <span class="badge
+                  {% if appt.status == 'confirmed' %}badge--success
+                  {% elif appt.status == 'cancelled' %}badge--error
+                  {% elif appt.status == 'pending' %}badge--warning
+                  {% elif appt.status == 'completed' %}badge--gold
+                  {% else %}badge--neutral
+                  {% endif %}"
+                  aria-label="Status: {{ appt.get_status_display }}"
+                >
+                  <i class="fas
+                    {% if appt.status == 'confirmed' %}fa-check
+                    {% elif appt.status == 'cancelled' %}fa-times
+                    {% elif appt.status == 'pending' %}fa-hourglass-half
+                    {% elif appt.status == 'completed' %}fa-star
+                    {% else %}fa-circle
+                    {% endif %}" aria-hidden="true"></i>
                   {{ appt.get_status_display }}
                 </span>
-                <a href="{% url 'bookings:detail' appt.reference %}" class="btn btn--outline btn--sm">View</a>
+                <a href="{% url 'bookings:detail' appt.reference %}" class="btn btn--outline btn--sm">
+                  View Details
+                </a>
               </div>
-            </div>
+            </article>
             {% endfor %}
           </div>
+
+          <!-- Rebook CTA -->
+          <div style="margin-top:var(--space-8);padding-top:var(--space-6);border-top:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4)">
+            <p style="font-size:var(--text-sm);color:var(--text-secondary)">
+              Need something new? We'd love to see you again.
+            </p>
+            <a href="{% url 'bookings:book' %}" class="btn btn--primary btn--sm">
+              <i class="fas fa-calendar-plus" aria-hidden="true"></i> Book Again
+            </a>
+          </div>
+
           {% else %}
           <div class="empty-state">
-            <div class="empty-state__icon"><i class="fas fa-calendar-times"></i></div>
+            <div class="empty-state__icon" aria-hidden="true">
+              <i class="fas fa-calendar-star"></i>
+            </div>
             <h3 class="empty-state__title">No Appointments Yet</h3>
-            <p class="empty-state__text">You haven't booked anything with us yet. Let's change that.</p>
-            <a href="{% url 'bookings:book' %}" class="btn btn--primary">Book Your First Appointment</a>
+            <p class="empty-state__text">
+              You haven't booked anything with us yet. Treat yourself &mdash; you deserve it.
+            </p>
+            <a href="{% url 'bookings:book' %}" class="btn btn--primary">
+              <i class="fas fa-calendar-plus" aria-hidden="true"></i> Book Your First Appointment
+            </a>
           </div>
           {% endif %}
+
         </div>
       </div>
+
     </div>
   </div>
 </section>

@@ -6,15 +6,16 @@
 
 {% block content %}
 
+<!-- Page hero -->
 <div class="page-hero">
   <div class="container">
     <div class="page-hero__content">
       <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
         <a href="{% url 'core:home' %}">Home</a>
-        <span class="page-hero__breadcrumb-sep">/</span>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
         <a href="{% url 'team:list' %}">Our Team</a>
-        <span class="page-hero__breadcrumb-sep">/</span>
-        <span>{{ stylist.get_full_name }}</span>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">{{ stylist.get_full_name }}</span>
       </nav>
       <h1 class="page-hero__title">{{ stylist.get_full_name }}</h1>
       <p class="page-hero__subtitle">{{ stylist.get_role_display }}</p>
@@ -22,45 +23,81 @@
   </div>
 </div>
 
+<!-- Stylist detail -->
 <section class="section">
   <div class="container">
-    <div style="display:grid;grid-template-columns:340px 1fr;gap:3rem;align-items:start">
+    <div class="stylist-detail-layout">
+
+      <!-- Photo column -->
       <div data-aos="fade-right">
         {% if stylist.photo %}
-          <img src="{{ stylist.photo_thumb.url }}" alt="{{ stylist.get_full_name }}" style="width:100%;border-radius:var(--radius-lg);box-shadow:var(--shadow-md)">
+          <img
+            src="{{ stylist.photo_thumb.url }}"
+            alt="{{ stylist.get_full_name }}"
+            class="stylist-detail-photo"
+            loading="eager"
+          >
         {% else %}
-          <div style="width:100%;aspect-ratio:3/4;border-radius:var(--radius-lg);background:var(--navy);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md)">
-            <i class="fas fa-user-tie" style="font-size:5rem;color:rgba(212,175,55,.3)"></i>
+          <div class="stylist-detail-photo-placeholder" aria-hidden="true">
+            <i class="fas fa-user-tie"></i>
           </div>
         {% endif %}
 
         {% if stylist.instagram %}
-        <a href="{{ stylist.instagram }}" target="_blank" rel="noopener" class="btn btn--outline btn--full" style="margin-top:1.5rem">
-          <i class="fab fa-instagram"></i> Follow on Instagram
-        </a>
+          <a href="{{ stylist.instagram }}"
+             class="btn btn--outline btn--full"
+             style="margin-top:var(--space-6)"
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label="{{ stylist.get_full_name }} on Instagram">
+            <i class="fab fa-instagram" aria-hidden="true"></i> Follow on Instagram
+          </a>
         {% endif %}
       </div>
 
+      <!-- Info column -->
       <div data-aos="fade-left">
+
         <span class="section-eyebrow">{{ stylist.get_role_display }}</span>
-        <h2 style="font-size:2rem;margin-bottom:.5rem">{{ stylist.get_full_name }}</h2>
-        <p style="color:var(--gold);font-family:var(--font-ui);font-weight:600;font-size:.9375rem;margin-bottom:1.5rem">
-          {{ stylist.years_experience }} years of experience
+        <h2 style="font-size:var(--text-4xl);margin-bottom:var(--space-2)">
+          {{ stylist.get_full_name }}
+        </h2>
+        <p class="stylist-detail-experience">
+          {{ stylist.years_experience }} year{{ stylist.years_experience|pluralize }} of experience
         </p>
 
-        <div class="team-card__specs" style="justify-content:flex-start;margin-bottom:2rem">
-          {% for spec in stylist.specializations.all %}
-            <span class="spec-tag">{{ spec.name }}</span>
-          {% endfor %}
-        </div>
-
-        {% if stylist.bio %}
-        <p style="color:var(--grey-600);line-height:1.9;font-size:1.0625rem;margin-bottom:2.5rem">{{ stylist.bio }}</p>
+        <!-- Specialisations -->
+        {% if stylist.specializations.all %}
+          <div class="team-card__specs" style="justify-content:flex-start;margin-bottom:var(--space-8)">
+            {% for spec in stylist.specializations.all %}
+              <span class="spec-tag">{{ spec.name }}</span>
+            {% endfor %}
+          </div>
         {% endif %}
 
-        <a href="{% url 'bookings:book' %}?stylist={{ stylist.pk }}" class="btn btn--primary btn--lg">
-          <i class="fas fa-calendar-check"></i> Book with {{ stylist.first_name }}
-        </a>
+        <!-- Bio -->
+        {% if stylist.bio %}
+          <p class="stylist-detail-bio">{{ stylist.bio }}</p>
+        {% endif %}
+
+        <!-- CTA -->
+        <div style="display:flex;gap:var(--space-4);flex-wrap:wrap;align-items:center">
+          <a href="{% url 'bookings:book' %}?stylist={{ stylist.pk }}"
+             class="btn btn--primary btn--lg">
+            <i class="fas fa-calendar-check" aria-hidden="true"></i>
+            Book with {{ stylist.first_name }}
+          </a>
+          {% if salon.whatsapp_number %}
+            <a href="https://wa.me/{{ salon.whatsapp_number|cut:'+' }}?text=Hi%2C%20I%27d%20like%20to%20book%20with%20{{ stylist.first_name|urlencode }}"
+               class="btn btn--ghost"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Ask about booking {{ stylist.first_name }} on WhatsApp">
+              <i class="fab fa-whatsapp" aria-hidden="true"></i> Ask a Question
+            </a>
+          {% endif %}
+        </div>
+
       </div>
     </div>
   </div>

@@ -2,17 +2,74 @@
 {% load static %}
 
 {% block title %}Gallery{% endblock %}
-{% block meta_description %}Browse our gallery of haircuts, beard work, nail art, and client transformations at Balirah Beauty Salon.{% endblock %}
+{% block meta_description %}Browse our gallery of haircuts, beard work, nail art, and client transformations at Balirah Beauty Salon in Kampala.{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* ── Filter bar ─────────────────────────────────────────────────────── */
+  .gallery-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-10);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .gallery-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-ui);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding: var(--space-2) var(--space-5);
+    border-radius: var(--radius-full);
+    border: 1.5px solid var(--border-color);
+    background: none;
+    transition: all var(--transition);
+    cursor: pointer;
+  }
+  .gallery-filter:hover  { border-color: var(--gold); color: var(--gold); }
+  .gallery-filter.active { background: var(--gold); border-color: var(--gold); color: #1A1208; }
+
+  @media (max-width: 640px) {
+    .gallery-filters {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: var(--space-3);
+      scrollbar-width: none;
+    }
+    .gallery-filters::-webkit-scrollbar { display: none; }
+    .gallery-filter { flex-shrink: 0; }
+  }
+
+  /* ── Gallery grid ───────────────────────────────────────────────────── */
+  /* Override base grid for a masonry-like feel on larger screens */
+  @media (max-width: 480px) {
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-2); }
+  }
+
+  /* Badge inside overlay */
+  .gallery-item__overlay {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 
+<!-- Page hero -->
 <div class="page-hero">
   <div class="container">
     <div class="page-hero__content">
       <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
         <a href="{% url 'core:home' %}">Home</a>
-        <span class="page-hero__breadcrumb-sep">/</span>
-        <span>Gallery</span>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">Gallery</span>
       </nav>
       <h1 class="page-hero__title">Our Gallery</h1>
       <p class="page-hero__subtitle">A glimpse into the artistry we bring to every appointment.</p>
@@ -20,50 +77,102 @@
   </div>
 </div>
 
+<!-- Gallery section -->
 <section class="section">
   <div class="container">
+
+    <!-- Category filter buttons -->
     {% if categories %}
-    <div class="gallery-filters" role="group" aria-label="Filter gallery by category">
-      <button class="gallery-filter {% if not active_category %}active{% endif %}" data-filter="all">All</button>
-      {% for category in categories %}
-      <button class="gallery-filter {% if active_category == category.slug %}active{% endif %}" data-filter="{{ category.slug }}">{{ category.name }}</button>
-      {% endfor %}
-    </div>
+      <div class="gallery-filters"
+           role="group"
+           aria-label="Filter gallery by category"
+           data-aos="fade-up">
+        <button class="gallery-filter {% if not active_category %}active{% endif %}"
+                data-filter="all"
+                aria-pressed="{% if not active_category %}true{% else %}false{% endif %}">
+          All Work
+        </button>
+        {% for category in categories %}
+          <button
+            class="gallery-filter {% if active_category == category.slug %}active{% endif %}"
+            data-filter="{{ category.slug }}"
+            aria-pressed="{% if active_category == category.slug %}true{% else %}false{% endif %}"
+          >
+            {{ category.name }}
+          </button>
+        {% endfor %}
+      </div>
     {% endif %}
 
+    <!-- Images grid -->
     {% if images %}
-    <div class="gallery-grid" data-aos="fade-up">
-      {% for image in images %}
-      <div class="gallery-item"
-           data-lightbox="{{ image.large.url }}"
-           data-title="{{ image.title }}"
-           data-category="{{ image.category.slug }}"
-           role="button"
-           tabindex="0"
-           aria-label="View {{ image.title|default:"gallery image" }}">
-        <img src="{{ image.thumbnail.url }}" alt="{{ image.title|default:"Balirah salon work" }}" loading="lazy">
-        <div class="gallery-item__overlay">
-          {% if image.is_before_after %}<span class="badge badge--gold" style="margin-bottom:.5rem">Before / After</span>{% endif %}
-          <i class="fas fa-expand-alt gallery-item__overlay-icon"></i>
-        </div>
+      <div class="gallery-grid" data-aos="fade-up" data-stagger data-stagger-step="50">
+        {% for image in images %}
+          <div
+            class="gallery-item"
+            data-lightbox="{{ image.large.url }}"
+            data-title="{{ image.title|default:'' }}"
+            data-category="{{ image.category.slug|default:'uncategorised' }}"
+          >
+            <img
+              src="{{ image.thumbnail.url }}"
+              alt="{{ image.title|default:'Balirah salon work' }}"
+              loading="lazy"
+              decoding="async"
+            >
+            <div class="gallery-item__overlay" aria-hidden="true">
+              {% if image.is_before_after %}
+                <span class="badge badge--gold">Before / After</span>
+              {% endif %}
+              <i class="fas fa-expand-alt gallery-item__overlay-icon"></i>
+            </div>
+          </div>
+        {% endfor %}
       </div>
-      {% endfor %}
-    </div>
+
     {% else %}
-    <div class="empty-state">
-      <div class="empty-state__icon"><i class="fas fa-images"></i></div>
-      <h3 class="empty-state__title">Gallery Coming Soon</h3>
-      <p class="empty-state__text">We're curating our best work for you. Check back shortly.</p>
-    </div>
+      <div class="empty-state" data-aos="fade-up">
+        <div class="empty-state__icon" aria-hidden="true">
+          <i class="fas fa-images"></i>
+        </div>
+        <h3 class="empty-state__title">Gallery Coming Soon</h3>
+        <p class="empty-state__text">We're curating our best work for you. Check back shortly.</p>
+        <a href="{% url 'bookings:book' %}" class="btn btn--primary">Book an Appointment</a>
+      </div>
     {% endif %}
+
+    <!-- CTA below gallery -->
+    {% if images %}
+      <div style="margin-top:var(--space-12);text-align:center" data-aos="fade-up">
+        <p style="font-family:var(--font-ui);font-size:var(--text-sm);color:var(--text-muted);margin-bottom:var(--space-4)">
+          Like what you see? We'd love to work with you.
+        </p>
+        <a href="{% url 'bookings:book' %}" class="btn btn--primary">
+          <i class="fas fa-calendar-check" aria-hidden="true"></i> Book an Appointment
+        </a>
+      </div>
+    {% endif %}
+
   </div>
 </section>
 
-<div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
-  <button class="lightbox__close" aria-label="Close image viewer"><i class="fas fa-times"></i></button>
-  <button class="lightbox__prev" aria-label="Previous image"><i class="fas fa-chevron-left"></i></button>
+<!-- Lightbox (wired by main.js) -->
+<div id="lightbox"
+     class="lightbox"
+     role="dialog"
+     aria-modal="true"
+     aria-label="Image gallery viewer"
+     aria-hidden="true">
+  <button class="lightbox__close" aria-label="Close image viewer">
+    <i class="fas fa-times" aria-hidden="true"></i>
+  </button>
+  <button class="lightbox__prev" aria-label="Previous image">
+    <i class="fas fa-chevron-left" aria-hidden="true"></i>
+  </button>
   <img src="" alt="" class="lightbox__img" tabindex="0">
-  <button class="lightbox__next" aria-label="Next image"><i class="fas fa-chevron-right"></i></button>
+  <button class="lightbox__next" aria-label="Next image">
+    <i class="fas fa-chevron-right" aria-hidden="true"></i>
+  </button>
 </div>
 
 {% endblock %}

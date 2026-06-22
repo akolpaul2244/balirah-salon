@@ -2,24 +2,53 @@
 {% load static %}
 
 {% block title %}Cancel Appointment{% endblock %}
+{% block meta_description %}Cancel your appointment at Balirah Beauty Salon.{% endblock %}
+
+{% block extra_css %}
+<style>
+  .cancel-icon-ring {
+    width: 88px;
+    height: 88px;
+    border-radius: var(--radius-full);
+    background: var(--toast-error-bg);
+    border: 2px solid rgba(220,38,38,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-6);
+  }
+  .cancel-icon-ring i {
+    font-size: 2rem;
+    color: var(--toast-error-border);
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 
-<section class="section section--cream" style="min-height:calc(100vh - var(--nav-height));display:flex;align-items:center">
-  <div class="container" style="max-width:560px">
+<section class="section section--alt" style="min-height:calc(100vh - var(--nav-height));display:flex;align-items:center">
+  <div class="container" style="max-width:540px">
+
     <div class="form-card" data-aos="zoom-in">
-      <div style="text-align:center;margin-bottom:2rem">
-        <div class="status-card__icon status-card__icon--error" style="margin-bottom:1.5rem">
+
+      <!-- Icon + heading -->
+      <div style="text-align:center;margin-bottom:var(--space-8)">
+        <div class="cancel-icon-ring" aria-hidden="true">
           <i class="fas fa-exclamation-triangle"></i>
         </div>
-        <h1 style="font-size:1.75rem;margin-bottom:.5rem">Cancel Appointment?</h1>
-        <p style="color:var(--grey-600);font-size:.9375rem">This action cannot be undone. Your time slot will be released.</p>
+        <h1 style="font-size:var(--text-2xl);margin-bottom:var(--space-3)">Cancel Appointment?</h1>
+        <p style="color:var(--text-secondary);font-size:var(--text-sm);max-width:380px;margin:0 auto;line-height:1.7">
+          This action cannot be undone. Your time slot will be released and made available for other clients.
+        </p>
       </div>
 
-      <div class="booking-summary" style="margin-bottom:2rem">
+      <!-- Booking summary -->
+      <div class="booking-summary" style="margin-bottom:var(--space-8)">
         <div class="booking-summary__item">
           <span class="booking-summary__label">Reference</span>
-          <span class="booking-summary__value">{{ appointment.reference }}</span>
+          <span class="booking-summary__value" style="font-family:var(--font-ui);letter-spacing:0.06em">
+            {{ appointment.reference }}
+          </span>
         </div>
         <div class="booking-summary__item">
           <span class="booking-summary__label">Service</span>
@@ -27,7 +56,11 @@
         </div>
         <div class="booking-summary__item">
           <span class="booking-summary__label">Date</span>
-          <span class="booking-summary__value">{{ appointment.appointment_date|date:"l, d F Y" }}</span>
+          <span class="booking-summary__value">
+            <time datetime="{{ appointment.appointment_date|date:'Y-m-d' }}">
+              {{ appointment.appointment_date|date:"l, d F Y" }}
+            </time>
+          </span>
         </div>
         <div class="booking-summary__item">
           <span class="booking-summary__label">Time</span>
@@ -35,21 +68,52 @@
         </div>
       </div>
 
+      <!-- Cancellation form -->
       <form method="post" novalidate>
         {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="form-alert form-alert--error" role="alert">
+            <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+            <div>{{ form.non_field_errors }}</div>
+          </div>
+        {% endif %}
+
         <div class="form-group">
-          <label class="form-label" for="id_reason">{{ form.reason.label }}</label>
-          <textarea id="id_reason" name="reason" class="form-control" rows="3"
-                    placeholder="Let us know why you're cancelling (optional)...">{{ form.reason.value|default:'' }}</textarea>
+          <label class="form-label" for="id_reason">
+            {{ form.reason.label }}
+            <span style="font-weight:400;color:var(--text-muted)"> (optional)</span>
+          </label>
+          <textarea
+            id="id_reason"
+            name="reason"
+            class="form-control{% if form.reason.errors %} form-control--error{% endif %}"
+            rows="3"
+            placeholder="Let us know why you're cancelling so we can improve our service…"
+            aria-describedby="reasonHint{% if form.reason.errors %} reasonError{% endif %}"
+          >{{ form.reason.value|default:'' }}</textarea>
+          <span id="reasonHint" class="hint-text">Your feedback helps us serve you better.</span>
+          {% if form.reason.errors %}
+            <span id="reasonError" class="form-error" role="alert">
+              <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+              {{ form.reason.errors.0 }}
+            </span>
+          {% endif %}
         </div>
-        <div style="display:flex;gap:1rem;margin-top:1.5rem">
-          <a href="{% url 'accounts:profile' %}" class="btn btn--outline btn--full">Keep Appointment</a>
-          <button type="submit" class="btn btn--navy btn--full">
-            <i class="fas fa-times"></i> Confirm Cancellation
+
+        <div style="display:flex;gap:var(--space-3);margin-top:var(--space-6)">
+          <a href="{% url 'accounts:profile' %}" class="btn btn--outline btn--full">
+            <i class="fas fa-arrow-left" aria-hidden="true"></i> Keep Appointment
+          </a>
+          <button type="submit" class="btn btn--navy btn--full"
+                  onclick="this.disabled=true;this.innerHTML='<span class=\'spinner\' style=\'width:16px;height:16px;border-width:2px\'></span> Cancelling…';this.form.submit()">
+            <i class="fas fa-times" aria-hidden="true"></i> Confirm Cancellation
           </button>
         </div>
       </form>
+
     </div>
+
   </div>
 </section>
 

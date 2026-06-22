@@ -10,13 +10,17 @@
   <meta name="description" content="{% block meta_description %}{{ salon.meta_description|default:"Premium barber and nail services in Kampala, Uganda." }}{% endblock %}">
   <meta name="keywords" content="{% block meta_keywords %}barber kampala, nail salon kampala, haircut kampala, balirah beauty{% endblock %}">
   <meta name="author" content="{{ salon.salon_name|default:'Balirah Beauty Salon' }}">
+  <meta name="robots" content="index, follow">
 
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="{% block og_title %}{{ salon.salon_name|default:"Balirah Beauty Salon" }}{% endblock %}">
+  <meta property="og:type"        content="website">
+  <meta property="og:title"       content="{% block og_title %}{{ salon.salon_name|default:"Balirah Beauty Salon" }}{% endblock %}">
   <meta property="og:description" content="{% block og_description %}{{ salon.meta_description|default:"Premium barber and nail services in Kampala, Uganda." }}{% endblock %}">
-  <meta property="og:image" content="{% block og_image %}{% if salon.hero_image %}{{ request.scheme }}://{{ request.get_host }}{{ salon.hero_image.url }}{% endif %}{% endblock %}">
-  <meta property="og:url" content="{{ request.build_absolute_uri }}">
-  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:image"       content="{% block og_image %}{% if salon.hero_image %}{{ request.scheme }}://{{ request.get_host }}{{ salon.hero_image.url }}{% endif %}{% endblock %}">
+  <meta property="og:url"         content="{{ request.build_absolute_uri }}">
+  <meta property="og:site_name"   content="{{ salon.salon_name|default:'Balirah Beauty Salon' }}">
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="{% block twitter_title %}{{ salon.salon_name|default:"Balirah Beauty Salon" }}{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}{{ salon.meta_description|default:"Premium barber and nail services in Kampala, Uganda." }}{% endblock %}">
   <link rel="canonical" href="{{ request.build_absolute_uri }}">
 
   {% if salon.favicon %}
@@ -25,52 +29,67 @@
     <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
   {% endif %}
   <link rel="manifest" href="{% static 'manifest.json' %}">
-  <meta name="theme-color" content="#C9A84C" id="theme-color-meta">
+  <meta name="theme-color" content="#C9A84C">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer">
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"
+        integrity="sha512-1cK78a1o+ht2JcaW6g8OXYwqpev9+6GqOkz9xmBN9iUUqROYPchTeiJAA1PNBF4UhbBZXQxGBRkInKEfFVfQ=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer">
+
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
 
   <style>
-    /* ── Theme tokens — single source of truth ───────────────── */
+    /* ── Design tokens (light theme — single source of truth) ───────────── */
     :root {
+      /* Gold — constant */
       --gold:       #C9A84C;
       --gold-light: #E2C97E;
       --gold-dark:  #A07832;
       --gold-faint: rgba(201, 168, 76, 0.12);
-    }
 
-    :root,
-    [data-theme="light"] {
-      color-scheme: light;
-
-      --bg-primary:   #FFFFFF;
-      --bg-secondary: #F8F6F2;
+      /* Backgrounds — warm off-white */
+      --bg-primary:   #FAF9F5;
+      --bg-secondary: #F5F2EB;
       --bg-card:      #FFFFFF;
-      --bg-overlay:   rgba(255, 255, 255, 0.95);
+      --bg-overlay:   rgba(255, 255, 255, 0.96);
 
-      --text-primary:   #1A1A1A;
-      --text-secondary: #4A4A4A;
-      --text-muted:     #767676;
+      /* Typography */
+      --text-primary:   #1F1A14;
+      --text-secondary: #5C5549;
+      --text-muted:     #8A8070;
       --text-inverse:   #FFFFFF;
 
-      --border-color:  #E8E4DC;
-      --border-subtle: #F0EDE8;
+      /* Borders */
+      --border-color:  #EDE8DF;
+      --border-subtle: #F4F1EC;
 
-      --shadow-sm:   0 1px 3px rgba(0, 0, 0, 0.08);
-      --shadow-md:   0 4px 16px rgba(0, 0, 0, 0.10);
-      --shadow-lg:   0 8px 32px rgba(0, 0, 0, 0.12);
-      --shadow-gold: 0 4px 24px rgba(201, 168, 76, 0.18);
+      /* Elevation */
+      --shadow-sm:   0 2px 8px  rgba(0, 0, 0, 0.06);
+      --shadow-md:   0 4px 16px rgba(0, 0, 0, 0.09);
+      --shadow-lg:   0 12px 40px rgba(0, 0, 0, 0.09);
+      --shadow-gold: 0 4px 24px rgba(201, 168, 76, 0.22);
 
-      --nav-bg:     rgba(255, 255, 255, 0.97);
-      --nav-border: rgba(232, 228, 220, 0.8);
-      --footer-bg:  #1A1208;
+      /* Navigation */
+      --nav-bg:     rgba(250, 249, 245, 0.97);
+      --nav-border: rgba(237, 232, 223, 0.85);
+
+      /* Footer — always dark */
+      --footer-bg:   #1A1208;
       --footer-text: #D4C89A;
 
+      /* Toasts / alerts */
       --toast-success-bg:     #F0FBF4;
       --toast-success-border: #2D7A4F;
       --toast-error-bg:       #FEF2F2;
@@ -81,47 +100,9 @@
       --toast-info-border:    #2563EB;
     }
 
-    [data-theme="dark"] {
-      color-scheme: dark;
-
-      --bg-primary:   #0F0D0A;
-      --bg-secondary: #1A1610;
-      --bg-card:      #1E1A13;
-      --bg-overlay:   rgba(15, 13, 10, 0.97);
-
-      --text-primary:   #F5F0E8;
-      --text-secondary: #C8BEA8;
-      --text-muted:     #8A7F6A;
-      --text-inverse:   #0F0D0A;
-
-      --border-color:  #2E2A20;
-      --border-subtle: #252118;
-
-      --shadow-sm:   0 1px 3px rgba(0, 0, 0, 0.30);
-      --shadow-md:   0 4px 16px rgba(0, 0, 0, 0.40);
-      --shadow-lg:   0 8px 32px rgba(0, 0, 0, 0.50);
-      --shadow-gold: 0 4px 24px rgba(201, 168, 76, 0.22);
-
-      --nav-bg:      rgba(15, 13, 10, 0.97);
-      --nav-border:  rgba(46, 42, 32, 0.9);
-      --footer-bg:   #080705;
-      --footer-text: #C8BEA8;
-
-      --toast-success-bg:     #0D1F14;
-      --toast-success-border: #2D7A4F;
-      --toast-error-bg:       #1F0D0D;
-      --toast-error-border:   #DC2626;
-      --toast-warning-bg:     #1F1A0D;
-      --toast-warning-border: #D97706;
-      --toast-info-bg:        #0D1420;
-      --toast-info-border:    #2563EB;
-    }
-
-    /* ── Base reset (only what main.css doesn't cover) ───────── */
     html {
       scroll-behavior: smooth;
       -webkit-text-size-adjust: 100%;
-      text-size-adjust: 100%;
     }
 
     body {
@@ -129,20 +110,18 @@
       background-color: var(--bg-primary);
       color: var(--text-primary);
       line-height: 1.65;
-      transition: background-color var(--transition), color var(--transition);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     main { flex: 1; }
 
-    ::selection {
-      background: var(--gold);
-      color: #000;
-    }
+    ::selection { background: var(--gold); color: #1A1208; }
 
-    /* ── No-JS banner ────────────────────────────────────────── */
+    /* No-JS banner */
     .noscript-banner {
       background: var(--gold-dark);
       color: #fff;
@@ -152,21 +131,7 @@
       font-family: 'Inter', sans-serif;
     }
 
-    /* ── Theme toggle icon animation ─────────────────────────── */
-    .theme-toggle .icon-sun,
-    .theme-toggle .icon-moon {
-      position: absolute;
-      font-size: 0.95rem;
-      transition: opacity 0.18s ease, transform 0.22s ease;
-      pointer-events: none;
-    }
-
-    [data-theme="light"] .theme-toggle .icon-sun  { opacity: 1; transform: rotate(0deg)   scale(1);   }
-    [data-theme="light"] .theme-toggle .icon-moon { opacity: 0; transform: rotate(90deg)  scale(0.7); }
-    [data-theme="dark"]  .theme-toggle .icon-sun  { opacity: 0; transform: rotate(-90deg) scale(0.7); }
-    [data-theme="dark"]  .theme-toggle .icon-moon { opacity: 1; transform: rotate(0deg)   scale(1);   }
-
-    /* ── Toast notifications ─────────────────────────────────── */
+    /* ── Toast notifications ─────────────────────────────────────────────── */
     .toast-container {
       position: fixed;
       top: 5rem;
@@ -184,7 +149,7 @@
       align-items: flex-start;
       gap: 0.75rem;
       padding: 0.875rem 1rem;
-      border-radius: var(--radius-md);
+      border-radius: 10px;
       border-left: 3px solid;
       box-shadow: var(--shadow-lg);
       pointer-events: all;
@@ -222,36 +187,25 @@
       line-height: 1;
       padding: 0;
       flex-shrink: 0;
-      transition: color var(--transition);
+      transition: color 0.2s;
     }
-
     .toast__close:hover { color: var(--text-primary); }
 
     @keyframes toastSlideIn {
       from { opacity: 0; transform: translateX(110%); }
       to   { opacity: 1; transform: translateX(0); }
     }
-
     @keyframes toastSlideOut {
-      from { opacity: 1; transform: translateX(0);    max-height: 100px; margin-bottom: 0; }
-      to   { opacity: 0; transform: translateX(110%); max-height: 0;     margin-bottom: -0.6rem; }
+      from { opacity: 1; transform: translateX(0);    max-height: 100px; }
+      to   { opacity: 0; transform: translateX(110%); max-height: 0; margin-bottom: -0.6rem; }
     }
 
     @media (max-width: 480px) {
-      .toast-container {
-        top: auto;
-        bottom: 1.5rem;
-        right: 0.75rem;
-        left: 0.75rem;
-        max-width: 100%;
-      }
+      .toast-container { top: auto; bottom: 1.5rem; right: 0.75rem; left: 0.75rem; max-width: 100%; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
-      }
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
     }
   </style>
 
@@ -266,23 +220,17 @@
     gtag('config', '{{ salon.google_analytics_id }}', { anonymize_ip: true });
   </script>
   {% endif %}
-
-  <!-- Must run before first paint to prevent flash of wrong theme -->
-  <script>
-    (function () {
-      var saved = localStorage.getItem('balirah-theme');
-      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
-    })();
-  </script>
 </head>
+
 <body class="site-body">
 
   <noscript>
     <div class="noscript-banner">
-      JavaScript is disabled. Some features like the booking calendar may not work correctly.
+      JavaScript is disabled. Some features like online booking may not work correctly.
     </div>
   </noscript>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
 
   {% include "partials/navbar.html" %}
 
@@ -298,7 +246,9 @@
         {% endif %}
       </span>
       <p class="toast__text">{{ message }}</p>
-      <button class="toast__close" onclick="dismissToast(this.parentElement)" aria-label="Dismiss notification">&times;</button>
+      <button class="toast__close"
+              onclick="dismissToast(this.parentElement)"
+              aria-label="Dismiss notification">&times;</button>
     </div>
     {% endfor %}
   </div>
@@ -311,46 +261,35 @@
   {% include "partials/footer.html" %}
   {% include "partials/whatsapp_button.html" %}
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.min.js"
+          integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer"></script>
+
   <script src="{% static 'js/main.js' %}"></script>
   {% block extra_js %}{% endblock %}
 
   <script>
+    /* ── AOS ─────────────────────────────────────────────────────────────── */
     AOS.init({ duration: 650, once: true, offset: 50, easing: 'ease-out-cubic' });
 
+    /* ── Toast dismiss ───────────────────────────────────────────────────── */
     function dismissToast(el) {
       el.style.animation = 'toastSlideOut 0.3s forwards';
       setTimeout(function () { if (el.parentElement) el.remove(); }, 300);
     }
-
     document.querySelectorAll('.toast').forEach(function (t) {
       setTimeout(function () { dismissToast(t); }, 5000);
     });
 
-    function toggleTheme() {
-      var html = document.documentElement;
-      var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-theme', next);
-      localStorage.setItem('balirah-theme', next);
-      document.getElementById('theme-color-meta').setAttribute('content', next === 'dark' ? '#0F0D0A' : '#C9A84C');
-      document.querySelectorAll('.theme-toggle[aria-pressed]').forEach(function (btn) {
-        btn.setAttribute('aria-pressed', next === 'dark' ? 'true' : 'false');
-      });
-    }
-
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
-      if (!localStorage.getItem('balirah-theme')) {
-        document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
-      }
-    });
-
-    // Hamburger + navbar scroll — kept here so main.js stays clean
+    /* ── Navbar: hamburger + scroll shadow + active link ─────────────────── */
     (function () {
       var hamburger = document.getElementById('hamburgerBtn');
       var mobileMenu = document.getElementById('mobileMenu');
       var navbar = document.getElementById('navbar');
 
       function openMenu() {
+        if (!mobileMenu || !hamburger) return;
         mobileMenu.classList.add('open');
         mobileMenu.setAttribute('aria-hidden', 'false');
         hamburger.classList.add('open');
@@ -360,6 +299,7 @@
       }
 
       function closeMenu() {
+        if (!mobileMenu || !hamburger) return;
         mobileMenu.classList.remove('open');
         mobileMenu.setAttribute('aria-hidden', 'true');
         hamburger.classList.remove('open');
@@ -372,18 +312,13 @@
         hamburger.addEventListener('click', function () {
           mobileMenu.classList.contains('open') ? closeMenu() : openMenu();
         });
-
         document.addEventListener('click', function (e) {
           if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
             closeMenu();
           }
         });
-
         document.addEventListener('keydown', function (e) {
-          if (e.key === 'Escape' && mobileMenu.classList.contains('open')) {
-            closeMenu();
-            hamburger.focus();
-          }
+          if (e.key === 'Escape' && mobileMenu.classList.contains('open')) { closeMenu(); hamburger.focus(); }
         });
       }
 
@@ -393,7 +328,6 @@
         }, { passive: true });
       }
 
-      // Active nav link
       var path = window.location.pathname;
       document.querySelectorAll('.navbar__link, .navbar__mobile-link').forEach(function (link) {
         if (link.getAttribute('href') === path) {
@@ -401,7 +335,7 @@
           link.setAttribute('aria-current', 'page');
         }
       });
-    })();
+    }());
   </script>
 </body>
 </html>

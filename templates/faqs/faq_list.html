@@ -2,17 +2,121 @@
 {% load static %}
 
 {% block title %}Frequently Asked Questions{% endblock %}
-{% block meta_description %}Answers to common questions about booking, services, and visiting Balirah Beauty Salon.{% endblock %}
+{% block meta_description %}Answers to common questions about booking, services, and visiting Balirah Beauty Salon in Kampala.{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* ── FAQ category heading ───────────────────────────────────────────── */
+  .faq-category { margin-bottom: var(--space-12); }
+  .faq-category__title {
+    font-size: var(--text-xl);
+    color: var(--text-primary);
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-3);
+    border-bottom: 2px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .faq-category__title::before {
+    content: '';
+    width: 4px;
+    height: 1.2em;
+    background: var(--gold);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ── FAQ item ───────────────────────────────────────────────────────── */
+  .faq-item {
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-3);
+    background: var(--bg-card);
+    overflow: hidden;
+    transition: border-color var(--transition), box-shadow var(--transition);
+  }
+  .faq-item:hover  { border-color: var(--border-color); }
+  .faq-item.open   { border-color: var(--gold); box-shadow: var(--shadow-sm); }
+
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-5) var(--space-6);
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .faq-question__text {
+    font-weight: 600;
+    font-size: var(--text-base);
+    color: var(--text-primary);
+    line-height: 1.5;
+    flex: 1;
+  }
+  .faq-item.open .faq-question__text { color: var(--gold-dark); }
+
+  .faq-question__icon {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    border: 1.5px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    flex-shrink: 0;
+    transition: all var(--transition);
+  }
+  .faq-item.open .faq-question__icon {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #1A1208;
+    transform: rotate(45deg);
+  }
+
+  /* ── FAQ answer ─────────────────────────────────────────────────────── */
+  .faq-answer { overflow: hidden; }
+  .faq-answer__inner {
+    padding: 0 var(--space-6) var(--space-6);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.8;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: var(--space-4);
+  }
+  .faq-answer__inner p  { margin-bottom: var(--space-3); }
+  .faq-answer__inner p:last-child { margin-bottom: 0; }
+  .faq-answer__inner a  { color: var(--gold); }
+  .faq-answer__inner a:hover { color: var(--gold-dark); }
+
+  /* ── Still have questions CTA ───────────────────────────────────────── */
+  .faq-cta {
+    margin-top: var(--space-12);
+    padding: var(--space-10) var(--space-8);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-subtle);
+    text-align: center;
+  }
+  .faq-cta__title { font-size: var(--text-2xl); margin-bottom: var(--space-3); }
+  .faq-cta__text  { color: var(--text-secondary); margin-bottom: var(--space-6); font-size: var(--text-sm); line-height: 1.7; max-width: 400px; margin-left: auto; margin-right: auto; }
+</style>
+{% endblock %}
 
 {% block content %}
 
+<!-- Page hero -->
 <div class="page-hero">
   <div class="container">
     <div class="page-hero__content">
       <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
         <a href="{% url 'core:home' %}">Home</a>
-        <span class="page-hero__breadcrumb-sep">/</span>
-        <span>FAQs</span>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">FAQs</span>
       </nav>
       <h1 class="page-hero__title">Frequently Asked Questions</h1>
       <p class="page-hero__subtitle">Everything you need to know before your visit.</p>
@@ -20,47 +124,89 @@
   </div>
 </div>
 
+<!-- FAQ content -->
 <section class="section">
   <div class="container" style="max-width:760px">
+
     {% if categories %}
-    {% for category in categories %}
-    <div class="faq-category" data-aos="fade-up">
-      <h2 class="faq-category__title">{{ category.name }}</h2>
-      {% for faq in category.faqs.all %}
-      {% if faq.is_active %}
-      <div class="faq-item">
-        <div class="faq-question">
-          <span class="faq-question__text">{{ faq.question }}</span>
-          <span class="faq-question__icon"><i class="fas fa-plus"></i></span>
+      {% for category in categories %}
+        <div class="faq-category" data-aos="fade-up">
+          <h2 class="faq-category__title">{{ category.name }}</h2>
+
+          {% for faq in category.faqs.all %}
+            {% if faq.is_active %}
+              <div class="faq-item">
+                <div class="faq-question" role="button" tabindex="0" aria-expanded="false">
+                  <span class="faq-question__text">{{ faq.question }}</span>
+                  <span class="faq-question__icon" aria-hidden="true">
+                    <i class="fas fa-plus"></i>
+                  </span>
+                </div>
+                <div class="faq-answer" role="region">
+                  <div class="faq-answer__inner">{{ faq.answer }}</div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+
         </div>
-        <div class="faq-answer">
-          <div class="faq-answer__inner">{{ faq.answer }}</div>
-        </div>
-      </div>
-      {% endif %}
       {% endfor %}
-    </div>
-    {% endfor %}
+
     {% else %}
-    <div class="empty-state">
-      <div class="empty-state__icon"><i class="fas fa-question-circle"></i></div>
-      <h3 class="empty-state__title">No FAQs Yet</h3>
-      <p class="empty-state__text">Have a question? Reach out and we'll be happy to help.</p>
-    </div>
+      <!-- Uncategorised fallback -->
+      {% if faqs %}
+        <div class="faq-category" data-aos="fade-up">
+          {% for faq in faqs %}
+            {% if faq.is_active %}
+              <div class="faq-item">
+                <div class="faq-question" role="button" tabindex="0" aria-expanded="false">
+                  <span class="faq-question__text">{{ faq.question }}</span>
+                  <span class="faq-question__icon" aria-hidden="true">
+                    <i class="fas fa-plus"></i>
+                  </span>
+                </div>
+                <div class="faq-answer" role="region">
+                  <div class="faq-answer__inner">{{ faq.answer }}</div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state" data-aos="fade-up">
+          <div class="empty-state__icon" aria-hidden="true">
+            <i class="fas fa-question-circle"></i>
+          </div>
+          <h3 class="empty-state__title">No FAQs Yet</h3>
+          <p class="empty-state__text">Have a question? Reach out and we'll be happy to help.</p>
+          <a href="{% url 'core:contact' %}" class="btn btn--primary">Contact Us</a>
+        </div>
+      {% endif %}
     {% endif %}
 
-    <div style="margin-top:3rem;padding:2.5rem;background:var(--cream);border-radius:var(--radius-xl);text-align:center" data-aos="fade-up">
-      <h3 style="font-size:1.25rem;margin-bottom:.75rem">Still Have Questions?</h3>
-      <p style="color:var(--grey-600);margin-bottom:1.5rem">Our team is happy to help with anything not covered above.</p>
-      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
-        <a href="{% url 'core:contact' %}" class="btn btn--outline">Contact Us</a>
-        {% if whatsapp_number %}
-        <a href="https://wa.me/{{ whatsapp_number|cut:'+' }}" class="btn btn--navy" target="_blank" rel="noopener">
-          <i class="fab fa-whatsapp"></i> WhatsApp Us
-        </a>
-        {% endif %}
+    <!-- Still have questions -->
+    {% if categories or faqs %}
+      <div class="faq-cta" data-aos="fade-up">
+        <h3 class="faq-cta__title">Still Have Questions?</h3>
+        <p class="faq-cta__text">
+          Our team is happy to help with anything not covered above. Reach out and we'll get back to you promptly.
+        </p>
+        <div style="display:flex;gap:var(--space-3);justify-content:center;flex-wrap:wrap">
+          <a href="{% url 'core:contact' %}" class="btn btn--outline">
+            <i class="fas fa-envelope" aria-hidden="true"></i> Contact Us
+          </a>
+          {% if salon.whatsapp_number %}
+            <a href="https://wa.me/{{ salon.whatsapp_number|cut:'+' }}"
+               class="btn btn--primary"
+               target="_blank"
+               rel="noopener noreferrer">
+              <i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp Us
+            </a>
+          {% endif %}
+        </div>
       </div>
-    </div>
+    {% endif %}
+
   </div>
 </section>
 

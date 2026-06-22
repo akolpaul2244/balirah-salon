@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Blog{% endblock %}
+{% block title %}Blog – Style Tips &amp; Trends{% endblock %}
 {% block meta_description %}Hair care tips, beard grooming advice, and nail trends from the Balirah Beauty Salon team.{% endblock %}
 
 {% block content %}
 
 <div class="page-hero">
   <div class="container">
-    <div class="page-hero__content">
+    <div class="page-hero__content" data-reveal>
       <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
         <a href="{% url 'core:home' %}">Home</a>
-        <span class="page-hero__breadcrumb-sep">/</span>
-        <span>Blog</span>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">Blog</span>
       </nav>
       <h1 class="page-hero__title">Style Tips &amp; Trends</h1>
       <p class="page-hero__subtitle">Grooming wisdom and nail inspiration from our experts.</p>
@@ -22,33 +22,75 @@
 
 <section class="section">
   <div class="container">
+
     {% if categories %}
-    <div class="gallery-filters" role="group" aria-label="Filter posts by category">
-      <a href="{% url 'blog:list' %}" class="gallery-filter {% if not active_category %}active{% endif %}">All</a>
+    <div
+      class="service-tab-nav"
+      role="group"
+      aria-label="Filter posts by category"
+      style="margin-bottom:var(--space-10)"
+    >
+      <a
+        href="{% url 'blog:list' %}"
+        class="service-tab {% if not active_category %}active{% endif %}"
+        aria-pressed="{% if not active_category %}true{% else %}false{% endif %}"
+      >
+        All Posts
+      </a>
       {% for category in categories %}
-      <a href="?category={{ category.slug }}" class="gallery-filter {% if active_category == category.slug %}active{% endif %}">{{ category.name }}</a>
+      <a
+        href="?category={{ category.slug }}"
+        class="service-tab {% if active_category == category.slug %}active{% endif %}"
+        aria-pressed="{% if active_category == category.slug %}true{% else %}false{% endif %}"
+      >
+        {{ category.name }}
+      </a>
       {% endfor %}
     </div>
     {% endif %}
 
     {% if page_obj %}
-    <div class="grid grid-3" data-aos="fade-up">
+
+    <div class="grid grid-3" data-stagger>
       {% for post in page_obj %}
-      <article class="blog-card">
-        <a href="{{ post.get_absolute_url }}">
+      <article class="blog-card" aria-label="{{ post.title }}">
+        <a
+          href="{{ post.get_absolute_url }}"
+          class="blog-card__image-wrap"
+          tabindex="-1"
+          aria-hidden="true"
+        >
           {% if post.featured_image %}
-            <img src="{{ post.featured_image_thumb.url }}" alt="{{ post.title }}" class="blog-card__image" loading="lazy">
+            <img
+              src="{{ post.featured_image_thumb.url }}"
+              alt=""
+              class="blog-card__image"
+              loading="lazy"
+              width="640"
+              height="400"
+            >
           {% else %}
-            <div class="blog-card__image-placeholder"><i class="fas fa-pen-nib"></i></div>
+            <div class="blog-card__image-placeholder" aria-hidden="true">
+              <i class="fas fa-pen-nib"></i>
+            </div>
           {% endif %}
         </a>
         <div class="blog-card__body">
-          {% if post.category %}<div class="blog-card__category">{{ post.category.name }}</div>{% endif %}
-          <h3 class="blog-card__title"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+          {% if post.category %}
+          <div class="blog-card__category">{{ post.category.name }}</div>
+          {% endif %}
+          <h2 class="blog-card__title">
+            <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+          </h2>
           <p class="blog-card__excerpt">{{ post.excerpt|truncatewords:20 }}</p>
           <div class="blog-card__meta">
-            <span>{{ post.published_at|date:"d M Y" }}</span>
-            {% if post.author %}<span class="blog-card__meta-sep">·</span><span>{{ post.author.get_full_name }}</span>{% endif %}
+            <time datetime="{{ post.published_at|date:'Y-m-d' }}">
+              {{ post.published_at|date:"d M Y" }}
+            </time>
+            {% if post.author %}
+            <span class="blog-card__meta-sep" aria-hidden="true">·</span>
+            <span>{{ post.author.get_full_name }}</span>
+            {% endif %}
           </div>
         </div>
       </article>
@@ -56,35 +98,103 @@
     </div>
 
     {% if page_obj.has_other_pages %}
-    <nav class="pagination" aria-label="Blog pagination">
+    <nav class="pagination" aria-label="Blog pagination" style="margin-top:var(--space-12)">
       {% if page_obj.has_previous %}
-      <a href="?page={{ page_obj.previous_page_number }}{% if active_category %}&category={{ active_category }}{% endif %}" class="page-link page-link--prev">
-        <i class="fas fa-arrow-left"></i>
+      <a
+        href="?page={{ page_obj.previous_page_number }}{% if active_category %}&amp;category={{ active_category }}{% endif %}"
+        class="page-link page-link--prev"
+        aria-label="Previous page"
+      >
+        <i class="fas fa-arrow-left" aria-hidden="true"></i>
       </a>
       {% endif %}
+
       {% for num in page_obj.paginator.page_range %}
         {% if num == page_obj.number %}
-        <span class="page-link active">{{ num }}</span>
+          <span class="page-link active" aria-current="page" aria-label="Page {{ num }}">{{ num }}</span>
         {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
-        <a href="?page={{ num }}{% if active_category %}&category={{ active_category }}{% endif %}" class="page-link">{{ num }}</a>
+          <a
+            href="?page={{ num }}{% if active_category %}&amp;category={{ active_category }}{% endif %}"
+            class="page-link"
+            aria-label="Page {{ num }}"
+          >{{ num }}</a>
         {% endif %}
       {% endfor %}
+
       {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}{% if active_category %}&category={{ active_category }}{% endif %}" class="page-link page-link--next">
-        <i class="fas fa-arrow-right"></i>
+      <a
+        href="?page={{ page_obj.next_page_number }}{% if active_category %}&amp;category={{ active_category }}{% endif %}"
+        class="page-link page-link--next"
+        aria-label="Next page"
+      >
+        <i class="fas fa-arrow-right" aria-hidden="true"></i>
       </a>
       {% endif %}
     </nav>
     {% endif %}
 
     {% else %}
-    <div class="empty-state">
-      <div class="empty-state__icon"><i class="fas fa-pen-nib"></i></div>
-      <h3 class="empty-state__title">No Posts Yet</h3>
-      <p class="empty-state__text">We're working on our first articles. Check back soon for tips and trends.</p>
+    <div class="empty-state" data-reveal>
+      <div class="empty-state__icon" aria-hidden="true">
+        <i class="fas fa-pen-nib"></i>
+      </div>
+      <h2 class="empty-state__title">No Posts Yet</h2>
+      <p class="empty-state__text">
+        We're working on our first articles. Check back soon for tips and trends from our stylists.
+      </p>
+      <a href="{% url 'bookings:book' %}" class="btn btn--primary">
+        <i class="fas fa-calendar-check" aria-hidden="true"></i> Book an Appointment
+      </a>
     </div>
     {% endif %}
+
   </div>
 </section>
 
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Reuse service-tab styles as category filters */
+  .service-tab-nav a.service-tab { text-decoration: none; }
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 var(--space-3);
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border-color);
+    font-family: var(--font-ui);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all var(--transition);
+  }
+
+  .page-link:hover { border-color: var(--gold); color: var(--gold); }
+
+  .page-link.active,
+  .page-link[aria-current="page"] {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #1A1208;
+    font-weight: 700;
+    pointer-events: none;
+  }
+
+  .page-link--prev,
+  .page-link--next { padding: 0 var(--space-3); }
+</style>
 {% endblock %}

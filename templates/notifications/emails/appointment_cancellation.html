@@ -1,20 +1,67 @@
 {% extends "notifications/emails/_base_email.html" %}
 
 {% block email_content %}
-<h1 style="margin:0 0 16px;font-family:Georgia,serif;font-size:24px;color:#0A2540;">Appointment Cancelled</h1>
-<p style="margin:0 0 24px;font-size:15px;line-height:1.7;color:#555555;">
-Hi {{ appointment.client_name }}, your appointment at {{ salon_name }} has been cancelled as requested.
+
+<h1 style="margin:0 0 8px;font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:700;color:#1A1208;line-height:1.2;">
+  Appointment Cancelled
+</h1>
+<div style="width:40px;height:3px;background-color:#C9A84C;border-radius:2px;margin-bottom:20px;"></div>
+
+<p style="margin:0 0 24px;font-size:15px;line-height:1.75;color:#5C5549;font-family:Helvetica,Arial,sans-serif;">
+  Hi <strong style="color:#1A1208;">{{ appointment.client_name }}</strong>, your appointment at
+  <strong style="color:#1A1208;">{{ salon_name }}</strong> has been cancelled as requested.
 </p>
 
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#FAF7F2;border-radius:8px;margin-bottom:24px;">
-<tr><td style="padding:24px;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-<tr><td style="padding:8px 0;font-size:14px;color:#555555;">Reference</td><td style="padding:8px 0;font-size:14px;font-weight:700;color:#0A2540;text-align:right;">{{ appointment.reference }}</td></tr>
-<tr><td style="padding:8px 0;font-size:14px;color:#555555;border-top:1px solid rgba(0,0,0,0.06);">Service</td><td style="padding:8px 0;font-size:14px;font-weight:700;color:#0A2540;text-align:right;border-top:1px solid rgba(0,0,0,0.06);">{{ appointment.service.name }}</td></tr>
-<tr><td style="padding:8px 0;font-size:14px;color:#555555;border-top:1px solid rgba(0,0,0,0.06);">Original Date</td><td style="padding:8px 0;font-size:14px;font-weight:700;color:#0A2540;text-align:right;border-top:1px solid rgba(0,0,0,0.06);">{{ appointment.appointment_date|date:"l, d F Y" }}</td></tr>
-</table>
-</td></tr>
+<!-- Summary table -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       style="background-color:#FAF9F5;border-radius:8px;margin-bottom:24px;border:1px solid #EDE8DF;">
+  <tr>
+    <td style="padding:20px 24px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+
+        <tr>
+          <td style="padding:9px 0;font-size:13px;color:#8A8070;font-family:Helvetica,Arial,sans-serif;">Reference</td>
+          <td style="padding:9px 0;font-size:13px;font-weight:700;color:#1A1208;text-align:right;font-family:Helvetica,Arial,sans-serif;letter-spacing:0.05em;">
+            {{ appointment.reference }}
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:9px 0;font-size:13px;color:#8A8070;font-family:Helvetica,Arial,sans-serif;border-top:1px solid #EDE8DF;">Service</td>
+          <td style="padding:9px 0;font-size:13px;font-weight:700;color:#1A1208;text-align:right;font-family:Helvetica,Arial,sans-serif;border-top:1px solid #EDE8DF;">
+            {{ appointment.service.name }}
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:9px 0;font-size:13px;color:#8A8070;font-family:Helvetica,Arial,sans-serif;border-top:1px solid #EDE8DF;">Original Date</td>
+          <td style="padding:9px 0;font-size:13px;font-weight:700;color:#1A1208;text-align:right;font-family:Helvetica,Arial,sans-serif;border-top:1px solid #EDE8DF;">
+            {{ appointment.appointment_date|date:"l, d F Y" }}
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
 </table>
 
-<p style="margin:0 0 16px;font-size:14px;line-height:1.7;color:#555555;">We're sorry to see this one go. Whenever you're ready to rebook, we'll be here.</p>
+<p style="margin:0 0 16px;font-size:14px;line-height:1.75;color:#5C5549;font-family:Helvetica,Arial,sans-serif;">
+  We're sorry to see this one go. Whenever you're ready to book again, we'll be here.
+</p>
+
+<!-- Rebook CTA -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td align="center" style="padding:8px 0 4px;">
+      <a href="{{ book_url }}"
+         class="btn-primary"
+         style="display:inline-block;background-color:#C9A84C;color:#1A1208;font-weight:700;
+                font-size:14px;padding:13px 36px;border-radius:24px;text-decoration:none;
+                font-family:Helvetica,Arial,sans-serif;letter-spacing:0.03em;">
+        Book Another Appointment
+      </a>
+    </td>
+  </tr>
+</table>
+
 {% endblock %}

@@ -2,97 +2,212 @@
 {% load static %}
 
 {% block title %}Create Account{% endblock %}
+{% block meta_description %}Create a Balirah Beauty Salon account to book appointments faster, track history, and access exclusive offers.{% endblock %}
 
 {% block content %}
 
 <div class="auth-layout">
+
+  <!-- Left decorative panel -->
   <div class="auth-panel--left">
     <div class="auth-intro">
       <span class="hero__eyebrow">Join Balirah</span>
-      <h1 class="auth-intro__title">Create Your Account</h1>
+      <h1 class="auth-intro__title">Your Beauty<br><em style="color:var(--gold);font-style:italic">Journey Starts Here</em></h1>
       <p class="auth-intro__text">
-        Sign up to book faster, track your appointment history, and receive exclusive offers tailored to you.
+        Create an account to book faster, track your appointment history, and receive exclusive offers tailored just for you.
       </p>
       <div class="auth-feature-list">
         <div class="auth-feature-item">
-          <i class="fas fa-bolt"></i>
+          <i class="fas fa-bolt" aria-hidden="true"></i>
           <span>Faster checkout with saved details</span>
         </div>
         <div class="auth-feature-item">
-          <i class="fas fa-history"></i>
+          <i class="fas fa-history" aria-hidden="true"></i>
           <span>Full appointment history at a glance</span>
         </div>
         <div class="auth-feature-item">
-          <i class="fas fa-gift"></i>
+          <i class="fas fa-gift" aria-hidden="true"></i>
           <span>Exclusive promotions and birthday treats</span>
+        </div>
+        <div class="auth-feature-item">
+          <i class="fas fa-shield-alt" aria-hidden="true"></i>
+          <span>Secure, private, and never spammed</span>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Right form panel -->
   <div class="auth-panel--right">
     <div class="auth-form-wrapper">
-      <h2 class="auth-title">Create Account</h2>
-      <p class="auth-subtitle">Already have an account? <a href="{% url 'accounts:login' %}" class="auth-link">Sign in</a></p>
+
+      <div style="margin-bottom:var(--space-8)">
+        <h2 class="auth-title">Create Account</h2>
+        <p class="auth-subtitle">
+          Already have an account?
+          <a href="{% url 'accounts:login' %}" class="auth-link">Sign in</a>
+        </p>
+      </div>
+
+      {% if form.non_field_errors %}
+      <div class="form-alert form-alert--error" role="alert" aria-live="assertive">
+        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+        <span>{{ form.non_field_errors|join:", " }}</span>
+      </div>
+      {% endif %}
 
       <form method="post" novalidate>
         {% csrf_token %}
+
         <div class="form-grid">
           <div class="form-group">
             <label class="form-label" for="id_first_name">First Name</label>
-            <input type="text" id="id_first_name" name="first_name" class="form-control {% if form.first_name.errors %}form-control--error{% endif %}"
-                   value="{{ form.first_name.value|default:'' }}" required autocomplete="given-name">
-            {% if form.first_name.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.first_name.errors|join:", " }}</span>{% endif %}
+            <input
+              type="text"
+              id="id_first_name"
+              name="first_name"
+              class="form-control {% if form.first_name.errors %}form-control--error{% endif %}"
+              value="{{ form.first_name.value|default:'' }}"
+              required
+              autocomplete="given-name"
+              aria-required="true"
+              placeholder="Jane"
+            >
+            {% if form.first_name.errors %}
+            <span class="form-error" role="alert">
+              <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+              {{ form.first_name.errors|join:", " }}
+            </span>
+            {% endif %}
           </div>
+
           <div class="form-group">
             <label class="form-label" for="id_last_name">Last Name</label>
-            <input type="text" id="id_last_name" name="last_name" class="form-control {% if form.last_name.errors %}form-control--error{% endif %}"
-                   value="{{ form.last_name.value|default:'' }}" required autocomplete="family-name">
-            {% if form.last_name.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.last_name.errors|join:", " }}</span>{% endif %}
+            <input
+              type="text"
+              id="id_last_name"
+              name="last_name"
+              class="form-control {% if form.last_name.errors %}form-control--error{% endif %}"
+              value="{{ form.last_name.value|default:'' }}"
+              required
+              autocomplete="family-name"
+              aria-required="true"
+              placeholder="Doe"
+            >
+            {% if form.last_name.errors %}
+            <span class="form-error" role="alert">
+              <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+              {{ form.last_name.errors|join:", " }}
+            </span>
+            {% endif %}
           </div>
         </div>
 
         <div class="form-group">
           <label class="form-label" for="id_email">Email Address</label>
-          <input type="email" id="id_email" name="email" class="form-control {% if form.email.errors %}form-control--error{% endif %}"
-                 value="{{ form.email.value|default:'' }}" required autocomplete="email" inputmode="email">
-          {% if form.email.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.email.errors|join:", " }}</span>{% endif %}
+          <input
+            type="email"
+            id="id_email"
+            name="email"
+            class="form-control {% if form.email.errors %}form-control--error{% endif %}"
+            value="{{ form.email.value|default:'' }}"
+            required
+            autocomplete="email"
+            inputmode="email"
+            aria-required="true"
+            placeholder="you@example.com"
+          >
+          {% if form.email.errors %}
+          <span class="form-error" role="alert">
+            <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+            {{ form.email.errors|join:", " }}
+          </span>
+          {% endif %}
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="id_phone_number">Phone Number</label>
-          <input type="tel" id="id_phone_number" name="phone_number" class="form-control"
-                 value="{{ form.phone_number.value|default:'' }}" placeholder="+256 700 000 000" autocomplete="tel">
+          <label class="form-label" for="id_phone_number">
+            Phone Number
+            <span class="text-muted" style="font-weight:400;font-size:var(--text-xs)"> (optional)</span>
+          </label>
+          <input
+            type="tel"
+            id="id_phone_number"
+            name="phone_number"
+            class="form-control"
+            value="{{ form.phone_number.value|default:'' }}"
+            placeholder="+256 700 000 000"
+            autocomplete="tel"
+          >
+          <p class="hint-text">Used only for appointment SMS reminders.</p>
         </div>
 
         <div class="form-group">
           <label class="form-label" for="id_password1">Password</label>
           <div class="input-icon-wrap">
-            <input type="password" id="id_password1" name="password1" class="form-control {% if form.password1.errors %}form-control--error{% endif %}" required autocomplete="new-password">
-            <button type="button" class="input-icon-btn" data-password-toggle="id_password1" aria-label="Show password">
-              <i class="fas fa-eye"></i>
+            <input
+              type="password"
+              id="id_password1"
+              name="password1"
+              class="form-control {% if form.password1.errors %}form-control--error{% endif %}"
+              required
+              autocomplete="new-password"
+              aria-required="true"
+              aria-describedby="password-hint"
+            >
+            <button
+              type="button"
+              class="input-icon-btn"
+              data-password-toggle="id_password1"
+              aria-label="Show password"
+              aria-pressed="false"
+            >
+              <i class="fas fa-eye" aria-hidden="true"></i>
             </button>
           </div>
-          {% if form.password1.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.password1.errors|join:", " }}</span>{% endif %}
-          <p class="hint-text">Minimum 8 characters, not entirely numeric.</p>
+          {% if form.password1.errors %}
+          <span class="form-error" role="alert">
+            <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+            {{ form.password1.errors|join:", " }}
+          </span>
+          {% endif %}
+          <p class="hint-text" id="password-hint">Minimum 8 characters. Not entirely numeric.</p>
         </div>
 
         <div class="form-group">
           <label class="form-label" for="id_password2">Confirm Password</label>
-          <input type="password" id="id_password2" name="password2" class="form-control {% if form.password2.errors %}form-control--error{% endif %}" required autocomplete="new-password">
-          {% if form.password2.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.password2.errors|join:", " }}</span>{% endif %}
+          <input
+            type="password"
+            id="id_password2"
+            name="password2"
+            class="form-control {% if form.password2.errors %}form-control--error{% endif %}"
+            required
+            autocomplete="new-password"
+            aria-required="true"
+          >
+          {% if form.password2.errors %}
+          <span class="form-error" role="alert">
+            <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+            {{ form.password2.errors|join:", " }}
+          </span>
+          {% endif %}
         </div>
 
-        <button type="submit" class="btn btn--primary btn--full btn--lg">
-          Create Account
+        <button type="submit" class="btn btn--primary btn--full btn--lg" style="margin-top:var(--space-2)">
+          <i class="fas fa-user-plus" aria-hidden="true"></i> Create Account
         </button>
 
-        <p class="hint-text hint-text--center">
-          By signing up, you agree to our <a href="{% url 'core:terms_conditions' %}" class="text-gold">Terms</a> and <a href="{% url 'core:privacy_policy' %}" class="text-gold">Privacy Policy</a>.
+        <p class="hint-text hint-text--center" style="margin-top:var(--space-5)">
+          By signing up, you agree to our
+          <a href="{% url 'core:terms_conditions' %}" class="text-gold">Terms</a>
+          and
+          <a href="{% url 'core:privacy_policy' %}" class="text-gold">Privacy Policy</a>.
         </p>
+
       </form>
     </div>
   </div>
+
 </div>
 
 {% endblock %}

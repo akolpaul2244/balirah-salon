@@ -5,7 +5,8 @@
   <div class="container">
     <div class="navbar__inner">
 
-      <a href="{% url 'core:home' %}" class="navbar__logo" aria-label="{{ salon.salon_name|default:'Balirah Beauty Salon' }} home">
+      <a href="{% url 'core:home' %}" class="navbar__logo"
+         aria-label="{{ salon.salon_name|default:'Balirah Beauty Salon' }} — home">
         {% if salon.logo %}
           <img src="{{ salon.logo.url }}" alt="{{ salon.salon_name }}" class="navbar__logo-img">
         {% else %}
@@ -16,39 +17,34 @@
       </a>
 
       <nav class="navbar__nav" aria-label="Site navigation">
-        <a href="{% url 'core:home' %}" class="navbar__link">Home</a>
-        <a href="{% url 'core:about' %}" class="navbar__link">About</a>
-        <a href="{% url 'services:list' %}" class="navbar__link">Services</a>
-        <a href="{% url 'team:list' %}" class="navbar__link">Team</a>
+        <a href="{% url 'core:home' %}"       class="navbar__link">Home</a>
+        <a href="{% url 'core:about' %}"      class="navbar__link">About</a>
+        <a href="{% url 'services:list' %}"   class="navbar__link">Services</a>
+        <a href="{% url 'team:list' %}"       class="navbar__link">Team</a>
         <a href="{% url 'gallery:gallery' %}" class="navbar__link">Gallery</a>
-        <a href="{% url 'blog:list' %}" class="navbar__link">Blog</a>
-        <a href="{% url 'core:contact' %}" class="navbar__link">Contact</a>
+        <a href="{% url 'blog:list' %}"       class="navbar__link">Blog</a>
+        <a href="{% url 'core:contact' %}"    class="navbar__link">Contact</a>
       </nav>
 
       <div class="navbar__actions">
-        <button type="button" class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" aria-pressed="false">
-          <i class="fas fa-sun icon-sun" aria-hidden="true"></i>
-          <i class="fas fa-moon icon-moon" aria-hidden="true"></i>
-        </button>
-
         {% if user.is_authenticated %}
           <a href="{% url 'accounts:profile' %}" class="navbar__auth">
-            <i class="fas fa-user-circle" aria-hidden="true"></i> {{ user.first_name }}
+            <i class="fas fa-user-circle" aria-hidden="true"></i>
+            {{ user.first_name }}
           </a>
         {% else %}
           <a href="{% url 'accounts:login' %}" class="navbar__auth">Sign in</a>
         {% endif %}
-
         <a href="{% url 'bookings:book' %}" class="navbar__book">Book Now</a>
       </div>
 
       <button
         class="navbar__hamburger"
         id="hamburgerBtn"
+        type="button"
         aria-label="Open menu"
         aria-expanded="false"
         aria-controls="mobileMenu"
-        type="button"
       >
         <span></span>
         <span></span>
@@ -67,37 +63,30 @@
   aria-modal="true"
   aria-hidden="true"
 >
-  <a href="{% url 'core:home' %}" class="navbar__mobile-link">Home</a>
-  <a href="{% url 'core:about' %}" class="navbar__mobile-link">About</a>
-  <a href="{% url 'services:list' %}" class="navbar__mobile-link">Services</a>
-  <a href="{% url 'services:pricing' %}" class="navbar__mobile-link">Pricing</a>
-  <a href="{% url 'team:list' %}" class="navbar__mobile-link">Our Team</a>
-  <a href="{% url 'gallery:gallery' %}" class="navbar__mobile-link">Gallery</a>
-  <a href="{% url 'blog:list' %}" class="navbar__mobile-link">Blog</a>
-  <a href="{% url 'faqs:list' %}" class="navbar__mobile-link">FAQs</a>
-  <a href="{% url 'core:contact' %}" class="navbar__mobile-link">Contact</a>
-
-  <div class="theme-toggle-mobile">
-    <span>
-      <i class="fas fa-circle-half-stroke" style="margin-right:.5rem;color:var(--gold)" aria-hidden="true"></i>
-      Appearance
-    </span>
-    <button type="button" class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" aria-pressed="false">
-      <i class="fas fa-sun icon-sun" aria-hidden="true"></i>
-      <i class="fas fa-moon icon-moon" aria-hidden="true"></i>
-    </button>
-  </div>
+  <a href="{% url 'core:home' %}"         class="navbar__mobile-link">Home</a>
+  <a href="{% url 'core:about' %}"        class="navbar__mobile-link">About</a>
+  <a href="{% url 'services:list' %}"     class="navbar__mobile-link">Services</a>
+  <a href="{% url 'services:pricing' %}"  class="navbar__mobile-link">Pricing</a>
+  <a href="{% url 'team:list' %}"         class="navbar__mobile-link">Our Team</a>
+  <a href="{% url 'gallery:gallery' %}"   class="navbar__mobile-link">Gallery</a>
+  <a href="{% url 'blog:list' %}"         class="navbar__mobile-link">Blog</a>
+  <a href="{% url 'faqs:list' %}"         class="navbar__mobile-link">FAQs</a>
+  <a href="{% url 'core:contact' %}"      class="navbar__mobile-link">Contact</a>
 
   <div class="navbar__mobile-actions">
-    <a href="{% url 'bookings:book' %}" class="btn btn--primary btn--full">Book Appointment</a>
+    <a href="{% url 'bookings:book' %}" class="btn btn--primary btn--full">
+      <i class="fas fa-calendar-check" aria-hidden="true"></i> Book Appointment
+    </a>
     {% if user.is_authenticated %}
-      <a href="{% url 'accounts:profile' %}" class="btn btn--outline btn--full">My Profile</a>
+      <a href="{% url 'accounts:profile' %}" class="btn btn--outline btn--full">
+        <i class="fas fa-user-circle" aria-hidden="true"></i> My Profile
+      </a>
       <form method="post" action="{% url 'accounts:logout' %}">
         {% csrf_token %}
         <button type="submit" class="btn btn--ghost btn--full">Sign Out</button>
       </form>
     {% else %}
-      <a href="{% url 'accounts:login' %}" class="btn btn--outline btn--full">Sign In</a>
+      <a href="{% url 'accounts:login' %}"    class="btn btn--outline btn--full">Sign In</a>
       <a href="{% url 'accounts:register' %}" class="btn btn--ghost btn--full">Create Account</a>
     {% endif %}
   </div>

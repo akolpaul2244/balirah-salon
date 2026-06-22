@@ -1,26 +1,117 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Booking Confirmed{% endblock %}
+{% block title %}Booking Confirmed — {{ appointment.reference }}{% endblock %}
+{% block meta_description %}Your appointment at Balirah Beauty Salon has been confirmed.{% endblock %}
+
+{% block extra_css %}
+<style>
+  .confirm-wrap {
+    min-height: calc(100vh - var(--nav-height));
+    display: flex;
+    align-items: center;
+    background: var(--bg-secondary);
+    padding: var(--space-12) 0;
+  }
+
+  .confirm-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    padding: var(--space-12) var(--space-10);
+    box-shadow: var(--shadow-lg);
+    max-width: 580px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .confirm-icon {
+    width: 88px;
+    height: 88px;
+    border-radius: var(--radius-full);
+    background: var(--toast-success-bg);
+    border: 2px solid rgba(45,122,79,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-6);
+    animation: confirmPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  .confirm-icon i { font-size: 2.25rem; color: var(--toast-success-border); }
+
+  @keyframes confirmPop {
+    from { opacity: 0; transform: scale(0.6); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .confirm-ref {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: var(--footer-bg);
+    color: var(--gold);
+    font-family: var(--font-ui);
+    font-size: var(--text-base);
+    font-weight: 700;
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--radius-full);
+    letter-spacing: 0.08em;
+    margin: var(--space-5) auto var(--space-8);
+  }
+
+  .confirm-summary {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    text-align: left;
+    margin-bottom: var(--space-8);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .confirm-note {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    margin-top: var(--space-6);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 640px) {
+    .confirm-card { padding: var(--space-8) var(--space-6); border-radius: var(--radius-lg); }
+    .confirm-card .form-actions { flex-direction: column; }
+    .confirm-card .form-actions .btn { width: 100%; justify-content: center; }
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 
-<section class="section section--cream" style="min-height:calc(100vh - var(--nav-height));display:flex;align-items:center">
+<div class="confirm-wrap">
   <div class="container">
-    <div class="status-card" data-aos="zoom-in">
-      <div class="status-card__icon">
-        <i class="fas fa-check"></i>
+    <div class="confirm-card" data-aos="zoom-in">
+
+      <!-- Success icon -->
+      <div class="confirm-icon" role="img" aria-label="Booking confirmed">
+        <i class="fas fa-check" aria-hidden="true"></i>
       </div>
-      <h1 class="status-card__title">Booking Confirmed!</h1>
-      <p class="status-card__text">
-        Thank you, {{ appointment.client_name }}. Your appointment has been successfully booked. A confirmation has been sent to {% if appointment.client_phone %}your phone{% endif %}{% if appointment.client_phone and appointment.client_email %} and {% endif %}{% if appointment.client_email %}email{% endif %}.
+
+      <!-- Heading -->
+      <h1 style="font-size:var(--text-3xl);margin-bottom:var(--space-3)">Booking Confirmed!</h1>
+      <p style="color:var(--text-secondary);font-size:var(--text-base);line-height:1.7;max-width:440px;margin:0 auto">
+        Thank you, <strong style="color:var(--text-primary)">{{ appointment.client_name }}</strong>. Your appointment has been successfully booked.
+        {% if appointment.client_email or appointment.client_phone %}
+          A confirmation has been sent to
+          {% if appointment.client_phone %}your phone{% endif %}{% if appointment.client_phone and appointment.client_email %} and {% endif %}{% if appointment.client_email %}email{% endif %}.
+        {% endif %}
       </p>
 
-      <div class="ref-badge">
-        <i class="fas fa-hashtag"></i> {{ appointment.reference }}
+      <!-- Reference badge -->
+      <div class="confirm-ref">
+        <i class="fas fa-hashtag" aria-hidden="true"></i>
+        {{ appointment.reference }}
       </div>
 
-      <div style="background:var(--cream);border-radius:var(--radius-lg);padding:1.5rem;text-align:left;margin-bottom:2rem">
+      <!-- Booking summary -->
+      <div class="confirm-summary">
         <div class="booking-summary__item">
           <span class="booking-summary__label">Service</span>
           <span class="booking-summary__value">{{ appointment.service.name }}</span>
@@ -31,7 +122,11 @@
         </div>
         <div class="booking-summary__item">
           <span class="booking-summary__label">Date</span>
-          <span class="booking-summary__value">{{ appointment.appointment_date|date:"l, d F Y" }}</span>
+          <span class="booking-summary__value">
+            <time datetime="{{ appointment.appointment_date|date:'Y-m-d' }}">
+              {{ appointment.appointment_date|date:"l, d F Y" }}
+            </time>
+          </span>
         </div>
         <div class="booking-summary__item">
           <span class="booking-summary__label">Time</span>
@@ -43,20 +138,89 @@
         </div>
       </div>
 
-      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
-        <a href="{% url 'core:home' %}" class="btn btn--outline">Back to Home</a>
+      <!-- Actions -->
+      <div class="form-actions" style="justify-content:center;margin-top:0">
+        <a href="{% url 'core:home' %}" class="btn btn--ghost">
+          <i class="fas fa-home" aria-hidden="true"></i> Back to Home
+        </a>
         {% if user.is_authenticated %}
-        <a href="{% url 'accounts:profile' %}" class="btn btn--primary">View My Bookings</a>
+          <a href="{% url 'accounts:profile' %}" class="btn btn--primary">
+            <i class="fas fa-calendar-alt" aria-hidden="true"></i> View My Bookings
+          </a>
         {% else %}
-        <a href="{% url 'accounts:register' %}" class="btn btn--primary">Create an Account</a>
+          <a href="{% url 'accounts:register' %}" class="btn btn--primary">
+            <i class="fas fa-user-plus" aria-hidden="true"></i> Create an Account
+          </a>
         {% endif %}
       </div>
 
-      <p style="font-size:.75rem;color:var(--grey-400);margin-top:2rem">
-        Need to make a change? Contact us as soon as possible quoting your reference number.
+      <!-- Footer note -->
+      <p class="confirm-note">
+        Need to make a change? Contact us as soon as possible quoting reference
+        <strong style="color:var(--text-primary)">{{ appointment.reference }}</strong>.
+        We're happy to help.
       </p>
+
     </div>
   </div>
-</section>
+</div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  /* Confetti-lite: floating gold dots for a celebratory moment */
+  (function () {
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    var canvas = document.createElement('canvas');
+    canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9990';
+    document.body.appendChild(canvas);
+    var ctx   = canvas.getContext('2d');
+    var W     = canvas.width  = window.innerWidth;
+    var H     = canvas.height = window.innerHeight;
+    var particles = [];
+    var colors    = ['#C9A84C', '#E2C97E', '#A07832', '#F5F2EB', '#FFFFFF'];
+
+    for (var i = 0; i < 60; i++) {
+      particles.push({
+        x:  Math.random() * W,
+        y:  Math.random() * H - H,
+        r:  Math.random() * 5 + 2,
+        d:  Math.random() * 2 + 1,
+        c:  colors[Math.floor(Math.random() * colors.length)],
+        s:  (Math.random() - 0.5) * 1.2,
+        o:  1,
+      });
+    }
+
+    var frame;
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      var alive = false;
+      particles.forEach(function (p) {
+        if (p.o <= 0) return;
+        alive = true;
+        ctx.save();
+        ctx.globalAlpha = p.o;
+        ctx.fillStyle   = p.c;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        p.y += p.d;
+        p.x += p.s;
+        if (p.y > H * 0.7) p.o -= 0.015;
+      });
+      if (alive) frame = requestAnimationFrame(draw);
+      else canvas.remove();
+    }
+
+    setTimeout(function () {
+      frame = requestAnimationFrame(draw);
+      setTimeout(function () { cancelAnimationFrame(frame); canvas.remove(); }, 4000);
+    }, 300);
+  }());
+</script>
 {% endblock %}

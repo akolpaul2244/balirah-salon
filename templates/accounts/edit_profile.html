@@ -2,20 +2,22 @@
 {% load static %}
 
 {% block title %}Edit Profile{% endblock %}
+{% block meta_description %}Update your Balirah Beauty Salon profile details and notification preferences.{% endblock %}
 
 {% block content %}
 
 <div class="page-hero">
   <div class="container">
-    <div class="page-hero__content">
+    <div class="page-hero__content" data-reveal>
       <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
         <a href="{% url 'core:home' %}">Home</a>
-        <span class="page-hero__breadcrumb-sep">/</span>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
         <a href="{% url 'accounts:profile' %}">My Profile</a>
-        <span class="page-hero__breadcrumb-sep">/</span>
-        <span>Edit</span>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">Edit</span>
       </nav>
       <h1 class="page-hero__title">Edit Profile</h1>
+      <p class="page-hero__subtitle">Keep your details up to date for a seamless experience.</p>
     </div>
   </div>
 </div>
@@ -23,89 +25,204 @@
 <section class="section">
   <div class="container">
     <div class="profile-layout">
-      <aside class="profile-sidebar">
+
+      <!-- Sidebar -->
+      <aside class="profile-sidebar" aria-label="Account navigation sidebar">
         <div class="profile-sidebar__header">
           {% if user.profile_picture %}
-            <img src="{{ user.profile_picture.url }}" alt="{{ user.get_full_name }}" class="profile-avatar">
+            <img
+              src="{{ user.profile_picture.url }}"
+              alt="{{ user.get_full_name }}'s profile photo"
+              class="profile-avatar"
+              width="80"
+              height="80"
+            >
           {% else %}
-            <div class="profile-avatar-placeholder"><i class="fas fa-user"></i></div>
+            <div class="profile-avatar-placeholder" aria-hidden="true">
+              <i class="fas fa-user"></i>
+            </div>
           {% endif %}
           <div class="profile-sidebar__name">{{ user.get_full_name }}</div>
           <div class="profile-sidebar__email">{{ user.email }}</div>
         </div>
+
         <nav class="profile-nav" aria-label="Account navigation">
-          <a href="{% url 'accounts:profile' %}" class="profile-nav__link"><i class="fas fa-calendar-alt"></i> My Bookings</a>
-          <a href="{% url 'accounts:edit_profile' %}" class="profile-nav__link active"><i class="fas fa-user-edit"></i> Edit Profile</a>
-          <a href="{% url 'accounts:change_password' %}" class="profile-nav__link"><i class="fas fa-lock"></i> Change Password</a>
-          <a href="{% url 'bookings:book' %}" class="profile-nav__link"><i class="fas fa-plus-circle"></i> New Booking</a>
+          <a href="{% url 'accounts:profile' %}" class="profile-nav__link">
+            <i class="fas fa-calendar-alt" aria-hidden="true"></i> My Bookings
+          </a>
+          <a href="{% url 'accounts:edit_profile' %}" class="profile-nav__link active" aria-current="page">
+            <i class="fas fa-user-edit" aria-hidden="true"></i> Edit Profile
+          </a>
+          <a href="{% url 'accounts:change_password' %}" class="profile-nav__link">
+            <i class="fas fa-lock" aria-hidden="true"></i> Change Password
+          </a>
+          <a href="{% url 'bookings:book' %}" class="profile-nav__link">
+            <i class="fas fa-plus-circle" aria-hidden="true"></i> New Booking
+          </a>
         </nav>
       </aside>
 
+      <!-- Main content -->
       <div class="profile-main">
         <div class="profile-section">
           <h2 class="profile-section__title">Personal Information</h2>
 
-          <form method="post" enctype="multipart/form-data" novalidate>
+          <form
+            method="post"
+            enctype="multipart/form-data"
+            novalidate
+            aria-label="Edit profile form"
+          >
             {% csrf_token %}
 
             <div class="form-grid">
               <div class="form-group">
                 <label class="form-label" for="id_first_name">First Name</label>
-                <input type="text" id="id_first_name" name="first_name" class="form-control {% if form.first_name.errors %}form-control--error{% endif %}"
-                       value="{{ form.first_name.value|default:user.first_name }}" required autocomplete="given-name">
-                {% if form.first_name.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.first_name.errors|join:", " }}</span>{% endif %}
+                <input
+                  type="text"
+                  id="id_first_name"
+                  name="first_name"
+                  class="form-control {% if form.first_name.errors %}form-control--error{% endif %}"
+                  value="{{ form.first_name.value|default:user.first_name }}"
+                  required
+                  autocomplete="given-name"
+                  aria-required="true"
+                >
+                {% if form.first_name.errors %}
+                <span class="form-error" role="alert">
+                  <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                  {{ form.first_name.errors|join:", " }}
+                </span>
+                {% endif %}
               </div>
+
               <div class="form-group">
                 <label class="form-label" for="id_last_name">Last Name</label>
-                <input type="text" id="id_last_name" name="last_name" class="form-control {% if form.last_name.errors %}form-control--error{% endif %}"
-                       value="{{ form.last_name.value|default:user.last_name }}" required autocomplete="family-name">
-                {% if form.last_name.errors %}<span class="form-error"><i class="fas fa-exclamation-circle"></i>{{ form.last_name.errors|join:", " }}</span>{% endif %}
+                <input
+                  type="text"
+                  id="id_last_name"
+                  name="last_name"
+                  class="form-control {% if form.last_name.errors %}form-control--error{% endif %}"
+                  value="{{ form.last_name.value|default:user.last_name }}"
+                  required
+                  autocomplete="family-name"
+                  aria-required="true"
+                >
+                {% if form.last_name.errors %}
+                <span class="form-error" role="alert">
+                  <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                  {{ form.last_name.errors|join:", " }}
+                </span>
+                {% endif %}
               </div>
             </div>
 
             <div class="form-grid">
               <div class="form-group">
                 <label class="form-label" for="id_phone_number">Phone Number</label>
-                <input type="tel" id="id_phone_number" name="phone_number" class="form-control"
-                       value="{{ form.phone_number.value|default:user.phone_number }}" placeholder="+256 700 000 000" autocomplete="tel">
+                <input
+                  type="tel"
+                  id="id_phone_number"
+                  name="phone_number"
+                  class="form-control"
+                  value="{{ form.phone_number.value|default:user.phone_number }}"
+                  placeholder="+256 700 000 000"
+                  autocomplete="tel"
+                >
+                <p class="hint-text">Used for appointment SMS reminders only.</p>
               </div>
+
               <div class="form-group">
                 <label class="form-label" for="id_date_of_birth">Date of Birth</label>
-                <input type="date" id="id_date_of_birth" name="date_of_birth" class="form-control"
-                       value="{{ form.date_of_birth.value|default:user.date_of_birth|date:'Y-m-d' }}" autocomplete="bday">
+                <input
+                  type="date"
+                  id="id_date_of_birth"
+                  name="date_of_birth"
+                  class="form-control"
+                  value="{{ form.date_of_birth.value|default:user.date_of_birth|date:'Y-m-d' }}"
+                  autocomplete="bday"
+                  max="{% now 'Y-m-d' %}"
+                >
+                <p class="hint-text">Used for birthday treat offers.</p>
               </div>
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="id_profile_picture">Profile Picture</label>
-              <input type="file" id="id_profile_picture" name="profile_picture" class="form-control" accept="image/*">
+              <label class="form-label" for="id_profile_picture">
+                Profile Picture
+                <span class="text-muted" style="font-weight:400;font-size:var(--text-xs)"> (optional)</span>
+              </label>
+              <input
+                type="file"
+                id="id_profile_picture"
+                name="profile_picture"
+                class="form-control"
+                accept="image/jpeg,image/png,image/webp"
+                aria-describedby="photo-hint"
+              >
+              <p class="hint-text" id="photo-hint">JPG, PNG, or WebP. Max 5 MB.</p>
+              {% if user.profile_picture %}
+              <div style="margin-top:var(--space-3);display:flex;align-items:center;gap:var(--space-3)">
+                <img
+                  src="{{ user.profile_picture.url }}"
+                  alt="Current profile photo"
+                  style="width:48px;height:48px;border-radius:var(--radius-full);object-fit:cover;border:2px solid var(--border-color)"
+                >
+                <span style="font-size:var(--text-xs);color:var(--text-muted)">Current photo — upload a new one to replace it</span>
+              </div>
+              {% endif %}
             </div>
 
             <div class="form-divider"></div>
-            <h3 class="form-section-heading">Notification Preferences</h3>
 
-            <div class="form-check-group">
+            <h3 class="form-section-heading">
+              <i class="fas fa-bell" aria-hidden="true" style="color:var(--gold);margin-right:var(--space-2)"></i>
+              Notification Preferences
+            </h3>
+
+            <div class="form-check-group" role="group" aria-label="Notification preferences">
               <label class="form-check">
-                <input type="checkbox" name="sms_notifications" {% if user.sms_notifications %}checked{% endif %}>
+                <input
+                  type="checkbox"
+                  name="sms_notifications"
+                  value="1"
+                  {% if user.sms_notifications %}checked{% endif %}
+                >
                 SMS appointment reminders
               </label>
               <label class="form-check">
-                <input type="checkbox" name="email_notifications" {% if user.email_notifications %}checked{% endif %}>
+                <input
+                  type="checkbox"
+                  name="email_notifications"
+                  value="1"
+                  {% if user.email_notifications %}checked{% endif %}
+                >
                 Email confirmations and updates
               </label>
               <label class="form-check">
-                <input type="checkbox" name="marketing_sms" {% if user.marketing_sms %}checked{% endif %}>
-                Promotional SMS offers
+                <input
+                  type="checkbox"
+                  name="marketing_sms"
+                  value="1"
+                  {% if user.marketing_sms %}checked{% endif %}
+                >
+                Promotional SMS offers and deals
               </label>
             </div>
 
             <div class="form-actions">
-              <a href="{% url 'accounts:profile' %}" class="btn btn--outline btn--full">Cancel</a>
-              <button type="submit" class="btn btn--primary btn--full">Save Changes</button>
+              <a href="{% url 'accounts:profile' %}" class="btn btn--ghost">
+                Cancel
+              </a>
+              <button type="submit" class="btn btn--primary">
+                <i class="fas fa-save" aria-hidden="true"></i> Save Changes
+              </button>
             </div>
+
           </form>
         </div>
       </div>
+
     </div>
   </div>
 </section>

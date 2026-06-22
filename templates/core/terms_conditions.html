@@ -1,55 +1,115 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Terms & Conditions{% endblock %}
+{% block title %}Terms &amp; Conditions{% endblock %}
 {% block meta_description %}Read the terms and conditions for using Balirah Beauty Salon's services and website.{% endblock %}
 
 {% block content %}
 
 <div class="page-hero">
   <div class="container">
-    <div class="page-hero__content">
+    <div class="page-hero__content" data-reveal>
       <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
         <a href="{% url 'core:home' %}">Home</a>
-        <span class="page-hero__breadcrumb-sep">/</span>
-        <span>Terms &amp; Conditions</span>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">Terms &amp; Conditions</span>
       </nav>
       <h1 class="page-hero__title">Terms &amp; Conditions</h1>
-      <p class="page-hero__subtitle">Last updated {% now "F Y" %}</p>
+      <p class="page-hero__subtitle">Last updated {% now "F Y" %} &mdash; Please read carefully before using our services.</p>
     </div>
   </div>
 </div>
 
 <section class="section">
-  <div class="container" style="max-width:760px">
-    {% if salon.terms_conditions %}
-    <div style="color:var(--text-primary);line-height:1.9;font-size:1rem">
-      {{ salon.terms_conditions|safe }}
+  <div class="container">
+    <div class="legal-doc">
+
+      <div class="legal-doc__intro" role="note">
+        <strong style="color:var(--text-primary);display:block;margin-bottom:0.35rem">Important Notice</strong>
+        By accessing our website or booking our services, you agree to be bound by these Terms &amp; Conditions.
+        If you do not agree with any part, please refrain from using our services.
+      </div>
+
+      {% if salon.terms_conditions %}
+        <div class="legal-doc__body">{{ salon.terms_conditions|safe }}</div>
+      {% else %}
+        <div class="legal-doc__body">
+
+          <div class="legal-section" data-reveal>
+            <h2 class="legal-section__title">1. Bookings &amp; Appointments</h2>
+            <p>All appointments are subject to availability and are confirmed only upon receipt of a booking confirmation via SMS or email. We reserve the right to reschedule in exceptional circumstances and will notify you as soon as possible.</p>
+            <p>Walk-in clients are welcome subject to availability, however booked clients take priority.</p>
+          </div>
+
+          <div class="legal-section" data-reveal>
+            <h2 class="legal-section__title">2. Cancellations &amp; No-Shows</h2>
+            <p>Appointments may be cancelled or rescheduled free of charge up to <strong>2 hours</strong> before the scheduled time. Cancellations made within 2 hours or failure to attend without notice may affect future booking privileges.</p>
+            <p>Repeated no-shows may require a non-refundable deposit for future bookings at management's discretion.</p>
+          </div>
+
+          <div class="legal-section" data-reveal>
+            <h2 class="legal-section__title">3. Pricing &amp; Promotions</h2>
+            <p>Prices displayed on our website are accurate at the time of publishing and are inclusive of all applicable taxes. We reserve the right to update pricing at any time — the confirmed price at booking time will be honoured for that appointment.</p>
+            <p>Promotional offers cannot be combined unless explicitly stated. Offers are subject to availability and may be withdrawn at any time.</p>
+          </div>
+
+          <div class="legal-section" data-reveal>
+            <h2 class="legal-section__title">4. Payment</h2>
+            <p>Payment is collected at the salon upon completion of service unless otherwise agreed in advance. We accept cash and mobile money (MTN MoMo &amp; Airtel Money).</p>
+            <p>Prices are in Ugandan Shillings (UGX) unless otherwise stated.</p>
+          </div>
+
+          <div class="legal-section" data-reveal>
+            <h2 class="legal-section__title">5. Health &amp; Allergy Disclosure</h2>
+            <p>Clients are responsible for disclosing any known allergies, skin sensitivities, or medical conditions before services commence. Balirah Beauty Salon cannot be held liable for adverse reactions arising from undisclosed conditions.</p>
+            <p>If you are unsure about a particular product or treatment, please request a patch test at least 24 hours before your appointment.</p>
+          </div>
+
+          <div class="legal-section" data-reveal>
+            <h2 class="legal-section__title">6. Client Conduct</h2>
+            <p>We are committed to maintaining a safe, welcoming, and respectful environment for all clients and staff. We reserve the right to refuse or discontinue service to anyone behaving in a manner that is unsafe, abusive, discriminatory, or disruptive.</p>
+          </div>
+
+          <div class="legal-section" data-reveal>
+            <h2 class="legal-section__title">7. Limitation of Liability</h2>
+            <p>While we take every reasonable precaution to ensure client safety and satisfaction, Balirah Beauty Salon's total liability for any claim arising from our services shall not exceed the amount paid for the specific service in question.</p>
+            <p>We are not liable for loss or damage to personal property brought onto the premises.</p>
+          </div>
+
+          <div class="legal-section" data-reveal>
+            <h2 class="legal-section__title">8. Intellectual Property</h2>
+            <p>All content on this website — including text, images, logos, and design — is the intellectual property of Balirah Beauty Salon and may not be reproduced, distributed, or used without written consent.</p>
+          </div>
+
+          <div class="legal-section" data-reveal>
+            <h2 class="legal-section__title">9. Changes to These Terms</h2>
+            <p>We may update these Terms &amp; Conditions from time to time. The updated version will be posted on this page with a revised date. Continued use of our website or services after any changes constitutes acceptance of the new terms.</p>
+          </div>
+
+          <div class="legal-section" data-reveal>
+            <h2 class="legal-section__title">10. Contact Us</h2>
+            <p>If you have any questions about these terms, please get in touch:</p>
+            <address class="legal-address">
+              <strong>Balirah Beauty Salon</strong>
+              {% if salon.address %}{{ salon.address }}{% else %}Kampala, Uganda{% endif %}<br>
+              {% if salon.phone %}
+                <a href="tel:{{ salon.phone }}">{{ salon.phone }}</a><br>
+              {% endif %}
+              {% if salon.email %}
+                <a href="mailto:{{ salon.email }}">{{ salon.email }}</a>
+              {% endif %}
+            </address>
+          </div>
+
+        </div>
+      {% endif %}
+
+      <div class="info-banner" data-reveal style="margin-top:var(--space-10)">
+        <i class="fas fa-shield-alt" aria-hidden="true"></i>
+        <p>These terms are governed by the laws of Uganda. For disputes, we encourage resolution through direct communication before any formal proceedings.</p>
+      </div>
+
     </div>
-    {% else %}
-    <div style="color:var(--text-primary);line-height:1.9;font-size:1rem">
-      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">1. Bookings</h2>
-      <p style="margin-bottom:1rem;color:var(--text-secondary)">All appointments are subject to availability. Bookings can be made online, by phone, or via WhatsApp. A confirmation will be sent via SMS and/or email.</p>
-
-      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">2. Cancellations</h2>
-      <p style="margin-bottom:1rem;color:var(--text-secondary)">Appointments may be cancelled or rescheduled free of charge up to 2 hours before the scheduled time. Late cancellations or no-shows may affect future booking privileges.</p>
-
-      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">3. Pricing</h2>
-      <p style="margin-bottom:1rem;color:var(--text-secondary)">Prices displayed on our website are accurate at the time of publishing and are subject to change. Services with variable pricing will be confirmed with you before treatment begins.</p>
-
-      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">4. Payment</h2>
-      <p style="margin-bottom:1rem;color:var(--text-secondary)">Payment is collected at the salon upon completion of service unless otherwise stated. We accept cash and mobile money.</p>
-
-      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">5. Client Conduct</h2>
-      <p style="margin-bottom:1rem;color:var(--text-secondary)">We reserve the right to refuse service to anyone behaving in a manner that is unsafe, abusive, or disruptive to staff or other clients.</p>
-
-      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">6. Liability</h2>
-      <p style="margin-bottom:1rem;color:var(--text-secondary)">While we take every precaution to ensure client safety and satisfaction, Balirah Beauty Salon is not liable for allergic reactions to products not disclosed by the client beforehand.</p>
-
-      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">7. Changes to Terms</h2>
-      <p style="margin-bottom:1rem;color:var(--text-secondary)">We may update these terms from time to time. Continued use of our services constitutes acceptance of the updated terms.</p>
-    </div>
-    {% endif %}
   </div>
 </section>
 

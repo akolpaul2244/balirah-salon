@@ -1,23 +1,44 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Access Denied{% endblock %}
+{% block title %}Access Denied — 403{% endblock %}
+{% block meta_description %}You don't have permission to view this page. Sign in or contact us if you think this is a mistake.{% endblock %}
 
 {% block content %}
 
-<div class="error-page">
+<div class="error-page" role="main">
+  <div aria-hidden="true" class="error-page__code">403</div>
+
   <div class="error-page__inner">
-    <div class="error-page__code">403</div>
-    <div class="error-page__content">
-      <i class="fas fa-lock error-page__icon"></i>
+    <div class="error-page__content" data-aos="fade-up">
+
+      <span class="error-page__badge">
+        <i class="fas fa-lock" aria-hidden="true"></i>
+        Error 403
+      </span>
+
+      <i class="fas fa-lock error-page__icon" aria-hidden="true"></i>
+
+      <div class="error-page__divider" aria-hidden="true"></div>
+
       <h1 class="error-page__title">Access Denied</h1>
-      <p class="error-page__text">You don't have permission to view this page. If you believe this is an error, please contact us.</p>
-      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
-        <a href="{% url 'core:home' %}" class="btn btn--primary">
-          <i class="fas fa-home"></i> Back to Home
+
+      <p class="error-page__text">
+        You don't have permission to view this page. If you believe that's a mistake,
+        sign in with the right account or get in touch with us directly.
+      </p>
+
+      <div class="error-page__actions">
+        <a href="{% url 'core:home' %}" class="btn btn--primary btn--lg">
+          <i class="fas fa-home" aria-hidden="true"></i>
+          Back to Home
         </a>
-        <a href="{% url 'accounts:login' %}" class="btn btn--outline">Sign In</a>
+        <a href="{% url 'accounts:login' %}" class="btn btn--outline btn--lg">
+          <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
+          Sign In
+        </a>
       </div>
+
     </div>
   </div>
 </div>

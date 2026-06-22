@@ -1,55 +1,258 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Privacy Policy{% endblock %}
-{% block meta_description %}Read Balirah Beauty Salon's privacy policy regarding the collection and use of personal data.{% endblock %}
+{% block title %}Privacy Policy | {{ salon.salon_name|default:"Balirah Beauty Salon" }}{% endblock %}
+{% block meta_description %}Read Balirah Beauty Salon's privacy policy — how we collect, use, and protect your personal information.{% endblock %}
+{% block og_title %}Privacy Policy | Balirah Beauty Salon{% endblock %}
+
+{% block extra_css %}
+<style>
+  /*  Legal doc styles  */
+  .legal-toc {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-bottom: var(--space-10);
+  }
+  .legal-toc__heading {
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: var(--space-4);
+  }
+  .legal-toc__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .legal-toc__link {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    transition: color var(--transition);
+  }
+  .legal-toc__link:hover { color: var(--gold); }
+  .legal-toc__link::before {
+    content: '';
+    width: 16px; height: 1px;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+
+  /* Print button */
+  .legal-print-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--text-muted);
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-full);
+    padding: var(--space-2) var(--space-4);
+    transition: all var(--transition);
+    cursor: pointer;
+    background: none;
+  }
+  .legal-print-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  @media print {
+    .legal-print-btn,
+    .page-hero,
+    .navbar,
+    .footer,
+    .whatsapp-btn { display: none !important; }
+    .legal-doc { max-width: 100%; }
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 
-<div class="page-hero">
+<!-- 
+     PAGE HERO
+ -->
+<div class="page-hero" data-aos="fade-in">
   <div class="container">
     <div class="page-hero__content">
       <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
         <a href="{% url 'core:home' %}">Home</a>
-        <span class="page-hero__breadcrumb-sep">/</span>
-        <span>Privacy Policy</span>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">Privacy Policy</span>
       </nav>
-      <h1 class="page-hero__title">Privacy Policy</h1>
-      <p class="page-hero__subtitle">Last updated {% now "F Y" %}</p>
+      <h1 class="page-hero__title" data-aos="fade-up" data-aos-delay="100">Privacy Policy</h1>
+      <p class="page-hero__subtitle" data-aos="fade-up" data-aos-delay="200">
+        Last updated <time datetime="{% now 'Y-m' %}">{% now "F Y" %}</time>
+      </p>
     </div>
   </div>
 </div>
 
-<section class="section">
-  <div class="container" style="max-width:760px">
-    {% if salon.privacy_policy %}
-    <div style="color:var(--text-primary);line-height:1.9;font-size:1rem">
-      {{ salon.privacy_policy|safe }}
-    </div>
-    {% else %}
-    <div style="color:var(--text-primary);line-height:1.9;font-size:1rem">
-      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">1. Information We Collect</h2>
-      <p style="margin-bottom:1rem;color:var(--text-secondary)">We collect information you provide directly to us, including your name, email address, phone number, and appointment preferences when you create an account or book a service.</p>
 
-      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">2. How We Use Your Information</h2>
-      <p style="margin-bottom:1rem;color:var(--text-secondary)">We use your information to process bookings, send appointment confirmations and reminders via SMS and email, improve our services, and communicate promotional offers if you have opted in.</p>
+<!-- 
+     POLICY BODY
+ -->
+<section class="section" aria-labelledby="privacy-heading">
+  <div class="container">
+    <div class="legal-doc" data-aos="fade-up">
 
-      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">3. SMS and Email Communications</h2>
-      <p style="margin-bottom:1rem;color:var(--text-secondary)">By providing your phone number, you consent to receive appointment-related SMS messages. You may opt out of promotional messages at any time through your account settings.</p>
+      <!-- Meta bar: last updated + print -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);margin-bottom:var(--space-8)">
+        <div class="badge badge--neutral">
+          <i class="fas fa-calendar" aria-hidden="true"></i>
+          Last updated {% now "F Y" %}
+        </div>
+        <button class="legal-print-btn" onclick="window.print()" aria-label="Print privacy policy">
+          <i class="fas fa-print" aria-hidden="true"></i> Print
+        </button>
+      </div>
 
-      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">4. Data Security</h2>
-      <p style="margin-bottom:1rem;color:var(--text-secondary)">We implement industry-standard security measures including encrypted password storage, secure connections, and restricted access to protect your personal information.</p>
+      {% if salon.privacy_policy %}
+        <!-- CMS-managed content -->
+        <div class="legal-doc__intro">
+          This privacy policy explains how {{ salon.salon_name }} collects, uses, and protects the personal information you provide to us through our website and services.
+        </div>
+        <div class="legal-doc__body">
+          {{ salon.privacy_policy|safe }}
+        </div>
 
-      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">5. Data Sharing</h2>
-      <p style="margin-bottom:1rem;color:var(--text-secondary)">We do not sell your personal information. We may share data with trusted service providers (such as SMS and email delivery services) solely to deliver our services to you.</p>
+      {% else %}
+        <!-- Default fallback content -->
 
-      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">6. Your Rights</h2>
-      <p style="margin-bottom:1rem;color:var(--text-secondary)">You may access, update, or request deletion of your personal data at any time by contacting us or through your account settings.</p>
+        <!-- Intro box -->
+        <div class="legal-doc__intro">
+          This privacy policy explains how <strong>{{ salon.salon_name|default:"Balirah Beauty Salon" }}</strong> ("we", "us", or "our") collects, uses, and protects the personal information you provide when using our website or services. By using our services, you agree to the practices described in this policy.
+        </div>
 
-      <h2 style="font-size:1.375rem;margin:2rem 0 1rem">7. Contact Us</h2>
-      <p style="margin-bottom:1rem;color:var(--text-secondary)">If you have questions about this privacy policy, please contact us at {{ salon.email|default:"hello@balirahsalon.com" }}.</p>
-    </div>
-    {% endif %}
+        <!-- Table of contents -->
+        <nav class="legal-toc" aria-label="Privacy policy sections">
+          <div class="legal-toc__heading">Contents</div>
+          <div class="legal-toc__list">
+            <a href="#privacy-section-1" class="legal-toc__link">Information We Collect</a>
+            <a href="#privacy-section-2" class="legal-toc__link">How We Use Your Information</a>
+            <a href="#privacy-section-3" class="legal-toc__link">SMS and Email Communications</a>
+            <a href="#privacy-section-4" class="legal-toc__link">Data Security</a>
+            <a href="#privacy-section-5" class="legal-toc__link">Data Sharing</a>
+            <a href="#privacy-section-6" class="legal-toc__link">Cookies</a>
+            <a href="#privacy-section-7" class="legal-toc__link">Your Rights</a>
+            <a href="#privacy-section-8" class="legal-toc__link">Contact Us</a>
+          </div>
+        </nav>
+
+        <!-- Sections -->
+        <div class="legal-doc__body">
+
+          <div class="legal-section" id="privacy-section-1">
+            <h2 class="legal-section__title">1. Information We Collect</h2>
+            <p>We collect information you provide directly to us when you create an account, make a booking, or contact us. This may include:</p>
+            <ul class="legal-list">
+              <li>Your full name, email address, and phone number</li>
+              <li>Appointment preferences, service history, and stylist preferences</li>
+              <li>Payment method details (processed securely via our payment provider — we do not store card numbers)</li>
+              <li>Messages, feedback, and reviews you submit to us</li>
+            </ul>
+            <p>We also collect limited technical data automatically, including your IP address, browser type, and pages visited, to maintain the security and performance of our website.</p>
+          </div>
+
+          <div class="legal-section" id="privacy-section-2">
+            <h2 class="legal-section__title">2. How We Use Your Information</h2>
+            <p>We use the information we collect to:</p>
+            <ul class="legal-list">
+              <li>Process and confirm your bookings and appointments</li>
+              <li>Send appointment reminders and follow-up messages via SMS and email</li>
+              <li>Improve the quality and personalisation of our services</li>
+              <li>Send promotional offers and newsletters — only if you have opted in</li>
+              <li>Respond to your enquiries and support requests</li>
+              <li>Comply with legal obligations</li>
+            </ul>
+          </div>
+
+          <div class="legal-section" id="privacy-section-3">
+            <h2 class="legal-section__title">3. SMS and Email Communications</h2>
+            <p>By providing your phone number and email address, you consent to receive transactional messages related to your appointments — including confirmations, reminders, and cancellation notices.</p>
+            <p>Promotional communications (offers, loyalty rewards, new services) are only sent if you have explicitly opted in. You may opt out at any time by updating your account preferences or by replying STOP to any SMS.</p>
+          </div>
+
+          <div class="legal-section" id="privacy-section-4">
+            <h2 class="legal-section__title">4. Data Security</h2>
+            <p>We take the security of your personal data seriously. Our security measures include:</p>
+            <ul class="legal-list">
+              <li>Encrypted password storage using industry-standard hashing</li>
+              <li>HTTPS encryption for all data transmitted via our website</li>
+              <li>Restricted staff access to personal data on a need-to-know basis</li>
+              <li>Regular security reviews of our systems and third-party services</li>
+            </ul>
+            <p>While we take every reasonable precaution, no system is completely secure. If you believe your account has been compromised, please contact us immediately.</p>
+          </div>
+
+          <div class="legal-section" id="privacy-section-5">
+            <h2 class="legal-section__title">5. Data Sharing</h2>
+            <p>We do not sell your personal information to any third party. We may share your data only with trusted service providers who help us operate our business — such as SMS delivery services, email providers, and payment processors — and only to the extent necessary to deliver our services.</p>
+            <p>These providers are contractually bound to handle your data securely and in accordance with applicable privacy laws.</p>
+          </div>
+
+          <div class="legal-section" id="privacy-section-6">
+            <h2 class="legal-section__title">6. Cookies</h2>
+            <p>Our website uses cookies to maintain your session, remember your preferences, and analyse website performance. We use:</p>
+            <ul class="legal-list">
+              <li><strong>Strictly necessary cookies</strong> — required for the website to function (e.g. login sessions, CSRF protection)</li>
+              <li><strong>Analytics cookies</strong> — to understand how visitors use our site so we can improve it (e.g. Google Analytics with anonymised IP)</li>
+            </ul>
+            <p>You can control cookies through your browser settings. Disabling certain cookies may affect the functionality of our website.</p>
+          </div>
+
+          <div class="legal-section" id="privacy-section-7">
+            <h2 class="legal-section__title">7. Your Rights</h2>
+            <p>You have the right to:</p>
+            <ul class="legal-list">
+              <li><strong>Access</strong> the personal data we hold about you</li>
+              <li><strong>Correct</strong> any inaccurate or incomplete information</li>
+              <li><strong>Delete</strong> your account and associated personal data</li>
+              <li><strong>Withdraw consent</strong> for marketing communications at any time</li>
+              <li><strong>Object</strong> to or restrict certain uses of your data</li>
+            </ul>
+            <p>To exercise any of these rights, please contact us using the details below or through your account settings.</p>
+          </div>
+
+          <div class="legal-section" id="privacy-section-8">
+            <h2 class="legal-section__title">8. Contact Us</h2>
+            <p>If you have questions or concerns about this privacy policy or how we handle your data, please reach out:</p>
+            <address class="legal-address">
+              <strong>{{ salon.salon_name|default:"Balirah Beauty Salon" }}</strong>
+              {{ salon.address|default:"Plot 12, Acacia Avenue, Kololo, Kampala, Uganda" }}<br>
+              {% if salon.email %}
+              Email: <a href="mailto:{{ salon.email }}">{{ salon.email }}</a><br>
+              {% else %}
+              Email: <a href="mailto:hello@balirahsalon.com">hello@balirahsalon.com</a><br>
+              {% endif %}
+              {% if salon.phone_primary %}
+              Phone: <a href="tel:{{ salon.phone_primary }}">{{ salon.phone_primary }}</a>
+              {% endif %}
+            </address>
+          </div>
+
+        </div><!-- /.legal-doc__body -->
+      {% endif %}
+
+      <!-- Back to top -->
+      <div style="margin-top:var(--space-12);padding-top:var(--space-8);border-top:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4)">
+        <a href="{% url 'core:home' %}" class="btn btn--ghost btn--sm">
+          <i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Home
+        </a>
+        <div style="display:flex;gap:var(--space-3)">
+          <a href="{% url 'core:terms' %}" class="btn btn--ghost btn--sm">Terms &amp; Conditions</a>
+          <a href="{% url 'core:contact' %}" class="btn btn--primary btn--sm">Contact Us</a>
+        </div>
+      </div>
+
+    </div><!-- /.legal-doc -->
   </div>
 </section>
 

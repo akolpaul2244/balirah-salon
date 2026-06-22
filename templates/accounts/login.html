@@ -2,66 +2,122 @@
 {% load static %}
 
 {% block title %}Sign In{% endblock %}
+{% block meta_description %}Sign in to your Balirah Beauty Salon account to manage bookings and access exclusive offers.{% endblock %}
 
 {% block content %}
 
 <div class="auth-layout">
+
+  <!-- Left decorative panel -->
   <div class="auth-panel--left">
     <div class="auth-intro">
       <span class="hero__eyebrow">Welcome Back</span>
-      <h1 class="auth-intro__title">Good to See You Again</h1>
+      <h1 class="auth-intro__title">Good to See<br><em style="color:var(--gold);font-style:italic">You Again</em></h1>
       <p class="auth-intro__text">
         Sign in to manage your appointments, view your booking history, and book your next visit in seconds.
       </p>
+      <div class="auth-feature-list">
+        <div class="auth-feature-item">
+          <i class="fas fa-calendar-check" aria-hidden="true"></i>
+          <span>View and manage all your bookings</span>
+        </div>
+        <div class="auth-feature-item">
+          <i class="fas fa-bolt" aria-hidden="true"></i>
+          <span>One-tap rebooking with saved details</span>
+        </div>
+        <div class="auth-feature-item">
+          <i class="fas fa-gift" aria-hidden="true"></i>
+          <span>Exclusive member offers and promotions</span>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- Right form panel -->
   <div class="auth-panel--right">
     <div class="auth-form-wrapper">
-      <h2 class="auth-title">Sign In</h2>
-      <p class="auth-subtitle">New here? <a href="{% url 'accounts:register' %}" class="auth-link">Create an account</a></p>
+
+      <div style="margin-bottom:var(--space-8)">
+        <h2 class="auth-title">Sign In</h2>
+        <p class="auth-subtitle">
+          New here?
+          <a href="{% url 'accounts:register' %}" class="auth-link">Create a free account</a>
+        </p>
+      </div>
 
       {% if form.non_field_errors %}
-      <div class="form-alert form-alert--error">
-        <i class="fas fa-exclamation-circle"></i>
+      <div class="form-alert form-alert--error" role="alert" aria-live="assertive">
+        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
         <span>{{ form.non_field_errors|join:", " }}</span>
       </div>
       {% endif %}
 
       <form method="post" novalidate>
         {% csrf_token %}
+
         <div class="form-group">
           <label class="form-label" for="id_username">Email Address</label>
-          <input type="email" id="id_username" name="username" class="form-control" required autocomplete="email" inputmode="email" autofocus>
+          <input
+            type="email"
+            id="id_username"
+            name="username"
+            class="form-control {% if form.non_field_errors %}form-control--error{% endif %}"
+            required
+            autocomplete="email"
+            inputmode="email"
+            autofocus
+            aria-required="true"
+            placeholder="you@example.com"
+          >
         </div>
 
         <div class="form-group">
           <label class="form-label" for="id_password">Password</label>
           <div class="input-icon-wrap">
-            <input type="password" id="id_password" name="password" class="form-control" required autocomplete="current-password">
-            <button type="button" class="input-icon-btn" data-password-toggle="id_password" aria-label="Show password">
-              <i class="fas fa-eye"></i>
+            <input
+              type="password"
+              id="id_password"
+              name="password"
+              class="form-control {% if form.non_field_errors %}form-control--error{% endif %}"
+              required
+              autocomplete="current-password"
+              aria-required="true"
+            >
+            <button
+              type="button"
+              class="input-icon-btn"
+              data-password-toggle="id_password"
+              aria-label="Show password"
+              aria-pressed="false"
+            >
+              <i class="fas fa-eye" aria-hidden="true"></i>
             </button>
           </div>
         </div>
 
         <div class="auth-form-row">
           <label class="form-check">
-            <input type="checkbox" name="remember_me">
-            Remember me
+            <input type="checkbox" name="remember_me" value="1">
+            Keep me signed in
           </label>
         </div>
 
         <button type="submit" class="btn btn--primary btn--full btn--lg">
-          Sign In
+          <i class="fas fa-sign-in-alt" aria-hidden="true"></i> Sign In
         </button>
+
       </form>
 
+      <div class="form-divider" style="margin:var(--space-6) 0"></div>
+
       <p class="hint-text hint-text--center">
-        Having trouble? <a href="{% url 'core:contact' %}" class="text-gold">Contact support</a>
+        Having trouble?
+        <a href="{% url 'core:contact' %}" class="text-gold">Contact support</a>
       </p>
+
     </div>
   </div>
+
 </div>
 
 {% endblock %}

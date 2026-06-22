@@ -1,18 +1,47 @@
 {% extends "notifications/emails/_base_email.html" %}
 
 {% block email_content %}
-<h1 style="margin:0 0 16px;font-family:Georgia,serif;font-size:24px;color:#0A2540;">Verify Your Email</h1>
-<p style="margin:0 0 24px;font-size:15px;line-height:1.7;color:#555555;">
-Hi {{ user.first_name }}, thanks for creating an account with {{ salon_name }}. Please confirm your email address to activate your account.
+
+<h1 style="margin:0 0 8px;font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:700;color:#1A1208;line-height:1.2;">
+  Verify Your Email
+</h1>
+<div style="width:40px;height:3px;background-color:#C9A84C;border-radius:2px;margin-bottom:20px;"></div>
+
+<p style="margin:0 0 24px;font-size:15px;line-height:1.75;color:#5C5549;font-family:Helvetica,Arial,sans-serif;">
+  Hi <strong style="color:#1A1208;">{{ user.first_name }}</strong>, thanks for creating an account
+  with <strong style="color:#1A1208;">{{ salon_name }}</strong>.
+  Please confirm your email address to activate your account.
 </p>
 
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-<tr><td align="center" style="padding:8px 0 24px;">
-<a href="{{ verify_url }}" style="display:inline-block;background-color:#D4AF37;color:#0A2540;font-weight:700;font-size:14px;padding:14px 40px;border-radius:24px;text-decoration:none;">Verify Email Address</a>
-</td></tr>
+<!-- CTA button -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td align="center" style="padding:4px 0 28px;">
+      <a href="{{ verify_url }}"
+         class="btn-primary"
+         style="display:inline-block;background-color:#C9A84C;color:#1A1208;font-weight:700;
+                font-size:15px;padding:15px 44px;border-radius:24px;text-decoration:none;
+                font-family:Helvetica,Arial,sans-serif;letter-spacing:0.03em;">
+        Verify Email Address
+      </a>
+    </td>
+  </tr>
 </table>
 
-<p style="margin:0 0 16px;font-size:13px;line-height:1.7;color:#999999;">If the button above doesn't work, copy and paste this link into your browser:</p>
-<p style="margin:0 0 24px;font-size:13px;line-height:1.7;color:#0A2540;word-break:break-all;">{{ verify_url }}</p>
-<p style="margin:0;font-size:13px;line-height:1.7;color:#999999;">This link will expire in 24 hours. If you didn't create an account, you can safely ignore this email.</p>
+<!-- Fallback URL -->
+<p style="margin:0 0 10px;font-size:13px;line-height:1.6;color:#8A8070;font-family:Helvetica,Arial,sans-serif;">
+  If the button doesn't work, copy and paste this link into your browser:
+</p>
+<p style="margin:0 0 24px;font-size:12px;line-height:1.6;color:#1A1208;
+           word-break:break-all;font-family:Helvetica,Arial,sans-serif;
+           background-color:#F5F2EB;padding:12px 16px;border-radius:6px;
+           border:1px solid #EDE8DF;">
+  {{ verify_url }}
+</p>
+
+<p style="margin:0;font-size:13px;line-height:1.75;color:#8A8070;font-family:Helvetica,Arial,sans-serif;">
+  This link will expire in <strong style="color:#1A1208;">24 hours</strong>.
+  If you didn't create an account with us, you can safely ignore this email.
+</p>
+
 {% endblock %}
