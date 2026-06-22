@@ -30,9 +30,9 @@
 
       <!-- Photo column -->
       <div data-aos="fade-right">
-        {% if stylist.photo %}
+        {% if stylist.photo_url_large %}
           <img
-            src="{{ stylist.photo_thumb.url }}"
+            src="{{ stylist.photo_url_large }}"
             alt="{{ stylist.get_full_name }}"
             class="stylist-detail-photo"
             loading="eager"

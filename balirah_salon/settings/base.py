@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import cloudinary
 from decouple import config, Csv
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -23,6 +24,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_ratelimit',
     'imagekit',
+    'cloudinary',
+    'cloudinary_storage',
 
     'apps.core',
     'apps.accounts',
@@ -90,8 +93,24 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
+# Media — Cloudinary handles all uploaded files persistently
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = BASE_DIR / 'media'  # local fallback (dev only)
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': config('CLOUDINARY_API_KEY'),
+    'API_SECRET': config('CLOUDINARY_API_SECRET'),
+    'SECURE': True,
+}
+
+cloudinary.config(
+    cloud_name=config('CLOUDINARY_CLOUD_NAME'),
+    api_key=config('CLOUDINARY_API_KEY'),
+    api_secret=config('CLOUDINARY_API_SECRET'),
+    secure=True,
+)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -181,5 +200,7 @@ REENGAGEMENT_DAYS = {
     'default': 30,
 }
 
+# ImageKit — use Cloudinary as the cache file backend so thumbnails persist
 IMAGEKIT_DEFAULT_CACHEFILE_STRATEGY = 'imagekit.cachefiles.strategies.Optimistic'
 IMAGEKIT_CACHEFILE_DIR = 'CACHE/images'
+IMAGEKIT_DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

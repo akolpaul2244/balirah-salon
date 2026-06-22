@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
-from imagekit.models import ImageSpecField
-from imagekit.processors import ResizeToFill
+import cloudinary
+from cloudinary.models import CloudinaryField
 
 
 class Stylist(models.Model):
@@ -20,12 +20,12 @@ class Stylist(models.Model):
     )
     bio = models.TextField(blank=True)
     years_experience = models.PositiveIntegerField(default=0)
-    photo = models.ImageField(upload_to='team/', null=True, blank=True)
-    photo_thumb = ImageSpecField(
-        source='photo',
-        processors=[ResizeToFill(300, 350)],
-        format='JPEG',
-        options={'quality': 85},
+    photo = CloudinaryField(
+        'photo',
+        folder='balirah/team',
+        transformation=[{'width': 600, 'height': 700, 'crop': 'fill', 'gravity': 'face'}],
+        null=True,
+        blank=True,
     )
     instagram = models.URLField(blank=True)
     is_active = models.BooleanField(default=True)
@@ -46,6 +46,24 @@ class Stylist(models.Model):
         if not self.slug:
             self.slug = slugify(self.get_full_name())
         super().save(*args, **kwargs)
+
+    @property
+    def photo_url(self):
+        if self.photo:
+            return cloudinary.CloudinaryImage(str(self.photo)).build_url(
+                width=300, height=350, crop='fill', gravity='face',
+                quality='auto', fetch_format='auto'
+            )
+        return None
+
+    @property
+    def photo_url_large(self):
+        if self.photo:
+            return cloudinary.CloudinaryImage(str(self.photo)).build_url(
+                width=600, height=700, crop='fill', gravity='face',
+                quality='auto', fetch_format='auto'
+            )
+        return None
 
     @property
     def completed_appointments(self):

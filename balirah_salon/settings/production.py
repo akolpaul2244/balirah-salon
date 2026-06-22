@@ -7,7 +7,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
-# Support both Railway's DATABASE_URL and individual DB_* variables
+#  Database 
 _DATABASE_URL = config('DATABASE_URL', default='')
 
 if _DATABASE_URL:
@@ -18,7 +18,6 @@ if _DATABASE_URL:
             conn_health_checks=True,
         )
     }
-    # Railway PostgreSQL requires SSL
     DATABASES['default'].setdefault('OPTIONS', {})['sslmode'] = config('DB_SSLMODE', default='require')
 else:
     DATABASES = {
@@ -36,7 +35,30 @@ else:
         }
     }
 
-# Security headers
+#  Cache (Redis via Railway plugin) 
+REDIS_URL = config('REDIS_URL', default='')
+
+if REDIS_URL:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': REDIS_URL,
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                'IGNORE_EXCEPTIONS': True,
+            },
+            'KEY_PREFIX': 'balirah',
+        }
+    }
+else:
+    # Fallback until Redis is provisioned — ratelimit inactive but app won't crash
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
+    }
+
+#  Security headers 
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
@@ -53,10 +75,11 @@ SECURE_REDIRECT_EXEMPT = [r'^health/$']
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+#  CORS 
 CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', cast=Csv(), default='')
 CORS_ALLOW_CREDENTIALS = True
 
-# Sentry (optional)
+#  Sentry (optional) 
 SENTRY_DSN = config('SENTRY_DSN', default='')
 if SENTRY_DSN:
     sentry_sdk.init(
@@ -66,7 +89,7 @@ if SENTRY_DSN:
         send_default_pii=False,
     )
 
-# Logs directory must exist — Railway has an ephemeral FS so write to console only
+#  Logging 
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

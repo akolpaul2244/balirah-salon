@@ -28,9 +28,9 @@
       <div class="grid grid-4" data-stagger data-stagger-step="80">
         {% for stylist in stylists %}
           <a href="{% url 'team:detail' stylist.slug %}" class="team-card" data-aos="fade-up">
-            {% if stylist.photo %}
+            {% if stylist.photo_url %}
               <img
-                src="{{ stylist.photo_thumb.url }}"
+                src="{{ stylist.photo_url }}"
                 alt="{{ stylist.get_full_name }}"
                 class="team-card__photo"
                 loading="lazy"
