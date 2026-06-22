@@ -127,12 +127,14 @@
     </a>
     {% endif %}
     {% if salon.whatsapp_number %}
-    <a href="https://wa.me/{{ salon.whatsapp_number|cut:'+' }}"
+    {% with wa_digits=salon.whatsapp_number|cut:"+"|cut:" "|cut:"-"|cut:"("|cut:")" %}
+    <a href="https://wa.me/{{ wa_digits }}"
        class="navbar__mobile-contact-link navbar__mobile-contact-link--whatsapp"
        target="_blank" rel="noopener noreferrer">
       <i class="fab fa-whatsapp" aria-hidden="true"></i>
       WhatsApp
     </a>
+    {% endwith %}
     {% endif %}
   </div>
 
@@ -165,11 +167,7 @@
 <div class="navbar__backdrop" id="menuBackdrop" aria-hidden="true"></div>
 
 <style>
-/* ── Navbar mobile drawer — self-contained fixes ─────────────────────────
-   These rules live here (not main.css) so they travel with the partial.
-   They override the base display:none on .navbar__mobile and add the
-   backdrop + close button that fix the hamburger not responding.
-   ──────────────────────────────────────────────────────────────────────── */
+
 
 /* Mobile header row inside drawer */
 .navbar__mobile-header {
@@ -263,7 +261,7 @@
   opacity: 1;
 }
 
-/* ── Core fix: drawer must be block at mobile widths ─────────────────── */
+
 @media (max-width: 900px) {
   .navbar__mobile {
     /* Override the global display:none — transform handles the hide/show */
@@ -273,19 +271,20 @@
 </style>
 
 <script>
-/* ── Navbar: hamburger + backdrop + close button + keyboard trap ─────── */
+
 (function () {
   'use strict';
 
-  var hamburger   = document.getElementById('hamburgerBtn');
-  var closeBtn    = document.getElementById('mobileMenuClose');
-  var mobileMenu  = document.getElementById('mobileMenu');
-  var backdrop    = document.getElementById('menuBackdrop');
-  var navbar      = document.getElementById('navbar');
+  var hamburger  = document.getElementById('hamburgerBtn');
+  var closeBtn   = document.getElementById('mobileMenuClose');
+  var mobileMenu = document.getElementById('mobileMenu');
+  var backdrop   = document.getElementById('menuBackdrop');
+  var navbar     = document.getElementById('navbar');
 
+  
   if (!hamburger || !mobileMenu) return;
 
-  /* ── Focus trap helpers ──────────────────────────────────────────────── */
+  /*  Focus trap helpers  */
   var focusableSelectors = [
     'a[href]', 'button:not([disabled])',
     'input:not([disabled])', 'textarea:not([disabled])',
@@ -293,7 +292,9 @@
   ].join(', ');
 
   function getFocusable () {
-    return Array.from(mobileMenu.querySelectorAll(focusableSelectors));
+    return Array.prototype.slice.call(
+      mobileMenu.querySelectorAll(focusableSelectors)
+    );
   }
 
   function trapFocus (e) {
@@ -308,7 +309,7 @@
     }
   }
 
-  /* ── Open ────────────────────────────────────────────────────────────── */
+  /*  Open  */
   function openMenu () {
     mobileMenu.classList.add('open');
     mobileMenu.setAttribute('aria-hidden', 'false');
@@ -318,14 +319,15 @@
     if (backdrop) backdrop.classList.add('open');
     document.body.style.overflow = 'hidden';
 
-    /* Move focus to first focusable element in drawer */
     var focusable = getFocusable();
-    if (focusable.length) setTimeout(function () { focusable[0].focus(); }, 50);
+    if (focusable.length) {
+      setTimeout(function () { focusable[0].focus(); }, 50);
+    }
 
     document.addEventListener('keydown', handleKey);
   }
 
-  /* ── Close ───────────────────────────────────────────────────────────── */
+  /*  Close  */
   function closeMenu () {
     mobileMenu.classList.remove('open');
     mobileMenu.setAttribute('aria-hidden', 'true');
@@ -338,31 +340,37 @@
     hamburger.focus();
   }
 
-  /* ── Key handler ─────────────────────────────────────────────────────── */
+  function isOpen () {
+    return mobileMenu.classList.contains('open');
+  }
+
+  /*  Key handler  */
   function handleKey (e) {
     if (e.key === 'Escape') { closeMenu(); return; }
     if (e.key === 'Tab')    { trapFocus(e); }
   }
 
-  /* ── Wire up ─────────────────────────────────────────────────────────── */
+  /*  Wire up  */
   hamburger.addEventListener('click', function () {
-    mobileMenu.classList.contains('open') ? closeMenu() : openMenu();
+    isOpen() ? closeMenu() : openMenu();
   });
 
-  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeMenu);
+  }
 
   if (backdrop) {
     backdrop.addEventListener('click', closeMenu);
   }
 
-  /* ── Scroll shadow on navbar ─────────────────────────────────────────── */
+  /*  Scroll shadow on navbar  */
   if (navbar) {
     window.addEventListener('scroll', function () {
       navbar.classList.toggle('scrolled', window.scrollY > 8);
     }, { passive: true });
   }
 
-  /* ── Active link highlight ───────────────────────────────────────────── */
+  /*  Active link highlight  */
   var path = window.location.pathname;
   document.querySelectorAll('.navbar__link, .navbar__mobile-link').forEach(function (link) {
     var href = link.getAttribute('href');
@@ -372,11 +380,17 @@
     }
   });
 
-  /* ── Close drawer when a nav link is tapped (SPA-style nav) ─────────── */
+  /*  Close drawer when a nav link is tapped (SPA-style nav)  */
   mobileMenu.querySelectorAll('.navbar__mobile-link').forEach(function (link) {
     link.addEventListener('click', function () {
-      if (mobileMenu.classList.contains('open')) closeMenu();
+      if (isOpen()) closeMenu();
     });
+  });
+
+  /*  Reset drawer state if the viewport grows past mobile breakpoint
+     while it's open (e.g. device rotation, browser resize)  */
+  window.addEventListener('resize', function () {
+    if (window.innerWidth > 900 && isOpen()) closeMenu();
   });
 
 }());
