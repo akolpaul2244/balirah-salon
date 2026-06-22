@@ -5,3 +5,6 @@ class TeamConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'apps.team'
     verbose_name = 'Team'
+
+    def ready(self):
+        import apps.team.signals  # noqa: F401
