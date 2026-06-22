@@ -35,7 +35,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  
+ 
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         crossorigin="anonymous"
@@ -50,7 +50,7 @@
   <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
 
   <style>
-    /* ── Design tokens (light theme — single source of truth) ───────────── */
+    /*  Design tokens (light theme — single source of truth)  */
     :root {
       /* Gold — constant */
       --gold:       #C9A84C;
@@ -261,12 +261,23 @@
   {% include "partials/footer.html" %}
   {% include "partials/whatsapp_button.html" %}
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.min.js"
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"
           crossorigin="anonymous"
-          referrerpolicy="no-referrer"></script>
+          referrerpolicy="no-referrer"
+          onerror="document.documentElement.classList.add('aos-failed')"></script>
 
   <script src="{% static 'js/main.js' %}"></script>
   {% block extra_js %}{% endblock %}
+
+  <style>
+    
+    html.aos-failed [data-aos] {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  </style>
 
   <script>
     
@@ -274,7 +285,15 @@
     /*  AOS  */
     if (window.AOS) {
       AOS.init({ duration: 650, once: true, offset: 50, easing: 'ease-out-cubic' });
+    } else {
+      
+      document.documentElement.classList.add('aos-failed');
     }
+    setTimeout(function () {
+      if (!window.AOS) {
+        document.documentElement.classList.add('aos-failed');
+      }
+    }, 2000);
 
     /*  Toast dismiss  */
     function dismissToast(el) {
