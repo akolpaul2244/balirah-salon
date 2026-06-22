@@ -164,6 +164,19 @@
   line-height: 1.7;
 }
 
+/* Honeypot field — hidden from sighted users, kept reachable for screen
+   readers/keyboard? No: this field must stay fully invisible AND unreachable
+   to avoid confusing assistive tech, since it exists purely to catch bots
+   filling every field. */
+.hp-field {
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 1100px) {
   .contact-layout { gap: var(--space-10); }
@@ -271,13 +284,14 @@
 
         <!-- WhatsApp -->
         {% if salon.whatsapp_number %}
+        {% with wa_digits=salon.whatsapp_number|cut:"+"|cut:" "|cut:"-"|cut:"("|cut:")" %}
         <div class="contact-info__item">
           <div class="contact-info__icon contact-info__icon--whatsapp" aria-hidden="true">
             <i class="fab fa-whatsapp"></i>
           </div>
           <div>
             <div class="contact-info__label">WhatsApp</div>
-            <a href="https://wa.me/{{ salon.whatsapp_number|cut:'+' }}?text=Hi%2C%20I'd%20like%20to%20book%20an%20appointment"
+            <a href="https://wa.me/{{ wa_digits }}?text=Hi%2C%20I%27d%20like%20to%20book%20an%20appointment"
                class="contact-info__value contact-info__value--whatsapp"
                target="_blank" rel="noopener noreferrer"
                aria-label="Chat on WhatsApp: {{ salon.whatsapp_number }}">
@@ -287,6 +301,7 @@
             </a>
           </div>
         </div>
+        {% endwith %}
         {% endif %}
 
         <!-- Opening hours -->
@@ -355,12 +370,14 @@
           </a>
           {% endif %}
           {% if salon.whatsapp_number %}
-          <a href="https://wa.me/{{ salon.whatsapp_number|cut:'+' }}"
+          {% with wa_digits=salon.whatsapp_number|cut:"+"|cut:" "|cut:"-"|cut:"("|cut:")" %}
+          <a href="https://wa.me/{{ wa_digits }}"
              class="contact-social-link contact-social-link--wa"
              target="_blank" rel="noopener noreferrer"
              aria-label="Message Balirah on WhatsApp">
             <i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp
           </a>
+          {% endwith %}
           {% endif %}
         </div>
 
@@ -401,8 +418,24 @@
           <form method="post"
                 action="{% url 'core:contact' %}"
                 novalidate
-                id="contactForm">
+                id="contactForm"
+                autocomplete="on">
             {% csrf_token %}
+
+            <!--
+              Honeypot anti-spam field. Real visitors never see or fill this
+              (hidden via .hp-field, not via type="hidden", which bots skip).
+              The Django view should reject any submission where this field
+              is non-empty, and should never store or email its value.
+            -->
+            <div class="hp-field" aria-hidden="true">
+              <label for="id_website">Leave this field blank</label>
+              <input type="text"
+                     id="id_website"
+                     name="website"
+                     tabindex="-1"
+                     autocomplete="off">
+            </div>
 
             <div class="form-grid">
               <!-- Name -->
@@ -422,6 +455,7 @@
                          value="{{ form.name.value|default:'' }}"
                          placeholder="Jane Doe"
                          required
+                         maxlength="150"
                          autocomplete="name"
                          aria-required="true"
                          {% if form.name.errors %}aria-describedby="name-error"{% endif %}>
@@ -451,6 +485,7 @@
                          value="{{ form.email.value|default:'' }}"
                          placeholder="you@example.com"
                          required
+                         maxlength="254"
                          autocomplete="email"
                          aria-required="true"
                          {% if form.email.errors %}aria-describedby="email-error"{% endif %}>
@@ -478,6 +513,7 @@
                          style="padding-left:2.75rem"
                          value="{{ form.phone.value|default:'' }}"
                          placeholder="+256 700 000 000"
+                         maxlength="20"
                          autocomplete="tel">
                 </div>
               </div>
@@ -499,6 +535,7 @@
                          value="{{ form.subject.value|default:'' }}"
                          placeholder="How can we help?"
                          required
+                         maxlength="200"
                          aria-required="true"
                          {% if form.subject.errors %}aria-describedby="subject-error"{% endif %}>
                 </div>
@@ -596,13 +633,15 @@
           Chat with us directly for quick questions or to request a custom service.
         </p>
         {% if salon.whatsapp_number %}
-        <a href="https://wa.me/{{ salon.whatsapp_number|cut:'+' }}?text=Hi%2C%20I'd%20like%20to%20enquire%20about%20a%20service"
+        {% with wa_digits=salon.whatsapp_number|cut:"+"|cut:" "|cut:"-"|cut:"("|cut:")" %}
+        <a href="https://wa.me/{{ wa_digits }}?text=Hi%2C%20I%27d%20like%20to%20enquire%20about%20a%20service"
            class="btn btn--ghost btn--sm"
            target="_blank" rel="noopener noreferrer"
            aria-label="Open WhatsApp chat with Balirah">
           <i class="fab fa-whatsapp" aria-hidden="true"
              style="color:#25D366"></i> Chat on WhatsApp
         </a>
+        {% endwith %}
         {% endif %}
       </div>
 
@@ -648,7 +687,8 @@
     updateCount();
   }
 
-  /* Submit loading state */
+  /* Submit loading state — guards against double-submit, and skips the
+     loading UI entirely if validation fails so users can see field errors. */
   var form = document.getElementById('contactForm');
   var btn  = document.getElementById('contactSubmitBtn');
   if (form && btn) {

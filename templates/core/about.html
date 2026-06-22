@@ -388,43 +388,44 @@
     <div class="grid grid-3" data-stagger data-stagger-step="80"
          data-aos="fade-up" data-aos-delay="100">
       {% for stylist in team %}
-      <a href="{% url 'team:detail' stylist.slug %}" class="team-card">
-        {% if stylist.photo %}
-          <img src="{{ stylist.photo_thumb.url }}"
-               alt="{{ stylist.get_full_name }}, {{ stylist.get_role_display }} at Balirah Beauty Salon"
-               class="team-card__photo"
-               loading="lazy">
-        {% else %}
-          <div class="team-card__photo-placeholder" aria-hidden="true">
-            <i class="fas fa-user-tie"></i>
+      <div class="team-card-wrap" style="position:relative">
+        <a href="{% url 'team:detail' stylist.slug %}" class="team-card">
+          {% if stylist.photo %}
+            <img src="{{ stylist.photo_thumb.url }}"
+                 alt="{{ stylist.get_full_name }}, {{ stylist.get_role_display }} at Balirah Beauty Salon"
+                 class="team-card__photo"
+                 loading="lazy">
+          {% else %}
+            <div class="team-card__photo-placeholder" aria-hidden="true">
+              <i class="fas fa-user-tie"></i>
+            </div>
+          {% endif %}
+          <div class="team-card__body">
+            <h3 class="team-card__name">{{ stylist.get_full_name }}</h3>
+            <div class="team-card__role">{{ stylist.get_role_display }}</div>
+            <p class="team-card__exp">
+              <i class="fas fa-award" aria-hidden="true"
+                 style="color:var(--gold);margin-right:4px;font-size:var(--text-xs)"></i>
+              {{ stylist.years_experience }} year{{ stylist.years_experience|pluralize }} of experience
+            </p>
+            {% if stylist.specializations.all %}
+            <div class="team-card__specs">
+              {% for spec in stylist.specializations.all %}
+                <span class="spec-tag">{{ spec.name }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
           </div>
-        {% endif %}
+        </a>
         {% if stylist.instagram_handle %}
         <a href="https://instagram.com/{{ stylist.instagram_handle }}"
            class="team-card__instagram"
            aria-label="{{ stylist.get_full_name }} on Instagram"
-           target="_blank" rel="noopener noreferrer"
-           onclick="event.stopPropagation()">
+           target="_blank" rel="noopener noreferrer">
           <i class="fab fa-instagram" aria-hidden="true"></i>
         </a>
         {% endif %}
-        <div class="team-card__body">
-          <h3 class="team-card__name">{{ stylist.get_full_name }}</h3>
-          <div class="team-card__role">{{ stylist.get_role_display }}</div>
-          <p class="team-card__exp">
-            <i class="fas fa-award" aria-hidden="true"
-               style="color:var(--gold);margin-right:4px;font-size:var(--text-xs)"></i>
-            {{ stylist.years_experience }} year{{ stylist.years_experience|pluralize }} of experience
-          </p>
-          {% if stylist.specializations.all %}
-          <div class="team-card__specs">
-            {% for spec in stylist.specializations.all %}
-              <span class="spec-tag">{{ spec.name }}</span>
-            {% endfor %}
-          </div>
-          {% endif %}
-        </div>
-      </a>
+      </div>
       {% endfor %}
     </div>
 

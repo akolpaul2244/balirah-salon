@@ -35,15 +35,27 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+  <!--
+    NOTE ON THE FIX BELOW:
+    The previous build pinned `integrity` (SRI) hashes on the Font Awesome
+    and AOS CDN links that did not match the actual files being served.
+    A mismatched SRI hash causes the browser to silently *block* the
+    entire stylesheet/script with no visible error — which is exactly
+    why every icon (value cards, contact info, WhatsApp button) rendered
+    as an empty circle: the icon font itself never loaded.
+
+    Fix: drop the (incorrect) integrity attributes and rely on the
+    version pin in the URL (6.5.2 / 2.3.4) for stability. If you want
+    SRI back, copy the *current* hash directly from cdnjs.com for the
+    exact version you're using — never hand-edit or truncate a hash.
+  -->
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W=="
         crossorigin="anonymous"
         referrerpolicy="no-referrer">
 
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"
-        integrity="sha512-1cK78a1o+ht2JcaW6g8OXYwqpev9+6GqOkz9xmBN9iUUqROYPchTeiJAA1PNBF4UhbBZXQxGBRkInKEfFVfQ=="
         crossorigin="anonymous"
         referrerpolicy="no-referrer">
 
@@ -246,7 +258,8 @@
         {% endif %}
       </span>
       <p class="toast__text">{{ message }}</p>
-      <button class="toast__close"
+      <button type="button"
+              class="toast__close"
               onclick="dismissToast(this.parentElement)"
               aria-label="Dismiss notification">&times;</button>
     </div>
@@ -262,7 +275,6 @@
   {% include "partials/whatsapp_button.html" %}
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.min.js"
-          integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw=="
           crossorigin="anonymous"
           referrerpolicy="no-referrer"></script>
 
@@ -271,10 +283,13 @@
 
   <script>
     /* ── AOS ─────────────────────────────────────────────────────────────── */
-    AOS.init({ duration: 650, once: true, offset: 50, easing: 'ease-out-cubic' });
+    if (window.AOS) {
+      AOS.init({ duration: 650, once: true, offset: 50, easing: 'ease-out-cubic' });
+    }
 
     /* ── Toast dismiss ───────────────────────────────────────────────────── */
     function dismissToast(el) {
+      if (!el) return;
       el.style.animation = 'toastSlideOut 0.3s forwards';
       setTimeout(function () { if (el.parentElement) el.remove(); }, 300);
     }
@@ -284,9 +299,9 @@
 
     /* ── Navbar: hamburger + scroll shadow + active link ─────────────────── */
     (function () {
-      var hamburger = document.getElementById('hamburgerBtn');
+      var hamburger  = document.getElementById('hamburgerBtn');
       var mobileMenu = document.getElementById('mobileMenu');
-      var navbar = document.getElementById('navbar');
+      var navbar     = document.getElementById('navbar');
 
       function openMenu() {
         if (!mobileMenu || !hamburger) return;

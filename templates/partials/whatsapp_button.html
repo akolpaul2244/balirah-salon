@@ -1,10 +1,12 @@
 {% load static %}
 {% if salon.whatsapp_number %}
-<a href="https://wa.me/{{ salon.whatsapp_number|cut:'+' }}?text=Hi%20Balirah%2C%20I%20would%20like%20to%20book%20an%20appointment."
+{% with wa_digits=salon.whatsapp_number|cut:"+"|cut:" "|cut:"-"|cut:"("|cut:")" %}
+<a href="https://wa.me/{{ wa_digits }}?text=Hi%20Balirah%2C%20I%20would%20like%20to%20book%20an%20appointment."
    class="whatsapp-btn"
    target="_blank"
    rel="noopener noreferrer"
    aria-label="Chat with us on WhatsApp to book an appointment">
   <i class="fab fa-whatsapp" aria-hidden="true"></i>
 </a>
+{% endwith %}
 {% endif %}
