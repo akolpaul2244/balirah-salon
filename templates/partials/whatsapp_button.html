@@ -1,12 +1,140 @@
 {% load static %}
 {% if salon.whatsapp_number %}
 {% with wa_digits=salon.whatsapp_number|cut:"+"|cut:" "|cut:"-"|cut:"("|cut:")" %}
-<a href="https://wa.me/{{ wa_digits }}?text=Hi%20Balirah%2C%20I%20would%20like%20to%20book%20an%20appointment."
-   class="whatsapp-btn"
-   target="_blank"
-   rel="noopener noreferrer"
-   aria-label="Chat with us on WhatsApp to book an appointment">
-  <i class="fab fa-whatsapp" aria-hidden="true"></i>
-</a>
+<div class="whatsapp-fab" id="whatsappFab">
+  <span class="whatsapp-fab__label" id="whatsappFabLabel" aria-hidden="true">
+    WhatsApp us
+  </span>
+  <a href="https://wa.me/{{ wa_digits }}?text=Hi%20Balirah%2C%20I%20would%20like%20to%20book%20an%20appointment."
+     class="whatsapp-btn"
+     target="_blank"
+     rel="noopener noreferrer"
+     aria-label="Chat with us on WhatsApp to book an appointment">
+    <span class="whatsapp-btn__ring" aria-hidden="true"></span>
+    <i class="fab fa-whatsapp" aria-hidden="true"></i>
+  </a>
+</div>
+
+<style>
+
+
+.whatsapp-fab {
+  position: fixed;
+  bottom: var(--space-8);
+  right: var(--space-8);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Re-anchor the original button inside the wrapper instead of fixed-
+   positioning itself, so the label sits flush beside it. */
+.whatsapp-fab .whatsapp-btn {
+  position: relative;
+  bottom: auto;
+  right: auto;
+  z-index: 1;
+  overflow: visible;
+}
+
+/* Pulsing ring behind the icon — draws the eye without being a strobe */
+.whatsapp-btn__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-full);
+  background: #25D366;
+  opacity: 0.55;
+  animation: whatsappPulse 2.4s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes whatsappPulse {
+  0%   { transform: scale(1);   opacity: 0.55; }
+  70%  { transform: scale(1.9); opacity: 0; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
+/* Label pill */
+.whatsapp-fab__label {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: #1A1208;
+  background: #fff;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-md);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(12px) scale(0.96);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+}
+
+.whatsapp-fab__label.is-visible {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+.whatsapp-fab__label.is-hiding {
+  opacity: 0;
+  transform: translateX(12px) scale(0.96);
+}
+
+/* Hovering/focusing the button re-shows the label even after it auto-hides */
+.whatsapp-fab:hover .whatsapp-fab__label,
+.whatsapp-fab:focus-within .whatsapp-fab__label {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-fab__label {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .whatsapp-btn__ring {
+    animation: none;
+    display: none;
+  }
+}
+
+
+@media (max-width: 640px) {
+  .whatsapp-fab {
+    bottom: var(--space-5);
+    right: var(--space-5);
+  }
+  .whatsapp-fab__label {
+    font-size: var(--text-xs);
+    padding: var(--space-2) var(--space-3);
+  }
+}
+</style>
+
+<script>
+(function () {
+  'use strict';
+
+  var label = document.getElementById('whatsappFabLabel');
+  if (!label) return;
+
+  
+  var showAfterMs = 900;
+  var hideAfterMs = 6000;
+
+  setTimeout(function () {
+    label.classList.add('is-visible');
+
+    setTimeout(function () {
+      label.classList.remove('is-visible');
+      label.classList.add('is-hiding');
+    }, hideAfterMs);
+  }, showAfterMs);
+}());
+</script>
 {% endwith %}
 {% endif %}
