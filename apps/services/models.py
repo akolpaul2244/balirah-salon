@@ -165,6 +165,16 @@ class Promotion(models.Model):
                 quality='auto', fetch_format='auto'
             )
         return None
+    
+    @property
+    def card_url(self):
+        """Card thumbnail — 600x338 (16:9), used on the promotions grid page."""
+        if self.banner_image:
+            return cloudinary.CloudinaryImage(str(self.banner_image)).build_url(
+                width=600, height=338, crop='fill', gravity='auto',
+                quality='auto', fetch_format='auto'
+            )
+        return None
 
     @property
     def is_active_today(self):

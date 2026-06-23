@@ -330,32 +330,16 @@
       <div class="promos-grid">
         {% for promo in active_promotions %}
           <article
-            class="promo-card {% if promo.end_date.date == today or promo.start_date.date == today %}promo-card--today{% endif %}"
+            class="promo-card {% if promo.is_active_today %}promo-card--today{% endif %}"
             data-aos="fade-up"
             data-aos-delay="{{ forloop.counter0 }}00"
           >
 
             <!-- Image (or placeholder) -->
             <div class="promo-card__image-wrap">
-              
-              {% if promo.image %}
+              {% if promo.banner_image %}
                 <img
-                  src="{{ promo.image.url }}"
-                  alt="{{ promo.title }}"
-                  class="promo-card__image"
-                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
-                  decoding="async"
-                  width="600"
-                  height="338"
-                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
-                >
-                {# Hidden fallback — shown by onerror if the src 404s #}
-                <div class="promo-card__image-placeholder" aria-hidden="true" style="display:none;">
-                  <i class="fas fa-tag"></i>
-                </div>
-              {% elif promo.image_url %}
-                <img
-                  src="{{ promo.image_url }}"
+                  src="{{ promo.card_url }}"
                   alt="{{ promo.title }}"
                   class="promo-card__image"
                   loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
@@ -373,14 +357,9 @@
                 </div>
               {% endif %}
 
-              <!-- Today badge sits inside image-wrap so it overlays the image -->
-              {% if promo.end_date.date == today %}
+              {% if promo.is_active_today %}
                 <div class="promo-card__today-badge">
-                  <i class="fas fa-fire-alt" aria-hidden="true"></i> Ends Today
-                </div>
-              {% elif promo.start_date.date == today %}
-                <div class="promo-card__today-badge">
-                  <i class="fas fa-star" aria-hidden="true"></i> New Today
+                  <i class="fas fa-star" aria-hidden="true"></i> Active Today
                 </div>
               {% endif %}
             </div>

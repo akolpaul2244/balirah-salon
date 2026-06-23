@@ -84,8 +84,6 @@ def pricing(request):
 @require_http_methods(['GET'])
 def promotions(request):
     now = timezone.now()
-    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-    today_end = now.replace(hour=23, minute=59, second=59, microsecond=999999)
 
     active_promotions = (
         Promotion.objects
@@ -94,12 +92,8 @@ def promotions(request):
         .order_by('end_date')
     )
 
-    todays_promotions = active_promotions.filter(
-        start_date__lte=today_end,
-        end_date__gte=today_start,
-    )
-
-    has_today_promo = todays_promotions.exists()
+    
+    has_today_promo = any(p.is_active_today for p in active_promotions)
 
     return render(request, 'services/promotions.html', {
         'active_promotions': active_promotions,
