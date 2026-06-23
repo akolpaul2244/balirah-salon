@@ -6,6 +6,7 @@
 
 {% block extra_css %}
 <style>
+  /* ─── Promotions grid ─────────────────────────────────────────── */
   .promos-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -13,6 +14,7 @@
     margin-top: var(--space-8);
   }
 
+  /* ─── Promo card ──────────────────────────────────────────────── */
   .promo-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -34,6 +36,41 @@
     box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.18);
   }
 
+  /* ─── Card image ──────────────────────────────────────────────── */
+  .promo-card__image-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--surface-alt);
+    flex-shrink: 0;
+  }
+
+  .promo-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.45s ease;
+  }
+
+  .promo-card:hover .promo-card__image {
+    transform: scale(1.04);
+  }
+
+  /* Fallback when no image is provided */
+  .promo-card__image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--surface-alt) 0%, rgba(201, 168, 76, 0.08) 100%);
+    color: var(--gold);
+    font-size: 2.5rem;
+  }
+
+  /* ─── Today badge (absolute over image) ──────────────────────── */
   .promo-card__today-badge {
     position: absolute;
     top: var(--space-3);
@@ -48,8 +85,10 @@
     padding: var(--space-1) var(--space-3);
     border-radius: var(--radius-full);
     z-index: 1;
+    white-space: nowrap;
   }
 
+  /* ─── Card body ───────────────────────────────────────────────── */
   .promo-card__body {
     padding: var(--space-6);
     flex: 1;
@@ -124,31 +163,29 @@
     background: var(--surface-alt);
   }
 
-  /* Balloon confetti canvas sits behind all content */
-  #balloon-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9999;
-  }
-
+  /* ─── Today's offer banner ────────────────────────────────────── */
   .today-promo-banner {
-    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    background: linear-gradient(110deg, var(--gold) 0%, var(--gold-light, #E8C97A) 100%);
     border-radius: var(--radius-xl);
     padding: var(--space-6) var(--space-8);
     display: flex;
     align-items: center;
-    gap: var(--space-4);
+    gap: var(--space-5);
     margin-bottom: var(--space-10);
-    flex-wrap: wrap;
+    box-shadow: 0 4px 24px rgba(201, 168, 76, 0.22);
   }
 
-  .today-promo-banner__icon {
-    font-size: 2rem;
+  .today-promo-banner__icon-wrap {
     flex-shrink: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    background: rgba(26, 18, 8, 0.12);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #1A1208;
   }
 
   .today-promo-banner__text {
@@ -162,21 +199,70 @@
     font-weight: 700;
     color: #1A1208;
     margin: 0 0 var(--space-1);
+    line-height: 1.2;
   }
 
   .today-promo-banner__subtitle {
     font-size: var(--text-sm);
     color: rgba(26, 18, 8, 0.65);
     margin: 0;
+    line-height: 1.5;
   }
 
+  .today-promo-banner__cta {
+    flex-shrink: 0;
+  }
+
+  /* ─── Empty state ─────────────────────────────────────────────── */
+  .empty-state--promos {
+    padding: var(--space-16) var(--space-6);
+    text-align: center;
+  }
+
+  .empty-state--promos .empty-state__icon {
+    width: 5rem;
+    height: 5rem;
+    background: rgba(201, 168, 76, 0.10);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-6);
+    font-size: 2rem;
+    color: var(--gold);
+  }
+
+  /* ─── Balloon canvas ──────────────────────────────────────────── */
+  #balloon-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ─── Mobile ──────────────────────────────────────────────────── */
   @media (max-width: 640px) {
     .promos-grid {
       grid-template-columns: 1fr;
     }
 
     .today-promo-banner {
-      padding: var(--space-4) var(--space-5);
+      flex-wrap: wrap;
+      padding: var(--space-5) var(--space-5);
+      gap: var(--space-4);
+    }
+
+    /* On small screens: stack icon + text as a row, button full-width below */
+    .today-promo-banner__cta {
+      width: 100%;
+    }
+
+    .today-promo-banner__cta .btn {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
     }
   }
 </style>
@@ -199,7 +285,7 @@
         <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
         <span aria-current="page">Promotions</span>
       </nav>
-      <h1 class="page-hero__title">Offers & Promotions</h1>
+      <h1 class="page-hero__title">Offers &amp; Promotions</h1>
       <p class="page-hero__subtitle">Limited-time deals on your favourite services.</p>
     </div>
   </div>
@@ -208,37 +294,83 @@
 <section class="section">
   <div class="container">
 
+    <!-- ── Today's special offer banner ───────────────────────── -->
     {% if has_today_promo %}
       <div class="today-promo-banner" role="region" aria-label="Today's special offers">
-        <div class="today-promo-banner__icon" aria-hidden="true">🎉</div>
+
+        <div class="today-promo-banner__icon-wrap" aria-hidden="true">
+          <i class="fas fa-bolt"></i>
+        </div>
+
         <div class="today-promo-banner__text">
-          <p class="today-promo-banner__title">Special offers active today!</p>
+          <p class="today-promo-banner__title">Special offers active today</p>
           <p class="today-promo-banner__subtitle">Book now to lock in your discount before it expires.</p>
         </div>
-        <a href="{% url 'bookings:book' %}" class="btn btn--navy btn--lg">
-          <i class="fas fa-calendar-check" aria-hidden="true"></i> Book Now
-        </a>
+
+        <div class="today-promo-banner__cta">
+          <a href="{% url 'bookings:book' %}" class="btn btn--navy btn--lg">
+            <i class="fas fa-calendar-check" aria-hidden="true"></i>
+            Book Now
+          </a>
+        </div>
+
       </div>
     {% endif %}
 
+    <!-- ── Promotions grid ─────────────────────────────────────── -->
     {% if active_promotions %}
       <div class="promos-grid">
         {% for promo in active_promotions %}
           <article
             class="promo-card {% if promo.start_date.date == today %}promo-card--today{% endif %}"
             data-aos="fade-up"
+            data-aos-delay="{{ forloop.counter0 | add:'0' }}00"
           >
 
-            {% if promo.end_date.date == today %}
-              <div class="promo-card__today-badge">Ends Today</div>
-            {% elif promo.start_date.date == today %}
-              <div class="promo-card__today-badge">New Today</div>
-            {% endif %}
+            <!-- Image (or placeholder) -->
+            <div class="promo-card__image-wrap">
+              {% if promo.image %}
+                <img
+                  src="{{ promo.image.url }}"
+                  alt="{{ promo.title }}"
+                  class="promo-card__image"
+                  loading="lazy"
+                  decoding="async"
+                  width="600"
+                  height="338"
+                >
+              {% elif promo.image_url %}
+                <img
+                  src="{{ promo.image_url }}"
+                  alt="{{ promo.title }}"
+                  class="promo-card__image"
+                  loading="lazy"
+                  decoding="async"
+                  width="600"
+                  height="338"
+                >
+              {% else %}
+                <div class="promo-card__image-placeholder" aria-hidden="true">
+                  <i class="fas fa-tag"></i>
+                </div>
+              {% endif %}
 
+              <!-- Today badge sits inside image-wrap so it overlays the image -->
+              {% if promo.end_date.date == today %}
+                <div class="promo-card__today-badge">
+                  <i class="fas fa-fire-alt" aria-hidden="true"></i> Ends Today
+                </div>
+              {% elif promo.start_date.date == today %}
+                <div class="promo-card__today-badge">
+                  <i class="fas fa-star" aria-hidden="true"></i> New Today
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- Body -->
             <div class="promo-card__body">
 
-              <!-- Discount headline -->
-              <div class="promo-card__discount">
+              <div class="promo-card__discount" aria-label="Discount: {% if promo.discount_type == 'percentage' %}{{ promo.discount_value|floatformat:0 }} percent off{% else %}UGX {{ promo.discount_value|floatformat:0 }} off{% endif %}">
                 {% if promo.discount_type == 'percentage' %}
                   {{ promo.discount_value|floatformat:0 }}% OFF
                 {% else %}
@@ -249,7 +381,6 @@
               <h2 class="promo-card__title">{{ promo.title }}</h2>
               <p class="promo-card__desc">{{ promo.description }}</p>
 
-              <!-- Services this promotion applies to -->
               {% with services=promo.services.all %}
                 {% if services %}
                   <div class="promo-card__services" aria-label="Applicable services">
@@ -274,7 +405,7 @@
               <a
                 href="{% url 'bookings:book' %}?promo={{ promo.pk }}"
                 class="btn btn--primary btn--full"
-                aria-label="Book and redeem {{ promo.title }}"
+                aria-label="Book and redeem {{ promo.title|escapejs }}"
               >
                 <i class="fas fa-calendar-check" aria-hidden="true"></i>
                 Redeem This Offer
@@ -286,8 +417,10 @@
       </div>
 
     {% else %}
-      <div class="empty-state">
-        <div class="empty-state__icon" aria-hidden="true"><i class="fas fa-tag"></i></div>
+      <div class="empty-state empty-state--promos">
+        <div class="empty-state__icon" aria-hidden="true">
+          <i class="fas fa-tag"></i>
+        </div>
         <h3 class="empty-state__title">No Active Promotions</h3>
         <p class="empty-state__text">Check back soon — we regularly run special offers for our clients.</p>
         <a href="{% url 'services:list' %}" class="btn btn--primary">Browse Services</a>
@@ -304,6 +437,13 @@
 <script>
 (function () {
   'use strict';
+
+  /* Respect prefers-reduced-motion before doing anything */
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const c = document.getElementById('balloon-canvas');
+    if (c) c.remove();
+    return;
+  }
 
   const canvas = document.getElementById('balloon-canvas');
   if (!canvas) return;
@@ -340,19 +480,22 @@
     ctx.save();
     ctx.globalAlpha = b.opacity;
 
-    /* Balloon body */
     ctx.beginPath();
     ctx.ellipse(b.x, b.y, b.radius, b.radius * 1.25, 0, 0, Math.PI * 2);
     ctx.fillStyle = b.color;
     ctx.fill();
 
-    /* Shine highlight */
     ctx.beginPath();
-    ctx.ellipse(b.x - b.radius * 0.28, b.y - b.radius * 0.35, b.radius * 0.22, b.radius * 0.18, -0.5, 0, Math.PI * 2);
+    ctx.ellipse(
+      b.x - b.radius * 0.28,
+      b.y - b.radius * 0.35,
+      b.radius * 0.22,
+      b.radius * 0.18,
+      -0.5, 0, Math.PI * 2
+    );
     ctx.fillStyle = 'rgba(255,255,255,0.35)';
     ctx.fill();
 
-    /* String */
     ctx.beginPath();
     ctx.moveTo(b.x, b.y + b.radius * 1.25);
     ctx.quadraticCurveTo(b.x + 8, b.y + b.radius * 2, b.x - 4, b.y + b.radius * 3);
@@ -370,16 +513,12 @@
       b.wobble += b.wobbleSpeed;
       b.x += Math.sin(b.wobble) * 0.8;
       b.y -= b.speed;
-
-      /* Fade out as balloons approach the top of the viewport */
       if (b.y < canvas.height * 0.2) {
         b.opacity = Math.max(0, b.opacity - 0.012);
       }
-
       drawBalloon(b);
     });
 
-    /* Remove fully faded balloons */
     balloons = balloons.filter(b => b.opacity > 0);
 
     if (balloons.length > 0) {
@@ -391,23 +530,15 @@
 
   function init() {
     resize();
-
-    /* Respect prefers-reduced-motion — skip animation entirely */
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      canvas.remove();
-      return;
-    }
-
     for (let i = 0; i < BALLOON_COUNT; i++) {
       const b = createBalloon();
       b.y -= randomBetween(0, canvas.height * 1.2);
       balloons.push(b);
     }
-
     animFrame = requestAnimationFrame(tick);
   }
 
-  window.addEventListener('resize', resize);
+  window.addEventListener('resize', resize, { passive: true });
   window.addEventListener('beforeunload', () => cancelAnimationFrame(animFrame));
 
   init();
