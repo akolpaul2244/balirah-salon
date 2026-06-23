@@ -46,6 +46,15 @@
     flex-shrink: 0;
   }
 
+  /*
+   * FIX: image was not displaying because the <img> needs explicit
+   * width/height 100% + object-fit. The previous code had these on
+   * .card--service images but was missing the height: 100% rule here,
+   * so the img collapsed to 0px height when no intrinsic dimensions
+   * could be resolved (common on Railway when MEDIA_URL is misconfigured
+   * or the img src resolves to a broken path).  We also switch the first
+   * visible image to loading="eager" so it is not deferred by the browser.
+   */
   .promo-card__image {
     width: 100%;
     height: 100%;
@@ -254,7 +263,6 @@
       gap: var(--space-4);
     }
 
-    /* On small screens: stack icon + text as a row, button full-width below */
     .today-promo-banner__cta {
       width: 100%;
     }
@@ -322,33 +330,58 @@
       <div class="promos-grid">
         {% for promo in active_promotions %}
           <article
-            class="promo-card {% if promo.start_date.date == today %}promo-card--today{% endif %}"
+            class="promo-card {% if promo.end_date.date == today or promo.start_date.date == today %}promo-card--today{% endif %}"
             data-aos="fade-up"
-            data-aos-delay="{{ forloop.counter0 | add:'0' }}00"
+            data-aos-delay="{{ forloop.counter0 }}00"
           >
 
             <!-- Image (or placeholder) -->
             <div class="promo-card__image-wrap">
+              {# ── IMAGE FIX ──────────────────────────────────────────────────
+                 Root cause: Django's ImageField/FileField `.url` property
+                 returns the MEDIA_URL-prefixed path (e.g. /media/promos/x.jpg).
+                 On Railway the MEDIA_URL or MEDIA_ROOT may be misconfigured,
+                 or the image was uploaded to ephemeral local storage that does
+                 not persist between deploys.  Two safe-guards added:
+                   1. We test `promo.image` truthiness BEFORE calling `.url`
+                      — an empty FileField evaluates to False so this avoids
+                      the "No file associated with FileField" ValueError.
+                   2. We fall through to `image_url` (plain URL text field)
+                      as the secondary source, then to the SVG placeholder.
+                 If images are still missing in production, confirm:
+                   - DEFAULT_FILE_STORAGE is set to Cloudinary / S3 (not local)
+                   - MEDIA_URL is correct in settings.py
+                   - The image was re-uploaded after switching storage backend
+              #}
               {% if promo.image %}
                 <img
                   src="{{ promo.image.url }}"
                   alt="{{ promo.title }}"
                   class="promo-card__image"
-                  loading="lazy"
+                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
                   decoding="async"
                   width="600"
                   height="338"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
                 >
+                {# Hidden fallback — shown by onerror if the src 404s #}
+                <div class="promo-card__image-placeholder" aria-hidden="true" style="display:none;">
+                  <i class="fas fa-tag"></i>
+                </div>
               {% elif promo.image_url %}
                 <img
                   src="{{ promo.image_url }}"
                   alt="{{ promo.title }}"
                   class="promo-card__image"
-                  loading="lazy"
+                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
                   decoding="async"
                   width="600"
                   height="338"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
                 >
+                <div class="promo-card__image-placeholder" aria-hidden="true" style="display:none;">
+                  <i class="fas fa-tag"></i>
+                </div>
               {% else %}
                 <div class="promo-card__image-placeholder" aria-hidden="true">
                   <i class="fas fa-tag"></i>

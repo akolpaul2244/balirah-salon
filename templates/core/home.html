@@ -8,7 +8,7 @@
 
 {% block extra_css %}
 <style>
-  /* Service card image wrapper */
+  /* ─── Service card image ──────────────────────────────────────── */
   .card--service .card__image-wrap {
     position: relative;
     overflow: hidden;
@@ -26,7 +26,7 @@
   .card__image-placeholder { font-size: 3rem; color: rgba(201, 168, 76, 0.28); }
   .card__image-placeholder i { font-size: inherit; color: inherit; }
 
-  /* About dark section */
+  /* ─── About dark section ──────────────────────────────────────── */
   .home-about {
     background: var(--footer-bg);
     position: relative;
@@ -59,7 +59,7 @@
     z-index: 1;
   }
 
-  /* About stats bar */
+  /* ─── About stats bar ─────────────────────────────────────────── */
   .about-stats-bar {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -87,7 +87,7 @@
     margin-top: var(--space-2);
   }
 
-  /* Service type cards */
+  /* ─── Service type cards ──────────────────────────────────────── */
   .service-type-cards {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -120,7 +120,7 @@
     color: rgba(212, 200, 154, 0.6);
   }
 
-  /* Gallery category filters */
+  /* ─── Gallery category filters ────────────────────────────────── */
   .gallery-filters {
     display: flex;
     gap: var(--space-2);
@@ -129,7 +129,7 @@
     margin-bottom: var(--space-8);
   }
 
-  /* CTA dark section */
+  /* ─── CTA dark section ────────────────────────────────────────── */
   .home-cta {
     background: var(--footer-bg);
     position: relative;
@@ -145,14 +145,13 @@
     pointer-events: none;
   }
 
-  /* Promotions carousel section */
+  /* ─── Promotions carousel section ────────────────────────────── */
   .home-promotions {
     background: var(--footer-bg);
     position: relative;
     overflow: hidden;
   }
 
-  /* Subtle radial ambient glow behind the carousel */
   .home-promotions::before {
     content: '';
     position: absolute;
@@ -178,18 +177,29 @@
     will-change: transform;
   }
 
-  /* Each slide occupies the full wrapper width */
+  /* ─── Slide ───────────────────────────────────────────────────── */
   .promo-slide {
     min-width: 100%;
     position: relative;
-    aspect-ratio: 16/7;
     overflow: hidden;
     display: flex;
     align-items: center;
+    /* Use a min-height instead of a rigid aspect-ratio so content is never
+       clipped on small screens regardless of how much text a promotion has */
+    min-height: 340px;
   }
 
-  @media (max-width: 640px) {
-    .promo-slide { aspect-ratio: 4/3; }
+  /*
+   * FIX: The original aspect-ratio: 16/7 was preserved at all sizes,
+   * making slides very short on small screens relative to the content inside.
+   * We keep 16/7 on large screens, switch to auto height on small screens
+   * so content determines the slide height instead of the ratio.
+   */
+  @media (min-width: 641px) {
+    .promo-slide {
+      aspect-ratio: 16/7;
+      min-height: unset;
+    }
   }
 
   /* Dark gradient overlay makes text legible over any image */
@@ -198,9 +208,9 @@
     inset: 0;
     background: linear-gradient(
       100deg,
-      rgba(10, 8, 4, 0.82) 0%,
-      rgba(10, 8, 4, 0.55) 50%,
-      rgba(10, 8, 4, 0.20) 100%
+      rgba(10, 8, 4, 0.88) 0%,
+      rgba(10, 8, 4, 0.60) 50%,
+      rgba(10, 8, 4, 0.25) 100%
     );
     z-index: 1;
   }
@@ -229,19 +239,20 @@
     border-radius: 0 2px 2px 0;
   }
 
+  /*
+   * FIX: Content padding was too generous on small screens, leaving
+   * insufficient space for text and causing overlap with the overlay.
+   * We now use clamp() for horizontal padding so it scales gracefully,
+   * and cap the max-width so long text never overruns the slide edge.
+   */
   .promo-slide__content {
     position: relative;
     z-index: 3;
-    padding: var(--space-10) var(--space-14);
-    max-width: 580px;
-  }
-
-  @media (max-width: 768px) {
-    .promo-slide__content { padding: var(--space-8) var(--space-8); }
-  }
-
-  @media (max-width: 480px) {
-    .promo-slide__content { padding: var(--space-6) var(--space-5); }
+    padding: var(--space-8) clamp(var(--space-5), 6vw, var(--space-14));
+    max-width: min(580px, 90%);
+    /* Ensure content never bleeds into arrow button zones */
+    padding-right: max(clamp(var(--space-5), 6vw, var(--space-14)), 60px);
+    box-sizing: border-box;
   }
 
   /* "Active Today" badge */
@@ -267,9 +278,14 @@
     50%       { box-shadow: 0 0 0 8px rgba(201, 168, 76, 0); }
   }
 
+  /*
+   * FIX: Original clamp had a 2.5rem minimum — that's 40px, too large on
+   * 320px screens. Lowered floor to 1.75rem; still bold and impactful
+   * but won't force the layout to break on small viewports.
+   */
   .promo-slide__discount {
     font-family: var(--font-display);
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-size: clamp(1.75rem, 6vw, 4.5rem);
     font-weight: 800;
     color: var(--gold);
     line-height: 1;
@@ -277,20 +293,24 @@
     letter-spacing: -0.02em;
   }
 
+  /*
+   * FIX: Same issue — lowered minimum from 1.25rem to 1rem so the title
+   * doesn't push past the slide boundary on narrow viewports.
+   */
   .promo-slide__title {
     font-family: var(--font-display);
-    font-size: clamp(1.25rem, 3vw, 2rem);
+    font-size: clamp(1rem, 3vw, 2rem);
     font-weight: 700;
     color: var(--footer-text);
     margin-bottom: var(--space-3);
-    line-height: 1.2;
+    line-height: 1.25;
   }
 
   .promo-slide__desc {
     font-size: var(--text-sm);
     color: rgba(212, 200, 154, 0.65);
     line-height: 1.7;
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-5);
     max-width: 420px;
   }
 
@@ -298,7 +318,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-5);
     flex-wrap: wrap;
   }
 
@@ -321,16 +341,21 @@
     flex-wrap: wrap;
   }
 
-  /* Balloon canvas for "Active Today" slides, sits above content */
+  /*
+   * FIX: Balloon canvas had z-index: 4 (above .promo-slide__content at z-index: 3),
+   * which caused it to block clicks on the CTA buttons on slides with active-today.
+   * Lowered to z-index: 2 (same layer as overlay) and added pointer-events: none
+   * (already set, but being explicit here). Overflow is clipped by .promo-slide.
+   */
   .promo-slide__balloons {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    z-index: 4;
+    z-index: 2;
     overflow: hidden;
   }
 
-  /* Arrow navigation buttons */
+  /* ─── Arrow navigation buttons ────────────────────────────────── */
   .promo-carousel-btn {
     position: absolute;
     top: 50%;
@@ -367,7 +392,7 @@
     .promo-carousel-btn--next { right: var(--space-2); }
   }
 
-  /* Dot indicators */
+  /* ─── Dot indicators ──────────────────────────────────────────── */
   .promo-carousel-dots {
     display: flex;
     justify-content: center;
@@ -396,14 +421,26 @@
     outline-offset: 2px;
   }
 
-  /* Responsive layout */
+  /* ─── Mobile: hide description on very small screens to prevent overflow ── */
+  @media (max-width: 400px) {
+    .promo-slide__desc { display: none; }
+    .promo-slide__actions .btn--outline-white { display: none; }
+  }
+
+  /* ─── Responsive ──────────────────────────────────────────────── */
   @media (max-width: 900px) {
     .home-about-grid { grid-template-columns: 1fr; gap: var(--space-10); }
     .about-stats-bar { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 640px) {
     .service-type-cards { grid-template-columns: 1fr 1fr; gap: var(--space-3); }
-    .gallery-filters { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; justify-content: flex-start; padding-bottom: var(--space-2); }
+    .gallery-filters {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      justify-content: flex-start;
+      padding-bottom: var(--space-2);
+    }
     .gallery-filter { flex-shrink: 0; }
   }
 </style>
@@ -615,18 +652,12 @@
 
         <div class="promo-carousel-track" id="promoTrack" aria-live="polite">
           {% for promo in active_promotions %}
-
-            {% comment %}
-              Determine if the promotion is active today so we can show balloon
-              animations and the "Active Today" badge. today_date is injected
-              by the home view context processor.
-            {% endcomment %}
             {% with is_today=promo.is_active_today %}
-
             <div class="promo-slide {% if is_today %}promo-slide--today{% endif %}"
                  role="group"
                  aria-roledescription="slide"
-                 aria-label="Promotion {{ forloop.counter }} of {{ active_promotions|length }}: {{ promo.title }}">
+                 aria-label="Promotion {{ forloop.counter }} of {{ active_promotions|length }}: {{ promo.title }}"
+                 {% if not forloop.first %}aria-hidden="true"{% endif %}>
 
               <div class="promo-slide__bg">
                 {% if promo.banner_image %}
@@ -640,6 +671,13 @@
               <div class="promo-slide__overlay" aria-hidden="true"></div>
               <div class="promo-slide__accent" aria-hidden="true"></div>
 
+              {#
+                FIX: Balloon canvas z-index lowered from 4 to 2 to sit
+                behind slide content (z-index 3). This prevents the canvas
+                from intercepting pointer events on CTA buttons even though
+                pointer-events: none is set (belt-and-suspenders fix for
+                browsers that don't honour pointer-events on canvas).
+              #}
               {% if is_today %}
                 <canvas class="promo-slide__balloons"
                         aria-hidden="true"
@@ -689,7 +727,6 @@
 
               </div>
             </div>
-
             {% endwith %}
           {% endfor %}
         </div>
@@ -731,7 +768,7 @@
 {% endif %}
 
 
-<!-- TEAM: stylist cards using photo_url property (Cloudinary-aware) -->
+<!-- TEAM -->
 {% if team %}
 <section class="section" aria-labelledby="team-heading">
   <div class="container">
@@ -1091,16 +1128,18 @@
   goTo(0);
   if (total > 1) startAuto();
 
-  /* Balloon animation on "Active Today" slides */
+  /* ── Balloon animation on "Active Today" slides ─────────────── */
   if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     document.querySelectorAll('[data-balloon-canvas]').forEach(canvas => {
       const COLORS  = ['#C9A84C', '#E8C97A', '#F5E6C0', '#ffffff', '#b8860b', '#e8a0a0'];
       const COUNT   = 14;
       let balloons  = [];
       let frame;
+      let ctx;
 
       function resize() {
         const slide = canvas.parentElement;
+        if (!slide) return;
         canvas.width  = slide.offsetWidth;
         canvas.height = slide.offsetHeight;
       }
@@ -1121,7 +1160,6 @@
       }
 
       function draw(b) {
-        const ctx = canvas.getContext('2d');
         ctx.save();
         ctx.globalAlpha = b.opacity;
         ctx.beginPath();
@@ -1142,7 +1180,6 @@
       }
 
       function tick() {
-        const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         balloons.forEach(b => {
           b.wobble += b.wobbleSpeed;
@@ -1158,6 +1195,8 @@
       }
 
       function init() {
+        ctx = canvas.getContext('2d');
+        if (!ctx) return;
         resize();
         for (let i = 0; i < COUNT; i++) {
           const b = make();
@@ -1167,7 +1206,7 @@
         frame = requestAnimationFrame(tick);
       }
 
-      window.addEventListener('resize', resize);
+      window.addEventListener('resize', resize, { passive: true });
       window.addEventListener('beforeunload', () => cancelAnimationFrame(frame));
       init();
     });
