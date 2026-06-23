@@ -370,8 +370,8 @@
     <div class="grid grid-4" data-stagger data-stagger-step="80" data-aos="fade-up" data-aos-delay="100">
       {% for stylist in team %}
       <a href="{% url 'team:detail' stylist.slug %}" class="team-card">
-        {% if stylist.photo %}
-          <img src="{{ stylist.photo_thumb.url }}"
+        {% if stylist.photo_url %}
+            <img src="{{ stylist.photo_url }}"
                alt="{{ stylist.get_full_name }}, {{ stylist.get_role_display }}"
                class="team-card__photo"
                loading="lazy"
