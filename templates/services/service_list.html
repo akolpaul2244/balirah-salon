@@ -21,12 +21,14 @@
   </div>
 </div>
 
-<!-- Active promotions banner -->
-{% if active_promotions %}
-  <div class="promo-banner" role="region" aria-label="Current promotions">
-    <div class="container">
-      <div class="promo-banner__inner">
-        <i class="fas fa-tag" aria-hidden="true"></i>
+<!-- Promotions banner — always visible -->
+<div class="promo-banner{% if not active_promotions %} promo-banner--empty{% endif %}"
+     role="region"
+     aria-label="Current promotions">
+  <div class="container">
+    <div class="promo-banner__inner">
+      <i class="fas fa-tag" aria-hidden="true"></i>
+      {% if active_promotions %}
         {% for promo in active_promotions %}
           <a href="{% url 'services:promotions' %}" class="promo-banner__item">
             <span>
@@ -46,10 +48,17 @@
         <a href="{% url 'services:promotions' %}" class="promo-banner__cta">
           View all offers →
         </a>
-      </div>
+      {% else %}
+        <span class="promo-banner__item promo-banner__item--none">
+          No active promotions right now — check back soon.
+        </span>
+        <a href="{% url 'services:promotions' %}" class="promo-banner__cta">
+          Browse past offers →
+        </a>
+      {% endif %}
     </div>
   </div>
-{% endif %}
+</div>
 
 <!-- Services section -->
 <section class="section">
@@ -57,7 +66,7 @@
 
     {% if categories %}
 
-      <!-- Category tabs — includes a Promotions tab if any active promotions exist -->
+      <!-- Category tabs — Promotions tab is always present -->
       <div class="service-tab-nav" role="tablist" aria-label="Service categories">
 
         {% for category in categories %}
@@ -76,13 +85,14 @@
           </button>
         {% endfor %}
 
-        {% if active_promotions %}
-          <a href="{% url 'services:promotions' %}" class="service-tab service-tab--promo">
-            <i class="fas fa-tag" aria-hidden="true"></i>
-            Promotions
+        <!-- Promotions tab — always rendered; badge only shown when count > 0 -->
+        <a href="{% url 'services:promotions' %}" class="service-tab service-tab--promo">
+          <i class="fas fa-tag" aria-hidden="true"></i>
+          Promotions
+          {% if active_promotions %}
             <span class="service-tab__badge">{{ active_promotions|length }}</span>
-          </a>
-        {% endif %}
+          {% endif %}
+        </a>
 
       </div>
 
