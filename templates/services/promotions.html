@@ -124,7 +124,7 @@
     background: var(--surface-alt);
   }
 
-  /* Balloon confetti canvas sits behind content */
+  /* Balloon confetti canvas sits behind all content */
   #balloon-canvas {
     position: fixed;
     top: 0;
@@ -174,6 +174,7 @@
     .promos-grid {
       grid-template-columns: 1fr;
     }
+
     .today-promo-banner {
       padding: var(--space-4) var(--space-5);
     }
@@ -187,6 +188,7 @@
   <canvas id="balloon-canvas" aria-hidden="true"></canvas>
 {% endif %}
 
+<!-- Page hero -->
 <div class="page-hero">
   <div class="container">
     <div class="page-hero__content">
@@ -222,7 +224,10 @@
     {% if active_promotions %}
       <div class="promos-grid">
         {% for promo in active_promotions %}
-          <article class="promo-card {% if promo.start_date.date == today %}promo-card--today{% endif %}" data-aos="fade-up">
+          <article
+            class="promo-card {% if promo.start_date.date == today %}promo-card--today{% endif %}"
+            data-aos="fade-up"
+          >
 
             {% if promo.end_date.date == today %}
               <div class="promo-card__today-badge">Ends Today</div>
@@ -232,6 +237,7 @@
 
             <div class="promo-card__body">
 
+              <!-- Discount headline -->
               <div class="promo-card__discount">
                 {% if promo.discount_type == 'percentage' %}
                   {{ promo.discount_value|floatformat:0 }}% OFF
@@ -243,6 +249,7 @@
               <h2 class="promo-card__title">{{ promo.title }}</h2>
               <p class="promo-card__desc">{{ promo.description }}</p>
 
+              <!-- Services this promotion applies to -->
               {% with services=promo.services.all %}
                 {% if services %}
                   <div class="promo-card__services" aria-label="Applicable services">
@@ -262,8 +269,9 @@
 
             </div>
 
+            <!-- CTA footer -->
             <div class="promo-card__footer">
-              
+              <a
                 href="{% url 'bookings:book' %}?promo={{ promo.pk }}"
                 class="btn btn--primary btn--full"
                 aria-label="Book and redeem {{ promo.title }}"
@@ -363,7 +371,7 @@
       b.x += Math.sin(b.wobble) * 0.8;
       b.y -= b.speed;
 
-      /* Fade out near the top */
+      /* Fade out as balloons approach the top of the viewport */
       if (b.y < canvas.height * 0.2) {
         b.opacity = Math.max(0, b.opacity - 0.012);
       }
@@ -371,7 +379,7 @@
       drawBalloon(b);
     });
 
-    /* Remove fully transparent balloons */
+    /* Remove fully faded balloons */
     balloons = balloons.filter(b => b.opacity > 0);
 
     if (balloons.length > 0) {
@@ -383,16 +391,19 @@
 
   function init() {
     resize();
-    /* Respect prefers-reduced-motion */
+
+    /* Respect prefers-reduced-motion — skip animation entirely */
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       canvas.remove();
       return;
     }
+
     for (let i = 0; i < BALLOON_COUNT; i++) {
       const b = createBalloon();
       b.y -= randomBetween(0, canvas.height * 1.2);
       balloons.push(b);
     }
+
     animFrame = requestAnimationFrame(tick);
   }
 

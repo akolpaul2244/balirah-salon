@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils.text import slugify
-from imagekit.models import ImageSpecField
-from imagekit.processors import ResizeToFill
 from django.utils import timezone
+import cloudinary
+from cloudinary.models import CloudinaryField
 
 
 class ServiceCategory(models.Model):
@@ -39,16 +39,21 @@ class Service(models.Model):
     description = models.TextField()
     short_description = models.CharField(max_length=300, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    price_max = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True,
-                                    help_text='For variable pricing, set a max price')
-    duration_minutes = models.PositiveIntegerField(help_text='Duration in minutes')
-    image = models.ImageField(upload_to='services/', null=True, blank=True)
-    image_thumbnail = ImageSpecField(
-        source='image',
-        processors=[ResizeToFill(400, 300)],
-        format='JPEG',
-        options={'quality': 85}
+    price_max = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True,
+        help_text='For variable pricing, set a max price'
     )
+    duration_minutes = models.PositiveIntegerField(help_text='Duration in minutes')
+
+    # Cloudinary handles resizing and optimisation on delivery — no local CACHE needed
+    image = CloudinaryField(
+        'image',
+        folder='balirah/services',
+        transformation=[{'width': 800, 'height': 600, 'crop': 'fill', 'gravity': 'auto'}],
+        null=True,
+        blank=True,
+    )
+
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=False)
     order = models.PositiveIntegerField(default=0)
@@ -73,6 +78,26 @@ class Service(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
+
+    @property
+    def image_url(self):
+        """Card thumbnail — 400×300, auto-cropped, auto-formatted by Cloudinary."""
+        if self.image:
+            return cloudinary.CloudinaryImage(str(self.image)).build_url(
+                width=400, height=300, crop='fill', gravity='auto',
+                quality='auto', fetch_format='auto'
+            )
+        return None
+
+    @property
+    def image_url_large(self):
+        """Detail hero — 800×600, used on the service detail page."""
+        if self.image:
+            return cloudinary.CloudinaryImage(str(self.image)).build_url(
+                width=800, height=600, crop='fill', gravity='auto',
+                quality='auto', fetch_format='auto'
+            )
+        return None
 
     @property
     def price_display(self):
@@ -104,8 +129,20 @@ class Promotion(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     is_active = models.BooleanField(default=True)
-    banner_image = models.ImageField(upload_to='promotions/', null=True, blank=True)
-    special_day = models.CharField(max_length=100, blank=True, help_text='e.g. Monday, Valentine, Christmas')
+
+    # Cloudinary handles resizing and optimisation on delivery
+    banner_image = CloudinaryField(
+        'banner_image',
+        folder='balirah/promotions',
+        transformation=[{'width': 1200, 'height': 400, 'crop': 'fill', 'gravity': 'auto'}],
+        null=True,
+        blank=True,
+    )
+
+    special_day = models.CharField(
+        max_length=100, blank=True,
+        help_text='e.g. Monday, Valentine, Christmas'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -118,7 +155,17 @@ class Promotion(models.Model):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
-        
+
+    @property
+    def banner_url(self):
+        """Promotion banner image — 1200×400, full-width hero crop."""
+        if self.banner_image:
+            return cloudinary.CloudinaryImage(str(self.banner_image)).build_url(
+                width=1200, height=400, crop='fill', gravity='auto',
+                quality='auto', fetch_format='auto'
+            )
+        return None
+
     @property
     def is_active_today(self):
         now = timezone.now()

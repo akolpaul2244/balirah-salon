@@ -6,6 +6,7 @@
 
 {% block content %}
 
+<!-- Page hero -->
 <div class="page-hero">
   <div class="container">
     <div class="page-hero__content">
@@ -20,6 +21,7 @@
   </div>
 </div>
 
+<!-- Active promotions banner -->
 {% if active_promotions %}
   <div class="promo-banner" role="region" aria-label="Current promotions">
     <div class="container">
@@ -27,7 +29,8 @@
         <i class="fas fa-tag" aria-hidden="true"></i>
         {% for promo in active_promotions %}
           <a href="{% url 'services:promotions' %}" class="promo-banner__item">
-            <span>{{ promo.title }} —
+            <span>
+              {{ promo.title }} —
               {% if promo.discount_type == 'percentage' %}
                 {{ promo.discount_value|floatformat:0 }}% off
               {% else %}
@@ -48,12 +51,15 @@
   </div>
 {% endif %}
 
+<!-- Services section -->
 <section class="section">
   <div class="container">
 
     {% if categories %}
 
+      <!-- Category tabs — includes a Promotions tab if any active promotions exist -->
       <div class="service-tab-nav" role="tablist" aria-label="Service categories">
+
         {% for category in categories %}
           <button
             class="service-tab {% if forloop.first %}active{% endif %}"
@@ -69,8 +75,18 @@
             {{ category.name }}
           </button>
         {% endfor %}
+
+        {% if active_promotions %}
+          <a href="{% url 'services:promotions' %}" class="service-tab service-tab--promo">
+            <i class="fas fa-tag" aria-hidden="true"></i>
+            Promotions
+            <span class="service-tab__badge">{{ active_promotions|length }}</span>
+          </a>
+        {% endif %}
+
       </div>
 
+      <!-- One panel per category -->
       {% for category in categories %}
         <div
           class="service-panel {% if forloop.first %}active{% endif %}"
@@ -78,6 +94,7 @@
           role="tabpanel"
           aria-labelledby="tab-{{ category.slug }}"
         >
+
           {% if category.description %}
             <p class="service-panel__desc">{{ category.description }}</p>
           {% endif %}
@@ -87,10 +104,11 @@
               {% if service.is_active %}
                 <article class="card card--service" data-aos="fade-up">
 
+                  <!-- Service image -->
                   <a href="{% url 'services:detail' service.slug %}" class="card__image-wrap" tabindex="-1" aria-hidden="true">
-                    {% if service.image %}
+                    {% if service.image_url %}
                       <img
-                        src="{{ service.image_thumbnail.url }}"
+                        src="{{ service.image_url }}"
                         alt="{{ service.name }}"
                         class="card__image"
                         loading="lazy"
@@ -104,6 +122,7 @@
                     <span class="card__badge">{{ service.category.name }}</span>
                   </a>
 
+                  <!-- Service info -->
                   <div class="card__body">
                     <h3 class="card__title">
                       <a href="{% url 'services:detail' service.slug %}">{{ service.name }}</a>
@@ -117,7 +136,7 @@
                         <i class="fas fa-clock" aria-hidden="true"></i>
                         {{ service.duration_display }}
                       </span>
-                      
+                      <a
                         href="{% url 'bookings:book' %}?service={{ service.pk }}"
                         class="btn btn--navy btn--sm"
                         style="margin-left:auto"
@@ -139,6 +158,8 @@
       {% endfor %}
 
     {% else %}
+
+      <!-- No categories — fallback empty state -->
       <div class="empty-state">
         <div class="empty-state__icon" aria-hidden="true"><i class="fas fa-cut"></i></div>
         <h3 class="empty-state__title">Services Coming Soon</h3>
@@ -152,8 +173,10 @@
           </a>
         {% endif %}
       </div>
+
     {% endif %}
 
+    <!-- Bottom CTA -->
     <div class="cta-box" data-aos="fade-up">
       <h3 class="cta-box__title">Not Sure What You Need?</h3>
       <p class="cta-box__text">

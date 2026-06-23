@@ -23,17 +23,18 @@
   </div>
 </div>
 
-<!-- Detail layout -->
+<!-- Service detail layout -->
 <section class="section">
   <div class="container">
     <div class="detail-layout">
 
-      <!-- Left: media + description -->
+      <!-- Left column: image + description + related services -->
       <div data-aos="fade-right">
 
-        {% if service.image %}
+        <!-- Service image -->
+        {% if service.image_url_large %}
           <img
-            src="{{ service.image.url }}"
+            src="{{ service.image_url_large }}"
             alt="{{ service.name }}"
             class="detail-media"
             loading="eager"
@@ -51,7 +52,29 @@
           {{ service.description }}
         </p>
 
-        <!-- Related services -->
+        <!-- Active promotions that include this service -->
+        {% if service.promotions.all %}
+          <div class="promo-banner" style="margin-top:var(--space-8);border-radius:var(--radius-lg)" role="region" aria-label="Promotions for this service">
+            <div class="promo-banner__inner" style="flex-wrap:wrap;gap:var(--space-2)">
+              <i class="fas fa-tag" aria-hidden="true"></i>
+              <span style="font-weight:600">Special offers on this service:</span>
+              {% for promo in service.promotions.all %}
+                {% if promo.is_active_today %}
+                  <a href="{% url 'services:promotions' %}" class="promo-banner__item">
+                    {{ promo.title }} —
+                    {% if promo.discount_type == 'percentage' %}
+                      {{ promo.discount_value|floatformat:0 }}% off
+                    {% else %}
+                      UGX {{ promo.discount_value|floatformat:0 }} off
+                    {% endif %}
+                  </a>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        <!-- Related services in the same category -->
         {% if related_services %}
           <div style="margin-top:var(--space-12)">
             <h3 style="font-size:var(--text-xl);margin-bottom:var(--space-6)">You Might Also Like</h3>
@@ -73,7 +96,7 @@
 
       </div>
 
-      <!-- Right: booking sidebar -->
+      <!-- Right column: booking sidebar -->
       <div data-aos="fade-left">
         <div class="form-card detail-sidebar">
 
@@ -93,7 +116,7 @@
             <i class="fas fa-calendar-check" aria-hidden="true"></i> Book This Service
           </a>
 
-          <!-- Reassurance list -->
+          <!-- Trust signals -->
           <div class="feature-list">
             <div class="feature-item">
               <i class="fas fa-check-circle" aria-hidden="true"></i>
