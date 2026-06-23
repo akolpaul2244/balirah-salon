@@ -337,22 +337,7 @@
 
             <!-- Image (or placeholder) -->
             <div class="promo-card__image-wrap">
-              {# ── IMAGE FIX ──────────────────────────────────────────────────
-                 Root cause: Django's ImageField/FileField `.url` property
-                 returns the MEDIA_URL-prefixed path (e.g. /media/promos/x.jpg).
-                 On Railway the MEDIA_URL or MEDIA_ROOT may be misconfigured,
-                 or the image was uploaded to ephemeral local storage that does
-                 not persist between deploys.  Two safe-guards added:
-                   1. We test `promo.image` truthiness BEFORE calling `.url`
-                      — an empty FileField evaluates to False so this avoids
-                      the "No file associated with FileField" ValueError.
-                   2. We fall through to `image_url` (plain URL text field)
-                      as the secondary source, then to the SVG placeholder.
-                 If images are still missing in production, confirm:
-                   - DEFAULT_FILE_STORAGE is set to Cloudinary / S3 (not local)
-                   - MEDIA_URL is correct in settings.py
-                   - The image was re-uploaded after switching storage backend
-              #}
+              
               {% if promo.image %}
                 <img
                   src="{{ promo.image.url }}"
