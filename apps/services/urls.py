@@ -6,5 +6,6 @@ app_name = 'services'
 urlpatterns = [
     path('', views.service_list, name='list'),
     path('pricing/', views.pricing, name='pricing'),
+    path('promotions/', views.promotions, name='promotions'),
     path('<slug:slug>/', views.service_detail, name='detail'),
 ]

@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.text import slugify
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
+from django.utils import timezone
 
 
 class ServiceCategory(models.Model):
@@ -117,3 +118,10 @@ class Promotion(models.Model):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
+        
+    @property
+    def is_active_today(self):
+        now = timezone.now()
+        today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        today_end = now.replace(hour=23, minute=59, second=59, microsecond=999999)
+        return self.is_active and self.start_date <= today_end and self.end_date >= today_start

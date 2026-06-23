@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Promotions & Offers | Balirah Beauty Salon{% endblock %}
+{% block meta_description %}Current deals and limited-time offers at Balirah Beauty Salon, Kampala. Book now to redeem.{% endblock %}
+
+{% block extra_css %}
+<style>
+  .promos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-6);
+    margin-top: var(--space-8);
+  }
+
+  .promo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow var(--transition), transform var(--transition);
+    position: relative;
+  }
+
+  .promo-card:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+    transform: translateY(-3px);
+  }
+
+  .promo-card--today {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.18);
+  }
+
+  .promo-card__today-badge {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    background: var(--gold);
+    color: #1A1208;
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    z-index: 1;
+  }
+
+  .promo-card__body {
+    padding: var(--space-6);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .promo-card__discount {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .promo-card__title {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .promo-card__desc {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.7;
+    flex: 1;
+  }
+
+  .promo-card__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    font-family: var(--font-ui);
+  }
+
+  .promo-card__countdown {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    background: rgba(201, 168, 76, 0.10);
+    color: var(--gold);
+    border-radius: var(--radius-full);
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-xs);
+    font-family: var(--font-ui);
+    font-weight: 600;
+  }
+
+  .promo-card__services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+  }
+
+  .promo-card__service-tag {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    padding: 2px var(--space-3);
+    color: var(--text-secondary);
+  }
+
+  .promo-card__footer {
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--border);
+    background: var(--surface-alt);
+  }
+
+  /* Balloon confetti canvas sits behind content */
+  #balloon-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  .today-promo-banner {
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: var(--radius-xl);
+    padding: var(--space-6) var(--space-8);
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-10);
+    flex-wrap: wrap;
+  }
+
+  .today-promo-banner__icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+
+  .today-promo-banner__text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .today-promo-banner__title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: #1A1208;
+    margin: 0 0 var(--space-1);
+  }
+
+  .today-promo-banner__subtitle {
+    font-size: var(--text-sm);
+    color: rgba(26, 18, 8, 0.65);
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .promos-grid {
+      grid-template-columns: 1fr;
+    }
+    .today-promo-banner {
+      padding: var(--space-4) var(--space-5);
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% if has_today_promo %}
+  <canvas id="balloon-canvas" aria-hidden="true"></canvas>
+{% endif %}
+
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero__content">
+      <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'core:home' %}">Home</a>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
+        <a href="{% url 'services:list' %}">Services</a>
+        <span class="page-hero__breadcrumb-sep" aria-hidden="true">/</span>
+        <span aria-current="page">Promotions</span>
+      </nav>
+      <h1 class="page-hero__title">Offers & Promotions</h1>
+      <p class="page-hero__subtitle">Limited-time deals on your favourite services.</p>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+
+    {% if has_today_promo %}
+      <div class="today-promo-banner" role="region" aria-label="Today's special offers">
+        <div class="today-promo-banner__icon" aria-hidden="true">🎉</div>
+        <div class="today-promo-banner__text">
+          <p class="today-promo-banner__title">Special offers active today!</p>
+          <p class="today-promo-banner__subtitle">Book now to lock in your discount before it expires.</p>
+        </div>
+        <a href="{% url 'bookings:book' %}" class="btn btn--navy btn--lg">
+          <i class="fas fa-calendar-check" aria-hidden="true"></i> Book Now
+        </a>
+      </div>
+    {% endif %}
+
+    {% if active_promotions %}
+      <div class="promos-grid">
+        {% for promo in active_promotions %}
+          <article class="promo-card {% if promo.start_date.date == today %}promo-card--today{% endif %}" data-aos="fade-up">
+
+            {% if promo.end_date.date == today %}
+              <div class="promo-card__today-badge">Ends Today</div>
+            {% elif promo.start_date.date == today %}
+              <div class="promo-card__today-badge">New Today</div>
+            {% endif %}
+
+            <div class="promo-card__body">
+
+              <div class="promo-card__discount">
+                {% if promo.discount_type == 'percentage' %}
+                  {{ promo.discount_value|floatformat:0 }}% OFF
+                {% else %}
+                  UGX {{ promo.discount_value|floatformat:0 }} OFF
+                {% endif %}
+              </div>
+
+              <h2 class="promo-card__title">{{ promo.title }}</h2>
+              <p class="promo-card__desc">{{ promo.description }}</p>
+
+              {% with services=promo.services.all %}
+                {% if services %}
+                  <div class="promo-card__services" aria-label="Applicable services">
+                    {% for service in services %}
+                      <span class="promo-card__service-tag">{{ service.name }}</span>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              {% endwith %}
+
+              <div class="promo-card__meta">
+                <span class="promo-card__countdown">
+                  <i class="fas fa-clock" aria-hidden="true"></i>
+                  Ends {{ promo.end_date|date:"d M Y" }}
+                </span>
+              </div>
+
+            </div>
+
+            <div class="promo-card__footer">
+              
+                href="{% url 'bookings:book' %}?promo={{ promo.pk }}"
+                class="btn btn--primary btn--full"
+                aria-label="Book and redeem {{ promo.title }}"
+              >
+                <i class="fas fa-calendar-check" aria-hidden="true"></i>
+                Redeem This Offer
+              </a>
+            </div>
+
+          </article>
+        {% endfor %}
+      </div>
+
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-state__icon" aria-hidden="true"><i class="fas fa-tag"></i></div>
+        <h3 class="empty-state__title">No Active Promotions</h3>
+        <p class="empty-state__text">Check back soon — we regularly run special offers for our clients.</p>
+        <a href="{% url 'services:list' %}" class="btn btn--primary">Browse Services</a>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+{% if has_today_promo %}
+<script>
+(function () {
+  'use strict';
+
+  const canvas = document.getElementById('balloon-canvas');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  const BALLOON_COUNT = 18;
+  const COLORS = ['#C9A84C', '#E8C97A', '#F5E6C0', '#fff', '#b8860b'];
+  let balloons = [];
+  let animFrame;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function randomBetween(a, b) {
+    return a + Math.random() * (b - a);
+  }
+
+  function createBalloon() {
+    return {
+      x: randomBetween(0.05, 0.95) * canvas.width,
+      y: canvas.height + randomBetween(40, 120),
+      radius: randomBetween(18, 32),
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      speed: randomBetween(1.2, 2.8),
+      wobble: randomBetween(0, Math.PI * 2),
+      wobbleSpeed: randomBetween(0.02, 0.05),
+      opacity: 1,
+    };
+  }
+
+  function drawBalloon(b) {
+    ctx.save();
+    ctx.globalAlpha = b.opacity;
+
+    /* Balloon body */
+    ctx.beginPath();
+    ctx.ellipse(b.x, b.y, b.radius, b.radius * 1.25, 0, 0, Math.PI * 2);
+    ctx.fillStyle = b.color;
+    ctx.fill();
+
+    /* Shine highlight */
+    ctx.beginPath();
+    ctx.ellipse(b.x - b.radius * 0.28, b.y - b.radius * 0.35, b.radius * 0.22, b.radius * 0.18, -0.5, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.fill();
+
+    /* String */
+    ctx.beginPath();
+    ctx.moveTo(b.x, b.y + b.radius * 1.25);
+    ctx.quadraticCurveTo(b.x + 8, b.y + b.radius * 2, b.x - 4, b.y + b.radius * 3);
+    ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function tick() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    balloons.forEach(b => {
+      b.wobble += b.wobbleSpeed;
+      b.x += Math.sin(b.wobble) * 0.8;
+      b.y -= b.speed;
+
+      /* Fade out near the top */
+      if (b.y < canvas.height * 0.2) {
+        b.opacity = Math.max(0, b.opacity - 0.012);
+      }
+
+      drawBalloon(b);
+    });
+
+    /* Remove fully transparent balloons */
+    balloons = balloons.filter(b => b.opacity > 0);
+
+    if (balloons.length > 0) {
+      animFrame = requestAnimationFrame(tick);
+    } else {
+      canvas.remove();
+    }
+  }
+
+  function init() {
+    resize();
+    /* Respect prefers-reduced-motion */
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      canvas.remove();
+      return;
+    }
+    for (let i = 0; i < BALLOON_COUNT; i++) {
+      const b = createBalloon();
+      b.y -= randomBetween(0, canvas.height * 1.2);
+      balloons.push(b);
+    }
+    animFrame = requestAnimationFrame(tick);
+  }
+
+  window.addEventListener('resize', resize);
+  window.addEventListener('beforeunload', () => cancelAnimationFrame(animFrame));
+
+  init();
+}());
+</script>
+{% endif %}
+{% endblock %}

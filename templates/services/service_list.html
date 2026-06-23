@@ -6,7 +6,6 @@
 
 {% block content %}
 
-<!-- Page hero -->
 <div class="page-hero">
   <div class="container">
     <div class="page-hero__content">
@@ -21,119 +20,144 @@
   </div>
 </div>
 
-<!-- Active promotions banner -->
 {% if active_promotions %}
-  <div style="background:linear-gradient(90deg,var(--gold),var(--gold-light));padding:var(--space-3) 0"
-       role="region" aria-label="Current promotions">
+  <div class="promo-banner" role="region" aria-label="Current promotions">
     <div class="container">
-      <div style="display:flex;align-items:center;gap:var(--space-4);flex-wrap:wrap;justify-content:center">
-        <i class="fas fa-tag" style="color:#1A1208" aria-hidden="true"></i>
+      <div class="promo-banner__inner">
+        <i class="fas fa-tag" aria-hidden="true"></i>
         {% for promo in active_promotions %}
-          <span style="font-family:var(--font-ui);font-size:var(--text-sm);font-weight:700;color:#1A1208">
-            {{ promo.title }} —
-            {% if promo.discount_type == 'percentage' %}
-              {{ promo.discount_value|floatformat:0 }}% off
-            {% else %}
-              UGX {{ promo.discount_value|floatformat:0 }} off
-            {% endif %}
-            until {{ promo.end_date|date:"d M" }}
-          </span>
+          <a href="{% url 'services:promotions' %}" class="promo-banner__item">
+            <span>{{ promo.title }} —
+              {% if promo.discount_type == 'percentage' %}
+                {{ promo.discount_value|floatformat:0 }}% off
+              {% else %}
+                UGX {{ promo.discount_value|floatformat:0 }} off
+              {% endif %}
+              until {{ promo.end_date|date:"d M" }}
+            </span>
+          </a>
           {% if not forloop.last %}
-            <span style="color:rgba(26,18,8,0.35)" aria-hidden="true">|</span>
+            <span class="promo-banner__sep" aria-hidden="true">|</span>
           {% endif %}
         {% endfor %}
-        <a href="{% url 'bookings:book' %}"
-           style="font-family:var(--font-ui);font-size:var(--text-xs);font-weight:700;color:#1A1208;border-bottom:1.5px solid #1A1208">
-          Book to redeem →
+        <a href="{% url 'services:promotions' %}" class="promo-banner__cta">
+          View all offers →
         </a>
       </div>
     </div>
   </div>
 {% endif %}
 
-<!-- Services section -->
 <section class="section">
   <div class="container">
 
     {% if categories %}
-      <!-- Category tabs -->
+
       <div class="service-tab-nav" role="tablist" aria-label="Service categories">
         {% for category in categories %}
           <button
             class="service-tab {% if forloop.first %}active{% endif %}"
             role="tab"
             data-tab="panel-{{ category.slug }}"
-            id="tab-panel-{{ category.slug }}"
+            id="tab-{{ category.slug }}"
             aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
             aria-controls="panel-{{ category.slug }}"
           >
-            {% if category.icon %}<i class="fas {{ category.icon }}" aria-hidden="true"></i>{% endif %}
+            {% if category.icon %}
+              <i class="fas {{ category.icon }}" aria-hidden="true"></i>
+            {% endif %}
             {{ category.name }}
           </button>
         {% endfor %}
       </div>
 
-      <!-- Service panels -->
       {% for category in categories %}
         <div
           class="service-panel {% if forloop.first %}active{% endif %}"
           id="panel-{{ category.slug }}"
           role="tabpanel"
-          aria-labelledby="tab-panel-{{ category.slug }}"
+          aria-labelledby="tab-{{ category.slug }}"
         >
           {% if category.description %}
-            <p style="color:var(--text-secondary);margin-bottom:var(--space-8);max-width:640px;font-size:var(--text-sm);line-height:1.8">
-              {{ category.description }}
-            </p>
+            <p class="service-panel__desc">{{ category.description }}</p>
           {% endif %}
 
-          {% for service in category.services.all %}
-            {% if service.is_active %}
-              <article class="service-item" data-aos="fade-up">
-                <div class="service-item__header">
-                  <h3 class="service-item__name">{{ service.name }}</h3>
-                  <span class="service-item__price">{{ service.price_display }}</span>
-                </div>
-                <p class="service-item__desc">{{ service.description }}</p>
-                <div class="service-item__footer">
-                  <span class="service-item__duration">
-                    <i class="fas fa-clock" aria-hidden="true"></i>
-                    {{ service.duration_display }}
-                  </span>
-                  <a href="{% url 'bookings:book' %}?service={{ service.pk }}" class="btn btn--primary btn--sm">
-                    Book This
+          <div class="grid grid-3" style="gap:var(--space-6)">
+            {% for service in category.services.all %}
+              {% if service.is_active %}
+                <article class="card card--service" data-aos="fade-up">
+
+                  <a href="{% url 'services:detail' service.slug %}" class="card__image-wrap" tabindex="-1" aria-hidden="true">
+                    {% if service.image %}
+                      <img
+                        src="{{ service.image_thumbnail.url }}"
+                        alt="{{ service.name }}"
+                        class="card__image"
+                        loading="lazy"
+                        decoding="async"
+                      >
+                    {% else %}
+                      <div class="card__image-placeholder" aria-hidden="true">
+                        <i class="{% if service.category.category_type == 'nails' %}fas fa-spa{% else %}fas fa-cut{% endif %}"></i>
+                      </div>
+                    {% endif %}
+                    <span class="card__badge">{{ service.category.name }}</span>
                   </a>
-                </div>
-              </article>
-            {% endif %}
-          {% empty %}
-            <p style="color:var(--text-muted);font-size:var(--text-sm);padding:var(--space-6) 0">
-              No services available in this category yet.
-            </p>
-          {% endfor %}
+
+                  <div class="card__body">
+                    <h3 class="card__title">
+                      <a href="{% url 'services:detail' service.slug %}">{{ service.name }}</a>
+                    </h3>
+                    <p class="card__text">
+                      {{ service.short_description|default:service.description|truncatewords:18 }}
+                    </p>
+                    <div class="card__meta">
+                      <span class="card__price">{{ service.price_display }}</span>
+                      <span class="card__duration">
+                        <i class="fas fa-clock" aria-hidden="true"></i>
+                        {{ service.duration_display }}
+                      </span>
+                      
+                        href="{% url 'bookings:book' %}?service={{ service.pk }}"
+                        class="btn btn--navy btn--sm"
+                        style="margin-left:auto"
+                        aria-label="Book {{ service.name }}"
+                      >
+                        Book
+                      </a>
+                    </div>
+                  </div>
+
+                </article>
+              {% endif %}
+            {% empty %}
+              <p class="empty-category-msg">No services in this category yet.</p>
+            {% endfor %}
+          </div>
 
         </div>
       {% endfor %}
 
     {% else %}
-      <!-- Empty state -->
       <div class="empty-state">
         <div class="empty-state__icon" aria-hidden="true"><i class="fas fa-cut"></i></div>
         <h3 class="empty-state__title">Services Coming Soon</h3>
         <p class="empty-state__text">We're updating our service menu. WhatsApp us for current availability.</p>
         {% if salon.whatsapp_number %}
-          <a href="https://wa.me/{{ salon.whatsapp_number|cut:'+' }}" class="btn btn--primary" target="_blank" rel="noopener noreferrer">
+          <a href="https://wa.me/{{ salon.whatsapp_number|cut:'+' }}"
+             class="btn btn--primary"
+             target="_blank"
+             rel="noopener noreferrer">
             <i class="fab fa-whatsapp" aria-hidden="true"></i> Chat With Us
           </a>
         {% endif %}
       </div>
     {% endif %}
 
-    <!-- Bottom CTA -->
     <div class="cta-box" data-aos="fade-up">
       <h3 class="cta-box__title">Not Sure What You Need?</h3>
       <p class="cta-box__text">
-        Our stylists are happy to advise you on the best treatment for your hair or nails. Reach out before you book.
+        Our stylists are happy to advise you on the best treatment for your hair or nails.
       </p>
       <div class="cta-box__actions">
         <a href="{% url 'core:contact' %}" class="btn btn--outline">Ask a Question</a>
